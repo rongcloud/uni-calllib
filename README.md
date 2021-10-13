@@ -6,7 +6,7 @@
 
 [imlib-uni 接口文档](https://rongcloud.github.io/rongcloud-uniapp-imlib/)
 
-[calllib-uni 接口文档](详见./docs/index.html)
+[calllib-uni 接口文档](https://rongcloud.github.io/uni-calllib/)
 
 ## 关键目录说明
 1. call-example: uniapp 测试demo
