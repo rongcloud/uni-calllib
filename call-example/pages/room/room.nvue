@@ -1,0 +1,175 @@
+<template>
+  <view class="content">
+	<view class="content-view">
+		<view class="commView">
+			<!-- <RCUniCallView class="bigVideoView" ref="bigVideoView">
+			</RCUniCallView> -->
+			<RongCloud-Call-RCUniCallView class="bigVideoView" ref="bigVideoView">
+			</RongCloud-Call-RCUniCallView>
+		</view>
+		<view class="commView">
+			<!-- <RCUniCallView 
+				v-for="(item,index) in viewArr" 
+				:key="item.userId"
+				class="comm-show"
+				:ref="item.userId">
+			</RCUniCallView> -->
+			<RongCloud-Call-RCUniCallView
+				v-for="(item,index) in viewArr" 
+				:key="item.userId"
+				class="comm-show"
+				:ref="item.userId">
+			</RongCloud-Call-RCUniCallView>
+		<!-- <view class="commView">
+			<RCUniCallView class="smallVideoView" ref="smallVideoView">
+			</RCUniCallView> -->
+		</view>
+	</view>
+    <view class="container">
+		<!-- <RCUniCallView class="smallVideoView" ref="smallVideoView">
+		</RCUniCallView> -->
+		<button class="hangup" type="warn" @click="hangup">挂断</button>
+	</view>
+  </view>
+</template>
+
+<script>
+  import * as call from "@rongcloud/calllib-uni"
+  export default {
+    data() {
+      return {
+        mediaType: "video",
+        callType: "out",
+        targetId: "",
+        bottomHeight: 0,
+        isConnected: false,
+		isSelf:false,
+		viewArr:[],
+		callSelect:'single',
+		groupId:'',
+		userIds:[]
+      }
+    },
+    onLoad: function() {
+		console.log('是否执行自组件onLoad')
+		uni.getStorage({
+        key: "room-parameters",
+        success: (res) => {
+          this.mediaType = res.data.mediaType;
+          this.callType = res.data.callType;
+		  this.callSelect = res.data.callSelect;
+		  this.groupId = res.data.groupId?res.data.groupId:'';
+		  this.userIds = res.data.userIds?res.data.userIds:'';
+          if (this.callType === 'out') {
+ 			  console.log('呼出out')
+            this.targetId = res.data.targetId;
+            this.startCall();
+          } else {
+			console.log('呼入接受')
+            this.accept();
+          }
+        }
+      });
+	  uni.$on('OnCallConnected',this.onCallConnected)
+	  uni.$on('OnCallDisconnected',this.onCallDisconnected)
+    },
+	beforeDestroy(){
+		uni.$off('OnCallDisconnected');
+		uni.$off('OnCallConnected');
+	},
+    onUnload: function() {
+      const session = call.getCurrentCallSession();
+      if (session) {
+        call.hangup();
+      }
+    },
+    methods: {
+      hangup() {
+		 this.isSelf = true;
+		console.log('挂断中')
+        call.hangup();
+		uni.navigateBack({
+			delta:1
+		})
+		//挂断返回上一级
+		// uni.navigateBack();
+      },
+      accept() {
+		  call.accept();
+      },
+      startCall() {
+		  if(this.callSelect === 'single'){
+			  if (this.targetId.length > 0) {
+			    const type = this.mediaType === 'audio' ? 0 : 1;
+				call.startSingleCall(this.targetId, type, null);
+			    var session = call.getCurrentCallSession();
+			    call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
+			  }
+		  }else{
+			  const type = this.mediaType === 'audio' ? 0 : 1;
+			  call.startGroupCall(this.groupId, this.userIds,[] , type, '');
+			  var session = call.getCurrentCallSession();
+			  call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
+		  }
+        
+      },
+      onCallConnected() {
+		  let context = this;
+		  console.log('oncallconnected接收了')
+        if (this.mediaType === 'video') {
+          // call.enableSpeaker(true);
+          var session = call.getCurrentCallSession();
+          if (session && session.users.length > 0) {
+			call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, '0');
+			this.viewArr = session.users.filter((item)=>{
+				return item.userId !== session.mine.userId;
+			});
+			this.$nextTick(()=>{
+				this.viewArr.forEach((itm)=>{
+					call.setVideoView(itm.userId, context.$refs[itm.userId][0].ref, 0);
+				});
+			})
+			
+			
+          }
+        }
+        this.isConnected = true;
+      },
+      onCallDisconnected() {
+		  console.log('挂断');
+		  if(!this.isSelf){
+			  uni.navigateBack({
+			  	delta:1
+			  })
+		  }
+		  
+      }
+    }
+  }
+</script>
+
+<style scoped>  .content {    flex: 1;	flex-direction: column;    position: relative;  }  .content-view{	  flex: 1;	  background-color: #000000;  }
+  .commView{
+	  margin-bottom: 20upx;
+	  flex: 1;
+	  flex-direction: row;
+	  height: 300upx;
+  }
+  .commView .bigVideoView{
+	  flex: 1;
+	  /* background: blue; */
+  }
+  .r{
+	  background: red;
+  }
+ /* video{
+	  flex: 1;
+  } */
+  .commView .comm-show{
+	  flex: 1;
+	  margin-bottom: 20upx;
+	  /* background: pink; */
+  }  .container {
+	  height: 100upx;
+	  background: #ccc;
+  }   .hangup {    /* margin-top: 20upx; */  }</style>

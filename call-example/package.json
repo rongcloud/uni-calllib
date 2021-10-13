@@ -1,0 +1,16 @@
+{
+    "name": "uniapp-native-plugin-demo",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.js",
+    "dependencies": {
+        "@rongcloud/calllib-uni": "0.0.1-alpha.4",
+        "@rongcloud/imlib-uni": "^5.1.3-release.2"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
+}
