@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 2fcf1d210884d185e3a3db8d0b19f9693432ec1c
- * Fri Oct 15 2021 15:16:37 GMT+0800 (中国标准时间)
+ * CommitId - d71da30705de68a19719bdd1318b60d7918309c2
+ * Fri Oct 15 2021 16:03:06 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 'use strict';
@@ -106,7 +106,13 @@ function startGroupCall(groupId, userIds, observerUserIds, type, extra) {
 *
 */
 function setVideoView(userId, ref, type, isZOrderOnTop) {
-    call.setVideoView(userId, ref, type, isZOrderOnTop);
+    console.log('isZOrderOnTop:' + isZOrderOnTop);
+    if (isZOrderOnTop === undefined) {
+        call.setVideoView(userId, ref, type);
+    }
+    else {
+        call.setVideoView(userId, ref, type, isZOrderOnTop);
+    }
 }
 /**
 * 设置callib是否开启扬声器

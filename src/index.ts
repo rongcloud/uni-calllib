@@ -104,8 +104,13 @@ export function startGroupCall(groupId:string,userIds:Array<string>,observerUser
 * @param type 视频视图个性化设置 0 铺满 1 自适应
 * 
 */
-export function setVideoView(userId:string,ref:string,type:number,isZOrderOnTop:boolean){
-   call.setVideoView(userId,ref,type,isZOrderOnTop);
+export function setVideoView(userId:string,ref:string,type:number,isZOrderOnTop?:boolean){
+   console.log('isZOrderOnTop:'+isZOrderOnTop)
+   if(isZOrderOnTop === undefined){
+      call.setVideoView(userId,ref,type)
+   }else{
+      call.setVideoView(userId,ref,type,isZOrderOnTop);
+   }
 }
 /**
 * 设置callib是否开启扬声器

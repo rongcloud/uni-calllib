@@ -109,12 +109,19 @@
 		uni.$off('OnCallDisconnected');
 		uni.$off('OnCallConnected');
 	},
-    onUnload: function() {
+    onUnload() {
       const session = call.getCurrentCallSession();
       if (session) {
         call.hangup();
       }
     },
+	onHide(){
+		console.log(页面隐藏触发);
+	    const session = call.getCurrentCallSession();
+		if (session) {
+		  call.hangup();
+		}
+	},
     methods: {
 	  closeCameraCur(){
 		  this.curCamera = !this.curCamera;
@@ -139,7 +146,7 @@
 		  call.enableSpeaker(this.enableSpeaker);
 	  },
       hangup() {
-		 this.isSelf = true;
+		this.isSelf = true;
 		console.log('挂断中')
         call.hangup();
 		uni.navigateBack({
@@ -158,13 +165,34 @@
 				call.startSingleCall(this.targetId, type, null);
 			    var session = call.getCurrentCallSession();
 				// call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
-			    call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0,false);
+				switch(uni.getSystemInfoSync().platform){
+				    case 'android':
+				       call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0,false);
+				       break;
+				    case 'ios':
+				       call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
+				       break;
+				    default:
+				       console.log('运行在开发者工具上')
+				       break;
+				}
+			    
 			  }
 		  }else{
 			  const type = this.mediaType === 'audio' ? 0 : 1;
 			  call.startGroupCall(this.groupId, this.userIds,[] , type, '');
 			  var session = call.getCurrentCallSession();
-			  call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
+			  switch(uni.getSystemInfoSync().platform){
+			      case 'android':
+			         call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0,false);
+			         break;
+			      case 'ios':
+			         call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
+			         break;
+			      default:
+			         console.log('运行在开发者工具上')
+			         break;
+			  }
 		  }
         
       },
@@ -175,13 +203,35 @@
           call.enableSpeaker(true);
           var session = call.getCurrentCallSession();
           if (session && session.users.length > 0) {
-			call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0,true);
+			  switch(uni.getSystemInfoSync().platform){
+			      case 'android':
+			         call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0,true);
+			         break;
+			      case 'ios':
+			         call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
+			         break;
+			      default:
+			         console.log('运行在开发者工具上')
+			         break;
+			  }
+			
 			this.viewArr = session.users.filter((item)=>{
 				return item.userId !== session.mine.userId;
 			});
 			this.$nextTick(()=>{
 				this.viewArr.forEach((itm)=>{
-					call.setVideoView(itm.userId, context.$refs.bigVideoView.ref, 0,false);
+					switch(uni.getSystemInfoSync().platform){
+					    case 'android':
+					       call.setVideoView(itm.userId, context.$refs.bigVideoView.ref, 0,false);
+					       break;
+					    case 'ios':
+					       call.setVideoView(itm.userId, context.$refs.bigVideoView.ref, 0);
+					       break;
+					    default:
+					       console.log('运行在开发者工具上')
+					       break;
+					}
+					
 				});
 			})
 			

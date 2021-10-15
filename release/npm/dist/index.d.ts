@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 2fcf1d210884d185e3a3db8d0b19f9693432ec1c
- * Fri Oct 15 2021 15:16:37 GMT+0800 (中国标准时间)
+ * CommitId - d71da30705de68a19719bdd1318b60d7918309c2
+ * Fri Oct 15 2021 16:03:06 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 interface UniListenerResult<T> {
@@ -116,7 +116,7 @@ declare function startGroupCall(groupId: string, userIds: Array<string>, observe
 * @param type 视频视图个性化设置 0 铺满 1 自适应
 *
 */
-declare function setVideoView(userId: string, ref: string, type: number, isZOrderOnTop: boolean): void;
+declare function setVideoView(userId: string, ref: string, type: number, isZOrderOnTop?: boolean): void;
 /**
 * 设置callib是否开启扬声器
 *
