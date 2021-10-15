@@ -1,6 +1,6 @@
 {
   "name": "@rongcloud/calllib-uni",
-  "version": "0.0.1-alpha.4",
+  "version": "0.0.1-alpha.5",
   "description": "",
   "main": "./dist/index.js",
   "__attrs__": {
@@ -23,5 +23,5 @@
     "node": ">=10.0.0"
   },
   "dependencies": {},
-  "__commit__": "8004763d1755bf02e8ee348ab393e7df72c4ba9f"
+  "__commit__": "2fcf1d210884d185e3a3db8d0b19f9693432ec1c"
 }

@@ -148,8 +148,8 @@
 				isLogining: "",
 				isInitIm: false,
 				form:{
-					appkey:'z3v5yqkbv8v30',
-					token:'Y5w0rF/AzBn5zi3SVx8RkZU2+79mjpXMq7+si4yGEz4CjTHnlb2xVQ==@emx6.cn.rongnav.com;emx6.cn.rongcfg.com',
+					appkey:'',
+					token:'',
 					navi:'',
 					mediaServer:''
 				},
@@ -180,7 +180,7 @@
 						label:'音视频'
 					}
 				],
-				targetId:'ftd_1629253053617',
+				targetId:'',
 				isRoom:false,
 				groupId:'',
 				userIds:'',

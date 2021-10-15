@@ -120,7 +120,8 @@
 		  this.curCamera = !this.curCamera;
 		  console.log(this.curCamera)
 		  console.log(call)
-		  call.enableCamera(this.curCamera,1)
+		  let camera = call.currentCamera();
+		  call.enableCamera(this.curCamera,camera)
 	  },
 	  closeCameraBack(){
 		  this.backCamera = !this.backCamera;

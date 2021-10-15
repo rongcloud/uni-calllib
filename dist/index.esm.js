@@ -1,7 +1,7 @@
 /*
- * RCCallUni - v0.0.1-alpha.4
- * CommitId - 8004763d1755bf02e8ee348ab393e7df72c4ba9f
- * Fri Oct 15 2021 14:31:57 GMT+0800 (中国标准时间)
+ * RCCallUni - v0.0.1-alpha.5
+ * CommitId - 2fcf1d210884d185e3a3db8d0b19f9693432ec1c
+ * Fri Oct 15 2021 15:16:37 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 const call = uni.requireNativePlugin('RongCloud-Call-RCUniCall');
@@ -132,6 +132,14 @@ function switchCamera() {
     call.switchCamera();
 }
 /**
+* 获取当前摄像头方式
+*
+* 默认不传参数
+*/
+function currentCamera() {
+    return call.currentCamera();
+}
+/**
 * 开启摄像头摄像头
 *
 * @param isOpen 是否开启
@@ -142,4 +150,4 @@ function enableCamera(isOpen, camera) {
     call.enableCamera(isOpen, camera);
 }
 
-export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
+export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };

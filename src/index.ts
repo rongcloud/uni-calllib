@@ -135,6 +135,14 @@ export function switchCamera(){
    call.switchCamera();
 }
 /**
+* 获取当前摄像头方式
+* 
+* 默认不传参数
+*/
+export function currentCamera(){
+   return call.currentCamera()
+}
+/**
 * 开启摄像头摄像头
 * 
 * @param isOpen 是否开启

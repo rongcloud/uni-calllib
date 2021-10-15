@@ -1,7 +1,7 @@
 /*
- * RCCallUni - v0.0.1-alpha.4
- * CommitId - 8004763d1755bf02e8ee348ab393e7df72c4ba9f
- * Fri Oct 15 2021 14:31:57 GMT+0800 (中国标准时间)
+ * RCCallUni - v0.0.1-alpha.5
+ * CommitId - 2fcf1d210884d185e3a3db8d0b19f9693432ec1c
+ * Fri Oct 15 2021 15:16:37 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 'use strict';
@@ -136,6 +136,14 @@ function switchCamera() {
     call.switchCamera();
 }
 /**
+* 获取当前摄像头方式
+*
+* 默认不传参数
+*/
+function currentCamera() {
+    return call.currentCamera();
+}
+/**
 * 开启摄像头摄像头
 *
 * @param isOpen 是否开启
@@ -150,6 +158,7 @@ exports.accept = accept;
 exports.addOnCallConnectedListener = addOnCallConnectedListener;
 exports.addOnCallDisconnectedListener = addOnCallDisconnectedListener;
 exports.addOnCallReceivedListener = addOnCallReceivedListener;
+exports.currentCamera = currentCamera;
 exports.enableCamera = enableCamera;
 exports.enableMicrophone = enableMicrophone;
 exports.enableSpeaker = enableSpeaker;
