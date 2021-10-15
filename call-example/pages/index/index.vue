@@ -1,5 +1,5 @@
 <template>
-	<view class="content">
+	<view class="content" >
 		<!-- IM连接 -->
 		<view v-if="!libPage" class="user">
 			<!-- <p>User1</p> -->
@@ -148,8 +148,8 @@
 				isLogining: "",
 				isInitIm: false,
 				form:{
-					appkey:'',
-					token:'',
+					appkey:'z3v5yqkbv8v30',
+					token:'Y5w0rF/AzBn5zi3SVx8RkZU2+79mjpXMq7+si4yGEz4CjTHnlb2xVQ==@emx6.cn.rongnav.com;emx6.cn.rongcfg.com',
 					navi:'',
 					mediaServer:''
 				},
@@ -180,7 +180,7 @@
 						label:'音视频'
 					}
 				],
-				targetId:'',
+				targetId:'ftd_1629253053617',
 				isRoom:false,
 				groupId:'',
 				userIds:'',
@@ -247,6 +247,7 @@
 					}
 				}else{
 				//取消接入
+				this.isCut=false;
 					call.hangup();
 				}
 			},

@@ -28,6 +28,10 @@ export interface ReceivedListenerResult{
 export interface ListenerResultRes{
   reason?:number
 }
-
+export enum RCCallIWCamera {
+  NONE = -1,
+  FRONT = 0,
+  BACK = 1
+}
 
 

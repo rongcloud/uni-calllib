@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.4
- * CommitId - 0af09b55b3da2bbf9e82784aef6965a260c11b32
- * Wed Oct 13 2021 17:46:11 GMT+0800 (中国标准时间)
+ * CommitId - 8004763d1755bf02e8ee348ab393e7df72c4ba9f
+ * Fri Oct 15 2021 14:31:57 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 interface UniListenerResult<T> {
@@ -33,6 +33,11 @@ interface ReceivedListenerResult {
 }
 interface ListenerResultRes {
     reason?: number;
+}
+declare enum RCCallIWCamera {
+    NONE = -1,
+    FRONT = 0,
+    BACK = 1
 }
 
 /**
@@ -111,13 +116,35 @@ declare function startGroupCall(groupId: string, userIds: Array<string>, observe
 * @param type 视频视图个性化设置 0 铺满 1 自适应
 *
 */
-declare function setVideoView(userId: string, ref: string, type: number): void;
+declare function setVideoView(userId: string, ref: string, type: number, isZOrderOnTop: boolean): void;
 /**
-* 设置callib是否开启会话
+* 设置callib是否开启扬声器
 *
 * @param isOPen 默认开启
 *
 */
 declare function enableSpeaker(isOPen: boolean): void;
+/**
+* 设置callib是否开启麦克风
+*
+* @param isOPen 默认开启
+*
+*/
+declare function enableMicrophone(isOpen: boolean): void;
+/**
+* 切换摄像头
+*
+* 默认不传参数
+*
+*/
+declare function switchCamera(): void;
+/**
+* 开启摄像头摄像头
+*
+* @param isOpen 是否开启
+* @param RCCallIWCamera 对端还是本端
+*
+*/
+declare function enableCamera(isOpen: boolean, camera: RCCallIWCamera): void;
 
-export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, enableSpeaker, getCurrentCallSession, hangup, init, setVideoView, startGroupCall, startSingleCall, unInit };
+export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };

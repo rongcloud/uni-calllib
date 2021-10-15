@@ -2,7 +2,8 @@
 import {
 	UniListenerResult,
 	ReceivedListenerResult,
-	ListenerResultRes
+	ListenerResultRes,
+   RCCallIWCamera
 } 
 from './types';
 const call = uni.requireNativePlugin('__RC_UNI_CALL__');
@@ -103,15 +104,43 @@ export function startGroupCall(groupId:string,userIds:Array<string>,observerUser
 * @param type 视频视图个性化设置 0 铺满 1 自适应
 * 
 */
-export function setVideoView(userId:string,ref:string,type:number){
-   call.setVideoView(userId,ref,type);
+export function setVideoView(userId:string,ref:string,type:number,isZOrderOnTop:boolean){
+   call.setVideoView(userId,ref,type,isZOrderOnTop);
 }
 /**
-* 设置callib是否开启会话
+* 设置callib是否开启扬声器
 * 
 * @param isOPen 默认开启
 * 
 */
 export function enableSpeaker(isOPen:boolean){
    call.enableSpeaker(isOPen);
+}
+/**
+* 设置callib是否开启麦克风
+* 
+* @param isOPen 默认开启
+* 
+*/
+export function enableMicrophone(isOpen:boolean){
+   call.enableMicrophone(isOpen);
+}
+/**
+* 切换摄像头
+* 
+* 默认不传参数
+* 
+*/
+export function switchCamera(){
+   call.switchCamera();
+}
+/**
+* 开启摄像头摄像头
+* 
+* @param isOpen 是否开启
+* @param RCCallIWCamera 对端还是本端
+* 
+*/
+export function enableCamera(isOpen:boolean,camera:RCCallIWCamera){
+   call.enableCamera(isOpen,camera)
 }

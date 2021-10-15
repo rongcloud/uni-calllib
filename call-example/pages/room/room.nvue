@@ -1,38 +1,56 @@
 <template>
   <view class="content">
-	<view class="content-view">
-		<view class="commView">
-			<!-- <RCUniCallView class="bigVideoView" ref="bigVideoView">
-			</RCUniCallView> -->
-			<RongCloud-Call-RCUniCallView class="bigVideoView" ref="bigVideoView">
-			</RongCloud-Call-RCUniCallView>
-		</view>
-		<view class="commView">
-			<!-- <RCUniCallView 
-				v-for="(item,index) in viewArr" 
-				:key="item.userId"
-				class="comm-show"
-				:ref="item.userId">
-			</RCUniCallView> -->
+	   <!-- 单人视频 -->
+	<view>
+		<RongCloud-Call-RCUniCallView 
+			class="bigVideoView" 
+			:style="{width:windowWidth+'px',height:windowHeight+'px'}"
+			ref="bigVideoView">
+		</RongCloud-Call-RCUniCallView>
+		<RongCloud-Call-RCUniCallView
+			class="smallVideoView"
+			ref="smallVideoView">
+		</RongCloud-Call-RCUniCallView>
+		<!-- <RongCloud-Call-RCUniCallView
+			v-for="(item,index) in viewArr" 
+			:key="item.userId"
+			class="smallVideoView"
+			:ref="item.userId">
+		</RongCloud-Call-RCUniCallView> -->
+	</view>
+		<!-- 多人视频 -->
+		<!-- <view class="commView">
 			<RongCloud-Call-RCUniCallView
 				v-for="(item,index) in viewArr" 
 				:key="item.userId"
 				class="comm-show"
 				:ref="item.userId">
 			</RongCloud-Call-RCUniCallView>
-		<!-- <view class="commView">
-			<RCUniCallView class="smallVideoView" ref="smallVideoView">
-			</RCUniCallView> -->
-		</view>
+		</view> -->
+	<!-- </view> -->
+	<view class="nav">
+		<text class="nav-com" @click="closeCameraCur">
+			{{curCamera?'关闭':'开启'}}摄像头
+		</text>
+		<text class="nav-com" @click="switchCamera">
+			切换摄像头
+		</text>
+		<text class="nav-com"  @click="microphone">
+			{{isMicrophone?'关闭':'开启'}}麦克风
+		</text>
+		<text class="nav-com" @click="enableSpeaker">
+			{{isEnableSpeaker?'关闭':'开启'}}扬声器
+		</text>
 	</view>
-    <view class="container">
+    <view class="container" :style="{width:windowWidth+'px'}">
 		<!-- <RCUniCallView class="smallVideoView" ref="smallVideoView">
 		</RCUniCallView> -->
-		<button class="hangup" type="warn" @click="hangup">挂断</button>
+		<!-- <view class="hangup" > -->
+			<text class="hangup" @click="hangup">挂断 </text> 
+		<!-- </view> -->
 	</view>
   </view>
 </template>
-
 <script>
   import * as call from "@rongcloud/calllib-uni"
   export default {
@@ -47,11 +65,19 @@
 		viewArr:[],
 		callSelect:'single',
 		groupId:'',
-		userIds:[]
+		userIds:[],
+		windowWidth:'',
+		windowHeight:'',
+		isMicrophone:true,
+		isEnableSpeaker:true,
+		curCamera:true,
+		backCamera:true
       }
     },
     onLoad: function() {
+		var _this=this;
 		console.log('是否执行自组件onLoad')
+		console.log(call);
 		uni.getStorage({
         key: "room-parameters",
         success: (res) => {
@@ -70,6 +96,12 @@
           }
         }
       });
+	  uni.getSystemInfo({
+	  	success:function(res){
+			_this.windowWidth = res.windowWidth;
+			_this.windowHeight = res.windowHeight;
+	  	}
+	  })
 	  uni.$on('OnCallConnected',this.onCallConnected)
 	  uni.$on('OnCallDisconnected',this.onCallDisconnected)
     },
@@ -84,6 +116,27 @@
       }
     },
     methods: {
+	  closeCameraCur(){
+		  this.curCamera = !this.curCamera;
+		  console.log(this.curCamera)
+		  console.log(call)
+		  call.enableCamera(this.curCamera,1)
+	  },
+	  closeCameraBack(){
+		  this.backCamera = !this.backCamera;
+		  call.enableCamera(this.backCamera,1)
+	  },
+	  switchCamera(){
+		call.switchCamera();
+	  },
+	  microphone(){
+		this.isMicrophone = !this.isMicrophone;
+		call.enableMicrophone(this.isMicrophone);
+	  },
+	  enableSpeaker(){
+		  this.isEnableSpeaker = !this.isEnableSpeaker;
+		  call.enableSpeaker(this.enableSpeaker);
+	  },
       hangup() {
 		 this.isSelf = true;
 		console.log('挂断中')
@@ -103,7 +156,8 @@
 			    const type = this.mediaType === 'audio' ? 0 : 1;
 				call.startSingleCall(this.targetId, type, null);
 			    var session = call.getCurrentCallSession();
-			    call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
+				// call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
+			    call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0,false);
 			  }
 		  }else{
 			  const type = this.mediaType === 'audio' ? 0 : 1;
@@ -117,16 +171,16 @@
 		  let context = this;
 		  console.log('oncallconnected接收了')
         if (this.mediaType === 'video') {
-          // call.enableSpeaker(true);
+          call.enableSpeaker(true);
           var session = call.getCurrentCallSession();
           if (session && session.users.length > 0) {
-			call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, '0');
+			call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0,true);
 			this.viewArr = session.users.filter((item)=>{
 				return item.userId !== session.mine.userId;
 			});
 			this.$nextTick(()=>{
 				this.viewArr.forEach((itm)=>{
-					call.setVideoView(itm.userId, context.$refs[itm.userId][0].ref, 0);
+					call.setVideoView(itm.userId, context.$refs.bigVideoView.ref, 0,false);
 				});
 			})
 			
@@ -148,8 +202,10 @@
   }
 </script>
 
-<style scoped>  .content {    flex: 1;	flex-direction: column;    position: relative;  }  .content-view{	  flex: 1;	  background-color: #000000;  }
+<style scoped>  .content {    flex: 1;	flex-direction: column;    position: relative;
+	/* background: pink; */  }  .content-view{	  flex: 1;	  background-color: #000000;  }
   .commView{
+	  position: relative;
 	  margin-bottom: 20upx;
 	  flex: 1;
 	  flex-direction: row;
@@ -158,6 +214,14 @@
   .commView .bigVideoView{
 	  flex: 1;
 	  /* background: blue; */
+  }
+  .smallVideoView{
+	  position: absolute;
+	  right: 0;
+	  top: 50upx;
+	  width: 200upx;
+	  height: 200upx;
+	  /* background: pink; */
   }
   .r{
 	  background: red;
@@ -170,6 +234,43 @@
 	  margin-bottom: 20upx;
 	  /* background: pink; */
   }  .container {
+	  position: absolute;
+	  bottom: 50upx;
 	  height: 100upx;
+	  background: red;
+	  flex-direction: row;
+	  justify-content: center;
+	  
+	  /* justify-content: space-between; */  }
+  .nav{
+	  position: absolute;
+	  bottom: 200upx;
+	  right: 0;
+	  
+  }
+  
+  .camera{
 	  background: #ccc;
-  }   .hangup {    /* margin-top: 20upx; */  }</style>
+  }
+  .nav1{
+	  position: absolute;
+	  bottom: 300upx;
+	  right: 0;
+  }
+  .nav-com{
+	  /* flex:1; */
+	  margin-top: 10upx;
+	  color: #fff;
+	  background: rgba(0,0,0,0.5);
+	  /* background-color: #ccc; */
+	  justify-content: center;
+	  align-items: center;
+  }
+  .hangup{
+	  flex: 1;
+	  height: 100upx;
+	  color: #fff;
+	  text-align: center;
+	  line-height: 100upx;
+	  /* background: blue; */
+  }</style>
