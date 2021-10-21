@@ -1,7 +1,7 @@
 <template>
   <view class="content">
 	   <!-- 单人视频 -->
-	<view>
+	<view v-if="users.length<=2">
 		<RongCloud-Call-RCUniCallView 
 			class="bigVideoView" 
 			:style="{width:windowWidth+'px',height:windowHeight+'px'}"
@@ -9,7 +9,9 @@
 		</RongCloud-Call-RCUniCallView>
 		<RongCloud-Call-RCUniCallView
 			class="smallVideoView"
-			ref="smallVideoView">
+			ref="smallVideoView"
+			@click="switchVideo"
+		>
 		</RongCloud-Call-RCUniCallView>
 		<!-- <RongCloud-Call-RCUniCallView
 			v-for="(item,index) in viewArr" 
@@ -18,16 +20,22 @@
 			:ref="item.userId">
 		</RongCloud-Call-RCUniCallView> -->
 	</view>
-		<!-- 多人视频 -->
-		<!-- <view class="commView">
+	<!-- 多人视频 -->
+	<view v-else>
+		<RongCloud-Call-RCUniCallView
+			class="bigVideoView" 
+			:style="{width:windowWidth+'px',height:300+'px'}"
+			ref="bigVideoView">
+		</RongCloud-Call-RCUniCallView>
+		<view class="smallViews">
 			<RongCloud-Call-RCUniCallView
 				v-for="(item,index) in viewArr" 
 				:key="item.userId"
-				class="comm-show"
+				class="smallView"
 				:ref="item.userId">
 			</RongCloud-Call-RCUniCallView>
-		</view> -->
-	<!-- </view> -->
+		</view>
+	</view>
 	<view class="nav">
 		<text class="nav-com" @click="closeCameraCur">
 			{{curCamera?'关闭':'开启'}}摄像头
@@ -71,7 +79,9 @@
 		isMicrophone:true,
 		isEnableSpeaker:true,
 		curCamera:true,
-		backCamera:true
+		backCamera:true,
+		isMe:true,
+		users:[]
       }
     },
     onLoad: function() {
@@ -79,22 +89,26 @@
 		console.log('是否执行自组件onLoad')
 		console.log(call);
 		uni.getStorage({
-        key: "room-parameters",
-        success: (res) => {
-          this.mediaType = res.data.mediaType;
-          this.callType = res.data.callType;
-		  this.callSelect = res.data.callSelect;
-		  this.groupId = res.data.groupId?res.data.groupId:'';
-		  this.userIds = res.data.userIds?res.data.userIds:'';
-          if (this.callType === 'out') {
- 			  console.log('呼出out')
-            this.targetId = res.data.targetId;
-            this.startCall();
-          } else {
-			console.log('呼入接受')
-            this.accept();
-          }
-        }
+			key: "room-parameters",
+			success: (res) => {
+				console.log(res)
+				// let session = call.getCurrentCallSession();
+				// console.log(session)
+				// console.log(res)
+				this.mediaType = res.data.mediaType;
+				this.callType = res.data.callType?res.data.callType:'in';
+				// this.callSelect = res.data.callSelect;
+				this.groupId = res.data.groupId?res.data.groupId:'';
+				this.userIds = res.data.userIds?res.data.userIds:'';
+				if (this.callType === 'out') {
+					console.log('呼出out')
+					this.targetId = res.data.targetId;
+					this.startCall();
+				} else {
+					console.log('呼入接受')
+					this.accept();
+			  }
+			}
       });
 	  uni.getSystemInfo({
 	  	success:function(res){
@@ -123,10 +137,47 @@
 		}
 	},
     methods: {
+	  switchVideo(){
+		this.isMe = !this.isMe;
+		let session = call.getCurrentCallSession();
+		console.log(session)
+		if(this.isMe){
+			console.log(true)
+			switch(uni.getSystemInfoSync().platform){
+			    case 'android':
+					call.setVideoView(session.targetId, this.$refs.bigVideoView.ref, 0,false);
+					call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0,true);
+			       break;
+			    case 'ios':
+					call.setVideoView(session.targetId, this.$refs.bigVideoView.ref, 0);
+					call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
+				   // call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
+			    //    call.setVideoView(this.targetId, this.$refs.smallVideoView.ref, 0);
+			       break;
+			    default:
+			       console.log('运行在开发者工具上')
+			       break;
+			}
+		}else{
+			console.log(false)
+			switch(uni.getSystemInfoSync().platform){
+			    case 'android':
+				console.log(this.targetId)
+					call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0,false);
+					call.setVideoView(session.targetId, this.$refs.smallVideoView.ref, 0,true);
+			       break;
+			    case 'ios':
+					call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref);
+					call.setVideoView(session.targetId, this.$refs.smallVideoView.ref);
+			       break;
+			    default:
+			       console.log('运行在开发者工具上')
+			       break;
+			}
+		}
+	  },
 	  closeCameraCur(){
 		  this.curCamera = !this.curCamera;
-		  console.log(this.curCamera)
-		  console.log(call)
 		  let camera = call.currentCamera();
 		  call.enableCamera(this.curCamera,camera)
 	  },
@@ -159,112 +210,97 @@
 		  call.accept();
       },
       startCall() {
-		  if(this.callSelect === 'single'){
-			  if (this.targetId.length > 0) {
-			    const type = this.mediaType === 'audio' ? 0 : 1;
-				call.startSingleCall(this.targetId, type, null);
-			    var session = call.getCurrentCallSession();
-				// call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
-				switch(uni.getSystemInfoSync().platform){
-				    case 'android':
-				       call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0,false);
-				       break;
-				    case 'ios':
-				       call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
-				       break;
-				    default:
-				       console.log('运行在开发者工具上')
-				       break;
-				}
-			    
-			  }
+		  const type = this.mediaType === 'audio' ? 0 : 1;
+		  if (this.targetId.length > 0) {
+			call.startSingleCall(this.targetId, type, null);
+			this.currentCallSession = call.getCurrentCallSession();
+			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
+			// call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
+			// this.currentCallSession = session;
 		  }else{
-			  const type = this.mediaType === 'audio' ? 0 : 1;
 			  call.startGroupCall(this.groupId, this.userIds,[] , type, '');
-			  var session = call.getCurrentCallSession();
-			  switch(uni.getSystemInfoSync().platform){
-			      case 'android':
-			         call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0,false);
-			         break;
-			      case 'ios':
-			         call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
-			         break;
-			      default:
-			         console.log('运行在开发者工具上')
-			         break;
-			  }
+			  this.currentCallSession = call.getCurrentCallSession();
+			  this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
+			  // this.currentCallSession = session;
 		  }
-        
+		  // console.log(this.currentCallSession.users)
+		  this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
       },
       onCallConnected() {
 		  let context = this;
 		  console.log('oncallconnected接收了')
+		  console.log(this.mediaType);
         if (this.mediaType === 'video') {
-          call.enableSpeaker(true);
-          var session = call.getCurrentCallSession();
-          if (session && session.users.length > 0) {
-			  switch(uni.getSystemInfoSync().platform){
-			      case 'android':
-			         call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0,true);
-			         break;
-			      case 'ios':
-			         call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
-			         break;
-			      default:
-			         console.log('运行在开发者工具上')
-			         break;
-			  }
-			
-			this.viewArr = session.users.filter((item)=>{
-				return item.userId !== session.mine.userId;
-			});
-			this.$nextTick(()=>{
-				this.viewArr.forEach((itm)=>{
-					switch(uni.getSystemInfoSync().platform){
-					    case 'android':
-					       call.setVideoView(itm.userId, context.$refs.bigVideoView.ref, 0,false);
-					       break;
-					    case 'ios':
-					       call.setVideoView(itm.userId, context.$refs.bigVideoView.ref, 0);
-					       break;
-					    default:
-					       console.log('运行在开发者工具上')
-					       break;
-					}
-					
-				});
-			})
-			
-			
-          }
-        }
-        this.isConnected = true;
+			call.enableSpeaker(true);
+			// let session = call.getCurrentCallSession();
+			this.currentCallSession = call.getCurrentCallSession();
+			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
+			if (this.currentCallSession && this.currentCallSession.users.length > 0 ) {
+				//视频是两个的时候
+				if(this.currentCallSession.users.length<=2){
+					this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.smallVideoView.ref,true);
+					this.viewArr = this.currentCallSession.users.filter((item)=>{
+						return item.userId !== this.currentCallSession.mine.userId;
+					});
+					this.$nextTick(()=>{
+						this.viewArr.forEach((itm)=>{
+							this.systemInfoSync(itm.userId,this.$refs.bigVideoView.ref,false);
+						});
+					})
+				}else{
+					// 视频超过三个
+					this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
+					this.viewArr = this.currentCallSession.users.filter((item)=>{
+						return item.userId !== this.currentCallSession.mine.userId;
+					});
+					console.log(this.viewArr)
+					this.$nextTick(()=>{
+						this.viewArr.forEach((itm)=>{
+							this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,true);
+						});
+					})
+				}
+			}
+		}
+        // this.isConnected = true;
       },
+	  systemInfoSync(userId,ref,isZOrderOnTop){
+		  switch(uni.getSystemInfoSync().platform){
+		  	case 'android':
+		  		call.setVideoView(userId, ref, 0,isZOrderOnTop);
+		  		break;
+		  	case 'ios':
+		  		call.setVideoView(userId.userId, ref, 0);
+		  		break;
+		  	default:
+		  		console.log('运行在开发者工具上')
+		  		break;
+		  }	
+	  },
       onCallDisconnected() {
 		  console.log('挂断');
+		  this.isMe = true;
 		  if(!this.isSelf){
 			  uni.navigateBack({
 			  	delta:1
 			  })
 		  }
-		  
       }
     }
   }
 </script>
 
-<style scoped>  .content {    flex: 1;	flex-direction: column;    position: relative;
-	/* background: pink; */  }  .content-view{	  flex: 1;	  background-color: #000000;  }
-  .commView{
-	  position: relative;
-	  margin-bottom: 20upx;
-	  flex: 1;
-	  flex-direction: row;
-	  height: 300upx;
+<style scoped>
+  .content {
+    flex: 1;
+	flex-direction: column;
+    position: relative;
+	/* background: pink; */
   }
-  .commView .bigVideoView{
-	  flex: 1;
+  .bigVideoView{
+	  /* flex: 1; */
 	  /* background: blue; */
+	  background: #000;
   }
   .smallVideoView{
 	  position: absolute;
@@ -274,39 +310,35 @@
 	  height: 200upx;
 	  /* background: pink; */
   }
-  .r{
-	  background: red;
+  .smallViews{
+	  flex-wrap: wrap;
+	  background: #ccc;
   }
- /* video{
-	  flex: 1;
-  } */
-  .commView .comm-show{
-	  flex: 1;
-	  margin-bottom: 20upx;
-	  /* background: pink; */
-  }  .container {
+  .smallView{
+	  width: 200upx;
+	  height: 200upx;
+	  margin-right: 20upx;
+	  background: pink;
+  }
+  .container {
 	  position: absolute;
-	  bottom: 50upx;
+	  bottom: 0;
 	  height: 100upx;
 	  background: red;
 	  flex-direction: row;
 	  justify-content: center;
 	  
-	  /* justify-content: space-between; */  }
+	  /* justify-content: space-between; */
+  }
   .nav{
-	  position: absolute;
+	  position: fixed;
 	  bottom: 200upx;
 	  right: 0;
-	  
+	  z-index:9999;
   }
   
   .camera{
 	  background: #ccc;
-  }
-  .nav1{
-	  position: absolute;
-	  bottom: 300upx;
-	  right: 0;
   }
   .nav-com{
 	  /* flex:1; */
@@ -324,4 +356,5 @@
 	  text-align: center;
 	  line-height: 100upx;
 	  /* background: blue; */
-  }</style>
+  }
+</style>

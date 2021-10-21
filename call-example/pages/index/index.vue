@@ -148,8 +148,8 @@
 				isLogining: "",
 				isInitIm: false,
 				form:{
-					appkey:'',
-					token:'',
+					appkey:'z3v5yqkbv8v30',
+					token:'Y5w0rF/AzBn5zi3SVx8RkZU2+79mjpXMq7+si4yGEz4CjTHnlb2xVQ==@emx6.cn.rongnav.com;emx6.cn.rongcfg.com',
 					navi:'',
 					mediaServer:''
 				},
@@ -180,10 +180,10 @@
 						label:'音视频'
 					}
 				],
-				targetId:'',
+				targetId:'ftd_1629253053617',
 				isRoom:false,
-				groupId:'',
-				userIds:'',
+				groupId:'pmd001',
+				userIds:'ftd_1629253053617',
 				isCut:false,
 				localSession:'',
 				showMask:false
@@ -194,8 +194,8 @@
 		},
 		onLoad() {
 			// 初始化 CallLib
-			console.log('初始化call')
-			console.log(call)
+			// console.log('初始化call')
+			im.disconnect();
 			call.init({});
 			call.addOnCallReceivedListener( (res)=> {
 				console.log('我接收到了')
