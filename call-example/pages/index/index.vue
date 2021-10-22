@@ -212,6 +212,14 @@
 				console.log('对端接收')
 				uni.$emit('OnCallConnected');
 			});
+			uni.getStorage({
+				key:"login-params",
+				success:(res)=>{
+					this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
+					this.form.token = res.data&&res.data.token?res.data.token:'';
+					this.form.navi = res.data&&res.data.navi?res.data.navi:'';
+				}
+			})
 		},
 		onUnload:function(){
 			call.unInit();
@@ -279,6 +287,7 @@
 					  });
 					  
 				  }).catch((e)=>{
+						console.log(e)
 						console.log("连接IM发生错误... code=",e.message);
 						uni.showToast({
 							title:"错误码: "+ e.message,
@@ -304,10 +313,19 @@
 					return;
 				}
 				return new Promise((resolve,reject)=>{
+					if(this.form.navi){
+						console.log('有nav')
+						im.setServerInfo(this.form.navi,'')
+					};
 					im.connect(this.form.token,(res)=> {
 						console.log('im已连接')
 						console.log(res)
 						if (res.code === 0) {
+							uni.setStorageSync('login-params',{
+								appkey:this.form.appkey,
+								token:this.form.token,
+								navi:this.form.navi
+							});
 							resolve(res.userId);
 						} else {
 							console.log(123)
@@ -384,25 +402,6 @@
 				uni.navigateTo({
 					url:'../room/room'
 				});
-				// uni.showModal({
-				// 	title:"是否接收？",
-				// 	success:function(res){
-				// 		if(res.confirm)	{
-				// 			//呼入
-				// 			uni.setStorageSync('room-parameters', {
-				// 				callType: 'in',
-				// 				mediaType: session.mediaType === 0 ? 'audio' : 'video'
-				// 			});
-				// 			//跳转.nvue
-				// 			uni.navigateTo({
-				// 				url:'../room/room'
-				// 			});
-				// 		}else{
-				// 			//挂断
-				// 			call.hangup();
-				// 		}
-				// 	}
-				// })
 			}
 		}
 	}

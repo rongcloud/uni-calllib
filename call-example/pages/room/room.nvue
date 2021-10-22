@@ -211,7 +211,10 @@
       },
       startCall() {
 		  const type = this.mediaType === 'audio' ? 0 : 1;
+		  console.log('startCall')
+		  console.log(this.targetId)
 		  if (this.targetId.length > 0) {
+			  console.log('呼叫')
 			call.startSingleCall(this.targetId, type, null);
 			this.currentCallSession = call.getCurrentCallSession();
 			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
@@ -223,7 +226,7 @@
 			  this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
 			  // this.currentCallSession = session;
 		  }
-		  // console.log(this.currentCallSession.users)
+		  console.log(this.currentCallSession.mine.userId)
 		  this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
       },
       onCallConnected() {
@@ -265,12 +268,16 @@
         // this.isConnected = true;
       },
 	  systemInfoSync(userId,ref,isZOrderOnTop){
+		  console.log('systemInfoSync')
 		  switch(uni.getSystemInfoSync().platform){
 		  	case 'android':
+			console.log(userId)
+			console.log(ref)
+			console.log(isZOrderOnTop)
 		  		call.setVideoView(userId, ref, 0,isZOrderOnTop);
 		  		break;
 		  	case 'ios':
-		  		call.setVideoView(userId.userId, ref, 0);
+		  		call.setVideoView(userId, ref, 0);
 		  		break;
 		  	default:
 		  		console.log('运行在开发者工具上')
@@ -312,6 +319,7 @@
   }
   .smallViews{
 	  flex-wrap: wrap;
+	  flex-direction: row;
 	  background: #ccc;
   }
   .smallView{
