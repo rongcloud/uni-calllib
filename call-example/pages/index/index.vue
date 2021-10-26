@@ -9,7 +9,7 @@
 					<span class="flex-des">App Key:</span>
 					<view class="flex1">
 						<input v-model="form.appkey" type="text" placeholder="请输入 App Key" />
-						<view>必填；</view>	
+						<view>必填；111</view>	
 					</view>
 				</view>
 				
@@ -148,9 +148,9 @@
 				isLogining: "",
 				isInitIm: false,
 				form:{
-					appkey:'',
-					token:'',
-					navi:'',
+					appkey:'c9kqb3rdkbb8j',
+					token:'fBsTKu1WSiANi7pTWnHRyf+f0IjfzRkyUpTVecImFcPNrpMY6GzeS/sRCrHjCiQD+FKPw5HyKn95+fgPzxzcLgS1YXhQ15eZ',
+					navi:'https://nav-ucqa.rongcloud.net',
 					mediaServer:''
 				},
 				isShow:false,
@@ -287,6 +287,11 @@
 					  });
 					  
 				  }).catch((e)=>{
+						uni.setStorageSync('login-params',{
+							appkey:this.form.appkey,
+							token:this.form.token,
+							navi:this.form.navi
+						});
 						console.log(e)
 						console.log("连接IM发生错误... code=",e.message);
 						uni.showToast({

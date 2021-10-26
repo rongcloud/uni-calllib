@@ -49,6 +49,16 @@ export function addOnCallConnectedListener(listener:(result:UniListenerResult<Li
    call.addEventListener("Engine:OnCallConnected", listener);
 }
 /**
+* 添加有用户被邀请加入通话监听函数  
+* 
+* @param listener 回调函数
+*/
+
+export function addRemoteUserInvited(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+   call.addEventListener("Engine:OnRemoteUserInvited", listener);
+}
+
+/**
 * 获取当前calllib本地存储信息
 * 
 * 默认不传参数

@@ -238,6 +238,13 @@
 			// let session = call.getCurrentCallSession();
 			this.currentCallSession = call.getCurrentCallSession();
 			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
+			// console.log(this.currentCallSession)
+			let isHasMine = this.users.findIndex((item)=>{
+				return item.userId === this.currentCallSession.mine.userId;
+			});
+			if(isHasMine === -1){
+				this.users.push(this.currentCallSession.mine);
+			}
 			if (this.currentCallSession && this.currentCallSession.users.length > 0 ) {
 				//视频是两个的时候
 				if(this.currentCallSession.users.length<=2){
@@ -257,11 +264,20 @@
 						return item.userId !== this.currentCallSession.mine.userId;
 					});
 					console.log(this.viewArr)
-					this.$nextTick(()=>{
+					console.log(this.$refs)
+					setTimeout(()=>{
+						console.log(this.viewArr)
+						console.log(this.$refs)
 						this.viewArr.forEach((itm)=>{
 							this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,true);
 						});
-					})
+					},100)
+					// console.log(this.viewArr)
+					// this.$nextTick(()=>{
+					// 	this.viewArr.forEach((itm)=>{
+					// 		this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,true);
+					// 	});
+					// })
 				}
 			}
 		}
