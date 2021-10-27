@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - d71da30705de68a19719bdd1318b60d7918309c2
- * Fri Oct 15 2021 16:03:06 GMT+0800 (中国标准时间)
+ * CommitId - 1fade288746514c2a99985af1e93eb977481e5c3
+ * Wed Oct 27 2021 10:28:19 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 'use strict';
@@ -48,6 +48,99 @@ function addOnCallDisconnectedListener(listener) {
 */
 function addOnCallConnectedListener(listener) {
     call.addEventListener("Engine:OnCallConnected", listener);
+}
+/**
+* 添加有用户被邀请加入通话监听函数
+*
+* @param listener 回调函数
+*/
+function addRemoteUserInvited(listener) {
+    call.addEventListener("Engine:OnRemoteUserInvited", listener);
+}
+/**
+ * 对端用户挂断 (实际测试，只在群聊时用触发)
+ * @param listener 回调函数
+ */
+//  export function addRemoteUserLeftListener(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+//    call.addEventListener("Engine:OnRemoteUserLeft", listener);
+// }
+function addRemoteUserLeftListener() {
+    call.addEventListener("Engine:OnRemoteUserLeft", (res) => {
+        console.log(res);
+    });
+}
+/**
+ * 移除监听-接收到通话呼入
+ */
+function removeCallReceivedListener() {
+    call.removeAllListeners('Engine:OnCallReceived');
+}
+/**
+ * 移除监听-通话已接通
+ */
+function removeCallConnectedListener() {
+    call.removeAllListeners('Engine:OnCallConnected');
+}
+/**
+ * 移除监听-通话已结束
+ * @param 挂断原因
+ */
+function removeCallDisconnectedListener() {
+    call.removeAllListeners('Engine:OnCallDisconnected');
+}
+/**
+ * 移除监听-对端用户加入了通话
+ */
+function removeRemoteUserJoinedListener() {
+    call.removeAllListeners('Engine:OnRemoteUserJoined');
+}
+/**
+ * 移除监听-对端用户挂断
+ */
+function removeRemoteUserLeftListener() {
+    call.removeAllListeners('Engine:OnRemoteUserLeft');
+}
+/**
+ * 移除监听-开启或关闭摄像头的回调
+ */
+function removeEnableCameraListener() {
+    call.removeAllListeners('Engine:OnEnableCamera');
+}
+/**
+ * 移除监听-切换摄像头回调
+ */
+function removeSwitchCameraListener() {
+    call.removeAllListeners('Engine:OnSwitchCamera');
+}
+/**
+ * 移除监听-通话出现错误的回调
+ */
+function removeErrorListener() {
+    call.removeAllListeners('Engine:OnError');
+}
+/**
+ * 移除监听-开始呼叫通话的回调
+ */
+function removeCallOutgoingListener() {
+    call.removeAllListeners('Engine:OnCallOutgoing');
+}
+/**
+ * 移除监听-对端用户正在振铃
+ */
+function removeRemoteUserRingingListener() {
+    call.removeAllListeners('Engine:OnRemoteUserRinging');
+}
+/**
+ * 移除监听-有用户被邀请加入通话
+ */
+function removeRemoteUserInvited() {
+    call.removeAllListeners('Engine:OnRemoteUserInvited');
+}
+/**
+ * 移除监听-对端用户切换了媒体类型
+ */
+function removeRemoteUserMediaTypeChangedListener() {
+    call.removeAllListeners('Engine:OnRemoteUserMediaTypeChanged');
 }
 /**
 * 获取当前calllib本地存储信息
@@ -164,6 +257,8 @@ exports.accept = accept;
 exports.addOnCallConnectedListener = addOnCallConnectedListener;
 exports.addOnCallDisconnectedListener = addOnCallDisconnectedListener;
 exports.addOnCallReceivedListener = addOnCallReceivedListener;
+exports.addRemoteUserInvited = addRemoteUserInvited;
+exports.addRemoteUserLeftListener = addRemoteUserLeftListener;
 exports.currentCamera = currentCamera;
 exports.enableCamera = enableCamera;
 exports.enableMicrophone = enableMicrophone;
@@ -171,6 +266,18 @@ exports.enableSpeaker = enableSpeaker;
 exports.getCurrentCallSession = getCurrentCallSession;
 exports.hangup = hangup;
 exports.init = init;
+exports.removeCallConnectedListener = removeCallConnectedListener;
+exports.removeCallDisconnectedListener = removeCallDisconnectedListener;
+exports.removeCallOutgoingListener = removeCallOutgoingListener;
+exports.removeCallReceivedListener = removeCallReceivedListener;
+exports.removeEnableCameraListener = removeEnableCameraListener;
+exports.removeErrorListener = removeErrorListener;
+exports.removeRemoteUserInvited = removeRemoteUserInvited;
+exports.removeRemoteUserJoinedListener = removeRemoteUserJoinedListener;
+exports.removeRemoteUserLeftListener = removeRemoteUserLeftListener;
+exports.removeRemoteUserMediaTypeChangedListener = removeRemoteUserMediaTypeChangedListener;
+exports.removeRemoteUserRingingListener = removeRemoteUserRingingListener;
+exports.removeSwitchCameraListener = removeSwitchCameraListener;
 exports.setVideoView = setVideoView;
 exports.startGroupCall = startGroupCall;
 exports.startSingleCall = startSingleCall;

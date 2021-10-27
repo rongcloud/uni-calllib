@@ -57,7 +57,103 @@ export function addOnCallConnectedListener(listener:(result:UniListenerResult<Li
 export function addRemoteUserInvited(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
    call.addEventListener("Engine:OnRemoteUserInvited", listener);
 }
-
+/**
+ * 对端用户挂断 (实际测试，只在群聊时用触发)
+ * @param listener 回调函数
+ */
+ export function addRemoteUserLeftListener(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+   call.addEventListener("Engine:OnRemoteUserLeft", listener);
+}
+// export function addRemoteUserLeftListener(){
+//    call.addEventListener("Engine:OnRemoteUserLeft",(res:any)=>{
+//       console.log(res);
+//    })
+// }
+/**
+ * 移除监听-接收到通话呼入
+ */
+export function removeCallReceivedListener () {
+   call.removeAllListeners('Engine:OnCallReceived')
+}
+ 
+ /**
+  * 移除监听-通话已接通
+  */
+export function removeCallConnectedListener () {
+   call.removeAllListeners('Engine:OnCallConnected')
+}
+ 
+ /**
+  * 移除监听-通话已结束
+  * @param 挂断原因
+  */
+export function removeCallDisconnectedListener () {
+   call.removeAllListeners('Engine:OnCallDisconnected')
+}
+ 
+ /**
+  * 移除监听-对端用户加入了通话
+  */
+  export function removeRemoteUserJoinedListener () {
+   call.removeAllListeners('Engine:OnRemoteUserJoined')
+ }
+ 
+ /**
+  * 移除监听-对端用户挂断
+  */
+  export function removeRemoteUserLeftListener () {
+   call.removeAllListeners('Engine:OnRemoteUserLeft')
+ }
+ 
+ /**
+  * 移除监听-开启或关闭摄像头的回调
+  */
+  export function removeEnableCameraListener () {
+   call.removeAllListeners('Engine:OnEnableCamera')
+ }
+ 
+ /**
+  * 移除监听-切换摄像头回调
+  */
+  export function removeSwitchCameraListener () {
+   call.removeAllListeners('Engine:OnSwitchCamera')
+ }
+ 
+ /**
+  * 移除监听-通话出现错误的回调
+  */
+export function removeErrorListener () {
+   call.removeAllListeners('Engine:OnError')
+ }
+ 
+ /**
+  * 移除监听-开始呼叫通话的回调
+  */
+  export function removeCallOutgoingListener () {
+   call.removeAllListeners('Engine:OnCallOutgoing')
+ }
+ 
+ /**
+  * 移除监听-对端用户正在振铃
+  */
+export function removeRemoteUserRingingListener () {
+   call.removeAllListeners('Engine:OnRemoteUserRinging')
+}
+ 
+ /**
+  * 移除监听-有用户被邀请加入通话
+  */
+export function removeRemoteUserInvited () {
+   call.removeAllListeners('Engine:OnRemoteUserInvited')
+}
+ 
+ /**
+  * 移除监听-对端用户切换了媒体类型
+  */
+export function removeRemoteUserMediaTypeChangedListener () {
+   call.removeAllListeners('Engine:OnRemoteUserMediaTypeChanged')
+}
+ 
 /**
 * 获取当前calllib本地存储信息
 * 

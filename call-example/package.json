@@ -4,7 +4,7 @@
     "description": "",
     "main": "main.js",
     "dependencies": {
-        "@rongcloud/calllib-uni": "0.0.1-alpha.6",
+        "@rongcloud/calllib-uni": "file:..",
         "@rongcloud/imlib-uni": "^5.1.3-release.2"
     },
     "devDependencies": {},

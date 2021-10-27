@@ -51,28 +51,28 @@
             "RongCloud-Call" : {
                 "__plugin_info__" : {
                     "name" : "RCUniCall",
-                    "description" : "Rongcloud call lib sdk for uni",
+                    "description" : "融云实时音视频 SDK uni 原生插件",
                     "platforms" : "Android,iOS",
-                    "url" : "",
-                    "android_package_name" : "",
-                    "ios_bundle_id" : "",
-                    "isCloud" : false,
-                    "bought" : -1,
-                    "pid" : "",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=6372",
+                    "android_package_name" : "uni.UNI98C6F90",
+                    "ios_bundle_id" : "cn.rongcloud.call.uni.example",
+                    "isCloud" : true,
+                    "bought" : 1,
+                    "pid" : "6372",
                     "parameters" : {}
                 }
             },
             "RongCloud-IM" : {
                 "__plugin_info__" : {
                     "name" : "RCUniIM",
-                    "description" : "融云 uni 原生插件",
+                    "description" : "融云即时通讯 SDK uni 原生插件",
                     "platforms" : "Android,iOS",
-                    "url" : "",
-                    "android_package_name" : "",
-                    "ios_bundle_id" : "",
-                    "isCloud" : false,
-                    "bought" : -1,
-                    "pid" : "",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=6120",
+                    "android_package_name" : "uni.UNI98C6F90",
+                    "ios_bundle_id" : "cn.rongcloud.call.uni.example",
+                    "isCloud" : true,
+                    "bought" : 1,
+                    "pid" : "6120",
                     "parameters" : {}
                 }
             }

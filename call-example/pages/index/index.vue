@@ -149,7 +149,7 @@
 				isInitIm: false,
 				form:{
 					appkey:'c9kqb3rdkbb8j',
-					token:'fBsTKu1WSiANi7pTWnHRyf+f0IjfzRkyUpTVecImFcPNrpMY6GzeS/sRCrHjCiQD+FKPw5HyKn95+fgPzxzcLgS1YXhQ15eZ',
+					token:'gXBEhCrJUcitLzrpQ+YcH233zkQsbE8eVSFdUMVanNuQ9rN9eNSS5WR31db/YADxs39z6c5rQzaaVj7qk3rqE54PiKUD5Xpx',
 					navi:'https://nav-ucqa.rongcloud.net',
 					mediaServer:''
 				},
@@ -197,6 +197,7 @@
 			// console.log('初始化call')
 			im.disconnect();
 			call.init({});
+			console.log(call)
 			call.addOnCallReceivedListener( (res)=> {
 				console.log('我接收到了')
 				console.log(res)
@@ -212,6 +213,18 @@
 				console.log('对端接收')
 				uni.$emit('OnCallConnected');
 			});
+			call.addRemoteUserInvited((res)=>{
+				console.log('远端客户加入')
+				uni.$emit('OnCallConnected');
+			})
+			call.addRemoteUserLeftListener((res)=>{
+				console.log(res)
+				console.log('远端用户挂断')
+				uni.$emit('OnCallConnected');
+				
+			})
+			// call.removeRemoteUserLeftListener()
+			console.log(call)
 			uni.getStorage({
 				key:"login-params",
 				success:(res)=>{
@@ -250,12 +263,13 @@
 			cutFn(isFlag){
 				//确认接入
 				if(isFlag){
+					this.isCut=false;
 					if (this.localSession.callId && this.localSession.callId.length > 0) {
 						this.onCallReceived(this.localSession);
 					}
 				}else{
 				//取消接入
-				this.isCut=false;
+					this.isCut=false;
 					call.hangup();
 				}
 			},

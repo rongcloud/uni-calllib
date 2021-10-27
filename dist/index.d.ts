@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - d71da30705de68a19719bdd1318b60d7918309c2
- * Fri Oct 15 2021 16:03:06 GMT+0800 (中国标准时间)
+ * CommitId - 1fade288746514c2a99985af1e93eb977481e5c3
+ * Wed Oct 27 2021 10:28:19 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 interface UniListenerResult<T> {
@@ -70,6 +70,66 @@ declare function addOnCallDisconnectedListener(listener: (result: UniListenerRes
 * @param listener 回调函数
 */
 declare function addOnCallConnectedListener(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+/**
+* 添加有用户被邀请加入通话监听函数
+*
+* @param listener 回调函数
+*/
+declare function addRemoteUserInvited(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+/**
+ * 对端用户挂断 (实际测试，只在群聊时用触发)
+ * @param listener 回调函数
+ */
+declare function addRemoteUserLeftListener(): void;
+/**
+ * 移除监听-接收到通话呼入
+ */
+declare function removeCallReceivedListener(): void;
+/**
+ * 移除监听-通话已接通
+ */
+declare function removeCallConnectedListener(): void;
+/**
+ * 移除监听-通话已结束
+ * @param 挂断原因
+ */
+declare function removeCallDisconnectedListener(): void;
+/**
+ * 移除监听-对端用户加入了通话
+ */
+declare function removeRemoteUserJoinedListener(): void;
+/**
+ * 移除监听-对端用户挂断
+ */
+declare function removeRemoteUserLeftListener(): void;
+/**
+ * 移除监听-开启或关闭摄像头的回调
+ */
+declare function removeEnableCameraListener(): void;
+/**
+ * 移除监听-切换摄像头回调
+ */
+declare function removeSwitchCameraListener(): void;
+/**
+ * 移除监听-通话出现错误的回调
+ */
+declare function removeErrorListener(): void;
+/**
+ * 移除监听-开始呼叫通话的回调
+ */
+declare function removeCallOutgoingListener(): void;
+/**
+ * 移除监听-对端用户正在振铃
+ */
+declare function removeRemoteUserRingingListener(): void;
+/**
+ * 移除监听-有用户被邀请加入通话
+ */
+declare function removeRemoteUserInvited(): void;
+/**
+ * 移除监听-对端用户切换了媒体类型
+ */
+declare function removeRemoteUserMediaTypeChangedListener(): void;
 /**
 * 获取当前calllib本地存储信息
 *
@@ -153,4 +213,4 @@ declare function currentCamera(): any;
 */
 declare function enableCamera(isOpen: boolean, camera: RCCallIWCamera): void;
 
-export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
+export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, addRemoteUserInvited, addRemoteUserLeftListener, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };

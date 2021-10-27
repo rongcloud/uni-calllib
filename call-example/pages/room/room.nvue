@@ -245,8 +245,10 @@
 			if(isHasMine === -1){
 				this.users.push(this.currentCallSession.mine);
 			}
+			console.log(this.users);
 			if (this.currentCallSession && this.currentCallSession.users.length > 0 ) {
 				//视频是两个的时候
+				console.log('2')
 				if(this.currentCallSession.users.length<=2){
 					this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.smallVideoView.ref,true);
 					this.viewArr = this.currentCallSession.users.filter((item)=>{
@@ -259,6 +261,7 @@
 					})
 				}else{
 					// 视频超过三个
+					console.log('3')
 					this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
 					this.viewArr = this.currentCallSession.users.filter((item)=>{
 						return item.userId !== this.currentCallSession.mine.userId;
