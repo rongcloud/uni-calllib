@@ -250,31 +250,40 @@
 				//视频是两个的时候
 				console.log('2')
 				if(this.currentCallSession.users.length<=2){
-					this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.smallVideoView.ref,true);
-					this.viewArr = this.currentCallSession.users.filter((item)=>{
-						return item.userId !== this.currentCallSession.mine.userId;
-					});
+					console.log(this.currentCallSession)
+					console.log(this.$refs)
 					this.$nextTick(()=>{
-						this.viewArr.forEach((itm)=>{
-							this.systemInfoSync(itm.userId,this.$refs.bigVideoView.ref,false);
+						this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.smallVideoView.ref,true);
+						this.viewArr = this.currentCallSession.users.filter((item)=>{
+							return item.userId !== this.currentCallSession.mine.userId;
 						});
+						console.log(this.viewArr)
+						// this.$nextTick(()=>{
+						setTimeout(()=>{
+							this.viewArr.forEach((itm)=>{
+								this.systemInfoSync(itm.userId,this.$refs.bigVideoView.ref,false);
+							});
+						},100);
 					})
+					
 				}else{
 					// 视频超过三个
 					console.log('3')
-					this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
-					this.viewArr = this.currentCallSession.users.filter((item)=>{
-						return item.userId !== this.currentCallSession.mine.userId;
-					});
-					console.log(this.viewArr)
-					console.log(this.$refs)
-					setTimeout(()=>{
+					this.$nextTick(()=>{
+						this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
+						this.viewArr = this.currentCallSession.users.filter((item)=>{
+							return item.userId !== this.currentCallSession.mine.userId;
+						});
 						console.log(this.viewArr)
 						console.log(this.$refs)
-						this.viewArr.forEach((itm)=>{
-							this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,true);
-						});
-					},100)
+						setTimeout(()=>{
+							console.log(this.viewArr)
+							console.log(this.$refs)
+							this.viewArr.forEach((itm)=>{
+								this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,true);
+							});
+						},100)
+					})
 					// console.log(this.viewArr)
 					// this.$nextTick(()=>{
 					// 	this.viewArr.forEach((itm)=>{

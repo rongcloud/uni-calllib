@@ -112,6 +112,11 @@
 						</view>
 					</view>
 				</view>
+				<!-- <view class="permision-btn">
+					<button @click="openPermission" class="btn">
+						开启权限
+					</button>
+				</view> -->
 				<view class="content-lab">
 					<button @click="callOut" class="btn">
 						呼叫
@@ -130,15 +135,27 @@
 				</view>
 			</view>
 		</view>
-		<mask v-if="showMask"></mask>
-		
+		<!-- <view class="boxs" v-if="isPermission">
+			<view class="boxs-cen">
+				<view class="boxs-des">
+					是否设置本地相机和麦克风权限？
+				</view>
+				<view class="boxs-btn">
+					<button type="default" @click="setPermission(false)">取消</button>
+					<button type="default" @click="setPermission(false)">确定</button>
+				</view>
+			</view>
+		</view> -->
+		<!-- <mask v-if="showMask"></mask> -->
 	</view>
 </template>
 
 <script>
-	import mask from "../component/mask.vue"
+	// import mask from "../component/mask.vue"
 	import * as call from "@rongcloud/calllib-uni"
 	import * as im from "@rongcloud/imlib-uni"
+	import permision from "@/js_sdk/wa-permission/permission.js"
+	import {reasonDeal} from '../../utils/util.js'
 	export default {
 		data() {
 			return {
@@ -149,7 +166,7 @@
 				isInitIm: false,
 				form:{
 					appkey:'c9kqb3rdkbb8j',
-					token:'gXBEhCrJUcitLzrpQ+YcH233zkQsbE8eVSFdUMVanNuQ9rN9eNSS5WR31db/YADxs39z6c5rQzaaVj7qk3rqE54PiKUD5Xpx',
+					token:'Vkafr5qiuToYHDO1aR8Cav+f0IjfzRkyUpTVecImFcPNrpMY6GzeSz/4+vc27/gmLkdUk0mUaL1lzb59dLb8/WYaUf7+nBJ+',
 					navi:'https://nav-ucqa.rongcloud.net',
 					mediaServer:''
 				},
@@ -186,15 +203,16 @@
 				userIds:'',
 				isCut:false,
 				localSession:'',
-				showMask:false
+				showMask:false,
+				isPermission:false
 			}
-		},
-		components:{
-			mask
 		},
 		onLoad() {
 			// 初始化 CallLib
 			// console.log('初始化call')
+			console.log(permision);
+			// permision.gotoAppPermissionSetting();
+			// console.log(permision.judgeIosPermission('record'))
 			im.disconnect();
 			call.init({});
 			console.log(call)
@@ -206,8 +224,15 @@
 			});
 			call.addOnCallDisconnectedListener((res)=>{
 				console.log('挂断1');
+				console.log(reasonDeal(res.data.reason));
 				this.isCut=false;
 				uni.$emit('OnCallDisconnected');
+				uni.showToast({
+					title:reasonDeal(res.data.reason),
+					error:"error",
+					icon:'none',
+					duration:4000
+				})
 			});
 			call.addOnCallConnectedListener((res)=>{
 				console.log('对端接收')
@@ -221,6 +246,12 @@
 				console.log(res)
 				console.log('远端用户挂断')
 				uni.$emit('OnCallConnected');
+				uni.showToast({
+					title:reasonDeal(res.data.reason),
+					error:"error",
+					icon:'none',
+					duration:4000
+				})
 				
 			})
 			// call.removeRemoteUserLeftListener()
@@ -259,6 +290,21 @@
 			   }
 		},
 		methods: {
+			openPermission(){
+				permision.gotoAppPermissionSetting();
+			},
+			setPermission(isFlag){
+				if(isFlag){
+					this.openPermission()
+				}else{
+					uni.showToast({
+						title:"没有设置相机和麦克风会影响音视频功能",
+						icon: "error",
+						duration:4000
+					})
+				}
+				this.isPermission = false;
+			},
 			//是否接入
 			cutFn(isFlag){
 				//确认接入
@@ -299,7 +345,10 @@
 					  uni.showToast({
 					  	title:userId
 					  });
-					  
+					  if(uni.getSystemInfoSync().platform === 'android'){
+						  permision.requestAndroidPermission('android.permission.CAMERA');
+						  permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
+					  }
 				  }).catch((e)=>{
 						uni.setStorageSync('login-params',{
 							appkey:this.form.appkey,
@@ -322,6 +371,10 @@
 				if(!this.isInitIm){
 					// console.log(im.init)
 					im.init(this.form.appkey)
+					if(this.form.navi){
+						console.log('有nav')
+						im.setServerInfo(this.form.navi,'')
+					};
 					this.isInitIm = true;
 				}else{
 					uni.showToast({
@@ -332,10 +385,6 @@
 					return;
 				}
 				return new Promise((resolve,reject)=>{
-					if(this.form.navi){
-						console.log('有nav')
-						im.setServerInfo(this.form.navi,'')
-					};
 					im.connect(this.form.token,(res)=> {
 						console.log('im已连接')
 						console.log(res)
@@ -355,6 +404,14 @@
 			},
 			//呼叫
 			callOut(){
+				if(this.targetId === ''){
+					uni.showToast({
+						title:"请输入对方ID",
+						icon: "error",
+						duration:2000
+					})
+					return;
+				}
 				//单聊音频
 				if(this.callSelect ==='single'&&this.mediaSelect ==='audio'){
 					this.callMsg(this.mediaSelect,this.targetId,this.callSelect);
