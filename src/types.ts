@@ -1,3 +1,7 @@
+import {
+  RCCallIWCallDisconnectedReason
+} 
+from './enum';
 export interface UniListenerResult <T>{
   module:string,
   type:string,
@@ -26,12 +30,8 @@ export interface ReceivedListenerResult{
   callId:string
 }
 export interface ListenerResultRes{
-  reason?:number
+  reason?:RCCallIWCallDisconnectedReason
 }
-export enum RCCallIWCamera {
-  NONE = -1,
-  FRONT = 0,
-  BACK = 1
-}
+
 
 

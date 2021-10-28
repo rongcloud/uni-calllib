@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 1fade288746514c2a99985af1e93eb977481e5c3
- * Wed Oct 27 2021 10:28:19 GMT+0800 (中国标准时间)
+ * CommitId - 47a3f97b125872a8e583927b9dd9b8a98aae45a0
+ * Wed Oct 27 2021 14:42:35 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 const call = uni.requireNativePlugin('RongCloud-Call-RCUniCall');
@@ -57,14 +57,14 @@ function addRemoteUserInvited(listener) {
  * 对端用户挂断 (实际测试，只在群聊时用触发)
  * @param listener 回调函数
  */
-//  export function addRemoteUserLeftListener(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
-//    call.addEventListener("Engine:OnRemoteUserLeft", listener);
-// }
-function addRemoteUserLeftListener() {
-    call.addEventListener("Engine:OnRemoteUserLeft", (res) => {
-        console.log(res);
-    });
+function addRemoteUserLeftListener(listener) {
+    call.addEventListener("Engine:OnRemoteUserLeft", listener);
 }
+// export function addRemoteUserLeftListener(){
+//    call.addEventListener("Engine:OnRemoteUserLeft",(res:any)=>{
+//       console.log(res);
+//    })
+// }
 /**
  * 移除监听-接收到通话呼入
  */

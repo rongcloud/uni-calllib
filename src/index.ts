@@ -2,10 +2,14 @@
 import {
 	UniListenerResult,
 	ReceivedListenerResult,
-	ListenerResultRes,
-   RCCallIWCamera
+	ListenerResultRes
 } 
 from './types';
+import {
+   RCCallIWCallDisconnectedReason
+ } 
+ from './enum';
+
 const call = uni.requireNativePlugin('__RC_UNI_CALL__');
 
 /**
