@@ -9,7 +9,7 @@
 					<span class="flex-des">App Key:</span>
 					<view class="flex1">
 						<input v-model="form.appkey" type="text" placeholder="请输入 App Key" />
-						<view>必填；111</view>	
+						<view>必填；</view>	
 					</view>
 				</view>
 				
@@ -166,7 +166,7 @@
 				isInitIm: false,
 				form:{
 					appkey:'c9kqb3rdkbb8j',
-					token:'Vkafr5qiuToYHDO1aR8Cav+f0IjfzRkyUpTVecImFcPNrpMY6GzeSz/4+vc27/gmLkdUk0mUaL1lzb59dLb8/WYaUf7+nBJ+',
+					token:'gXBEhCrJUcitLzrpQ+YcH233zkQsbE8eVSFdUMVanNuQ9rN9eNSS5WR31db/YADxs39z6c5rQzaaVj7qk3rqE54PiKUD5Xpx',
 					navi:'https://nav-ucqa.rongcloud.net',
 					mediaServer:''
 				},
@@ -197,10 +197,10 @@
 						label:'音视频'
 					}
 				],
-				targetId:'',
+				targetId:'13811396855',
 				isRoom:false,
-				groupId:'',
-				userIds:'',
+				groupId:'88888888',
+				userIds:'13811396855',
 				isCut:false,
 				localSession:'',
 				showMask:false,
@@ -224,9 +224,13 @@
 			});
 			call.addOnCallDisconnectedListener((res)=>{
 				console.log('挂断1');
-				console.log(reasonDeal(res.data.reason));
+				// console.log(reasonDeal(res.data.reason));
 				this.isCut=false;
 				uni.$emit('OnCallDisconnected');
+				// let camera = call.currentCamera();
+				// console.log(camera);
+				// call.enableCamera(false,camera)
+				// call.hangup();
 				uni.showToast({
 					title:reasonDeal(res.data.reason),
 					error:"error",
@@ -239,7 +243,12 @@
 				uni.$emit('OnCallConnected');
 			});
 			call.addRemoteUserInvited((res)=>{
-				console.log('远端客户加入')
+				console.log('邀请远端客户加入')
+				uni.$emit('OnCallConnected');
+			})
+			call.addRemoteUserJoinedListener((res)=>{
+				console.log('对端用户加入了通话')
+				console.log(res);
 				uni.$emit('OnCallConnected');
 			})
 			call.addRemoteUserLeftListener((res)=>{
@@ -256,17 +265,28 @@
 			})
 			// call.removeRemoteUserLeftListener()
 			console.log(call)
-			uni.getStorage({
-				key:"login-params",
-				success:(res)=>{
-					this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
-					this.form.token = res.data&&res.data.token?res.data.token:'';
-					this.form.navi = res.data&&res.data.navi?res.data.navi:'';
-				}
-			})
+			// uni.getStorage({
+			// 	key:"login-params",
+			// 	success:(res)=>{
+			// 		console.log(res)
+			// 		this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
+			// 		this.form.token = res.data&&res.data.token?res.data.token:'';
+			// 		this.form.navi = res.data&&res.data.navi?res.data.navi:'';
+			// 	}
+			// })
 		},
 		onUnload:function(){
 			call.unInit();
+			//移除监听-接收到通话呼入
+			call.removeCallReceivedListener();
+			// 移除监听-通话已结束
+			call.removeCallDisconnectedListener();
+			// 移除监听-通话已接通
+			call.removeCallConnectedListener();
+			// 移除监听-对端用户挂断
+			call.removeRemoteUserLeftListener();
+			// 移除监听-有用户被邀请加入通话
+			call.removeRemoteUserInvited();
 		},
 		onBackPress(){
 			if(this.showMask) {  
@@ -290,21 +310,6 @@
 			   }
 		},
 		methods: {
-			openPermission(){
-				permision.gotoAppPermissionSetting();
-			},
-			setPermission(isFlag){
-				if(isFlag){
-					this.openPermission()
-				}else{
-					uni.showToast({
-						title:"没有设置相机和麦克风会影响音视频功能",
-						icon: "error",
-						duration:4000
-					})
-				}
-				this.isPermission = false;
-			},
 			//是否接入
 			cutFn(isFlag){
 				//确认接入
@@ -367,14 +372,16 @@
 			},
 			//连接IM
 			connectIM(){
+				
 				//判断是否初始化
 				if(!this.isInitIm){
-					// console.log(im.init)
-					im.init(this.form.appkey)
 					if(this.form.navi){
 						console.log('有nav')
+						console.log(this.form.navi)
 						im.setServerInfo(this.form.navi,'')
 					};
+					// console.log(im.init)
+					im.init(this.form.appkey)
 					this.isInitIm = true;
 				}else{
 					uni.showToast({
@@ -385,37 +392,49 @@
 					return;
 				}
 				return new Promise((resolve,reject)=>{
-					im.connect(this.form.token,(res)=> {
-						console.log('im已连接')
-						console.log(res)
-						if (res.code === 0) {
-							uni.setStorageSync('login-params',{
-								appkey:this.form.appkey,
-								token:this.form.token,
-								navi:this.form.navi
-							});
-							resolve(res.userId);
-						} else {
-							console.log(123)
-							reject(Error(res.error));
-						}
-					});
+					setTimeout(()=>{
+						im.connect(this.form.token,(res)=> {
+							console.log('im已连接')
+							console.log(res)
+							if (res.code === 0) {
+								uni.setStorageSync('login-params',{
+									appkey:this.form.appkey,
+									token:this.form.token,
+									navi:this.form.navi
+								});
+								resolve(res.userId);
+							} else {
+								console.log(123)
+								reject(Error(res.error));
+							}
+						});
+					},0)
 				});
+				
 			},
 			//呼叫
 			callOut(){
-				if(this.targetId === ''){
-					uni.showToast({
-						title:"请输入对方ID",
-						icon: "error",
-						duration:2000
-					})
-					return;
-				}
+				
 				//单聊音频
 				if(this.callSelect ==='single'&&this.mediaSelect ==='audio'){
+					if(this.targetId === ''){
+						uni.showToast({
+							title:"请输入对方ID",
+							icon: "error",
+							duration:2000
+						})
+						return;
+					}
 					this.callMsg(this.mediaSelect,this.targetId,this.callSelect);
 				}else if(this.callSelect ==='single'&&this.mediaSelect ==='video'){
+					if(this.targetId === ''){
+						uni.showToast({
+							title:"请输入对方ID",
+							icon: "error",
+							duration:2000
+						})
+						return;
+					}
 					//单聊视频
 					this.callMsg(this.mediaSelect,this.targetId,this.callSelect);
 				}else if(this.callSelect ==='group'&&this.mediaSelect ==='video'){

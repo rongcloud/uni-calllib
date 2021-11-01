@@ -7,10 +7,11 @@
 			:style="{width:windowWidth+'px',height:windowHeight+'px'}"
 			ref="bigVideoView">
 		</RongCloud-Call-RCUniCallView>
+		<!-- @click="switchVideo" -->
 		<RongCloud-Call-RCUniCallView
 			class="smallVideoView"
+			:style="{width:200+'upx',height:200+'upx'}"
 			ref="smallVideoView"
-			@click="switchVideo"
 		>
 		</RongCloud-Call-RCUniCallView>
 		<!-- <RongCloud-Call-RCUniCallView
@@ -37,6 +38,9 @@
 		</view>
 	</view>
 	<view class="nav">
+		<text class="nav-com" v-if="callWay === 1" @click="isMark=true">
+			邀请
+		</text>
 		<text class="nav-com" @click="closeCameraCur">
 			{{curCamera?'关闭':'开启'}}摄像头
 		</text>
@@ -51,11 +55,24 @@
 		</text>
 	</view>
     <view class="container" :style="{width:windowWidth+'px'}">
-		<!-- <RCUniCallView class="smallVideoView" ref="smallVideoView">
-		</RCUniCallView> -->
-		<!-- <view class="hangup" > -->
-			<text class="hangup" @click="hangup">挂断 </text> 
-		<!-- </view> -->
+		<text class="hangup" @click="hangup">挂断 </text> 
+	</view>
+	<view 
+		class="box-mark" 
+		v-if="isMark"
+		:style="{width:windowWidth+'px',height:windowHeight+'px'}"
+	>
+		<view class="box-cen">
+			<text class="box-des">被邀请者ID:</text>
+			<view class="box-bot">
+				<input v-model="inviteUsersIds" ref="inviteInput" class="box-input" type="text" placeholder="请输入被邀请者ID">
+				<text class="box-tit">必填；需加入群后，方可收到邀请，多个userId用英文半角逗号分开</text>	
+			</view>
+			<view class="box-btns">
+				<button class="box-btn"  type="default" @click="inviteUsers(false)">取消</button>
+				<button class="box-btn" type="default" @click="inviteUsers(true)">确定</button>
+			</view>
+		</view>
 	</view>
   </view>
 </template>
@@ -66,6 +83,7 @@
       return {
         mediaType: "video",
         callType: "out",
+		callWay:0,//呼叫方式 0 单聊 1 群聊
         targetId: "",
         bottomHeight: 0,
         isConnected: false,
@@ -81,7 +99,10 @@
 		curCamera:true,
 		backCamera:true,
 		isMe:true,
-		users:[]
+		users:[],
+		currentCallSession:{},
+		isMark:false,
+		inviteUsersIds:''
       }
     },
     onLoad: function() {
@@ -92,9 +113,6 @@
 			key: "room-parameters",
 			success: (res) => {
 				console.log(res)
-				// let session = call.getCurrentCallSession();
-				// console.log(session)
-				// console.log(res)
 				this.mediaType = res.data.mediaType;
 				this.callType = res.data.callType?res.data.callType:'in';
 				// this.callSelect = res.data.callSelect;
@@ -137,6 +155,23 @@
 		}
 	},
     methods: {
+	  inviteUsers(flag){
+		  if(flag){
+			 if(this.inviteUsersIds === ''){
+			  uni.showToast({
+				title:"请输入被邀请者ID",
+				icon: "error",
+				duration:2000
+			  })
+			  return;
+			 }
+			 let userIdsArr = this.inviteUsersIds.split(',');
+			 call.inviteUsers(userIdsArr,[]); 
+		  }
+		  // console.log(this.$refs.inviteInput.blur());
+		  this.$refs.inviteInput.blur();  
+		  this.isMark =false;
+	  },
 	  switchVideo(){
 		this.isMe = !this.isMe;
 		let session = call.getCurrentCallSession();
@@ -167,8 +202,8 @@
 					call.setVideoView(session.targetId, this.$refs.smallVideoView.ref, 0,true);
 			       break;
 			    case 'ios':
-					call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref);
-					call.setVideoView(session.targetId, this.$refs.smallVideoView.ref);
+					call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref,0);
+					call.setVideoView(session.targetId, this.$refs.smallVideoView.ref,0);
 			       break;
 			    default:
 			       console.log('运行在开发者工具上')
@@ -215,6 +250,7 @@
 		  console.log(this.targetId)
 		  if (this.targetId.length > 0) {
 			  console.log('呼叫')
+			call.enableSpeaker(true);
 			call.startSingleCall(this.targetId, type, null);
 			this.currentCallSession = call.getCurrentCallSession();
 			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
@@ -233,10 +269,12 @@
 		  let context = this;
 		  console.log('oncallconnected接收了')
 		  console.log(this.mediaType);
-        if (this.mediaType === 'video') {
+        // if (this.mediaType === 'video') {
 			call.enableSpeaker(true);
 			// let session = call.getCurrentCallSession();
 			this.currentCallSession = call.getCurrentCallSession();
+			this.callWay = this.currentCallSession.callType;
+			console.log(this.currentCallSession);
 			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
 			// console.log(this.currentCallSession)
 			let isHasMine = this.users.findIndex((item)=>{
@@ -252,19 +290,20 @@
 				if(this.currentCallSession.users.length<=2){
 					console.log(this.currentCallSession)
 					console.log(this.$refs)
-					this.$nextTick(()=>{
+					setTimeout(()=>{
 						this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.smallVideoView.ref,true);
 						this.viewArr = this.currentCallSession.users.filter((item)=>{
 							return item.userId !== this.currentCallSession.mine.userId;
 						});
 						console.log(this.viewArr)
 						// this.$nextTick(()=>{
-						setTimeout(()=>{
+						// setTimeout(()=>{
 							this.viewArr.forEach((itm)=>{
+								this.targetId = itm.userId;
 								this.systemInfoSync(itm.userId,this.$refs.bigVideoView.ref,false);
 							});
-						},100);
-					})
+						// },100);
+					},100);
 					
 				}else{
 					// 视频超过三个
@@ -280,7 +319,7 @@
 							console.log(this.viewArr)
 							console.log(this.$refs)
 							this.viewArr.forEach((itm)=>{
-								this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,true);
+								this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,false);
 							});
 						},100)
 					})
@@ -292,16 +331,13 @@
 					// })
 				}
 			}
-		}
+		// }
         // this.isConnected = true;
       },
 	  systemInfoSync(userId,ref,isZOrderOnTop){
 		  console.log('systemInfoSync')
 		  switch(uni.getSystemInfoSync().platform){
 		  	case 'android':
-			console.log(userId)
-			console.log(ref)
-			console.log(isZOrderOnTop)
 		  		call.setVideoView(userId, ref, 0,isZOrderOnTop);
 		  		break;
 		  	case 'ios':
@@ -370,7 +406,7 @@
 	  position: fixed;
 	  bottom: 200upx;
 	  right: 0;
-	  z-index:9999;
+	  /* z-index:999; */
   }
   
   .camera{
@@ -392,5 +428,59 @@
 	  text-align: center;
 	  line-height: 100upx;
 	  /* background: blue; */
+  }
+  .box-mark{
+	  position: fixed;
+	  left: 0;
+	  top: 0;
+	  background: rgba(0,0,0,.5);
+	  /* color: #fff; */
+	  z-index: 9999;
+	  justify-content: center;
+	  align-items: center;
+	  color: #fff;
+	  /* padding: 0 50upx; */
+	  
+  }
+  .box-cen{
+	  /* line-height: 1.2; */
+	  /* position: fixed; */
+	  padding: 30upx;
+	  width: 500upx;
+	  height: 500upx;
+	  background: #222831;
+	 /* left: 0;
+	  right: 0;
+	  top: 0;
+	  bottom: 0;
+	  margin: auto;
+	  border-radius: 4upx; */
+	  /* padding-top: 100upx; */
+  }
+  .box-des{
+	color: #fff;
+  }
+  .box-input{
+	margin-top: 30upx;
+	color: #fff;
+	border: 1upx solid #fff;   
+  }
+  .box-tit{
+	margin-top: 30upx;
+	color: #fff;
+	/* font-size: 10upx */
+	/* border: 1upx solid #fff;     */
+  }
+  .box-btn{
+	  margin-top: 30upx;
+	  /* background: blue; */
+  }
+  .box-btns{
+	  flex-direction: row;
+	  justify-content: space-between;
+	  padding: 0 30upx;
+  }
+  .box-btn{
+	  padding:0 20upx;
   }
 </style>

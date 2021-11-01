@@ -32,6 +32,3 @@ export interface ReceivedListenerResult{
 export interface ListenerResultRes{
   reason?:RCCallIWCallDisconnectedReason
 }
-
-
-

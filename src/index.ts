@@ -2,10 +2,12 @@
 import {
 	UniListenerResult,
 	ReceivedListenerResult,
-	ListenerResultRes
+	ListenerResultRes,
+   usersParams
 } 
 from './types';
 import {
+   RCCallIWCamera,
    RCCallIWCallDisconnectedReason
  } 
  from './enum';
@@ -62,17 +64,28 @@ export function addRemoteUserInvited(listener:(result:UniListenerResult<Listener
    call.addEventListener("Engine:OnRemoteUserInvited", listener);
 }
 /**
+ * 对端用户加入了通话
+ * @param listener 回调函数 
+ */
+ export function addRemoteUserJoinedListener(listener:(result:UniListenerResult<usersParams>)=>void){
+   call.addEventListener("Engine:OnRemoteUserJoined",listener);
+}
+/**
  * 对端用户挂断 (实际测试，只在群聊时用触发)
  * @param listener 回调函数
  */
  export function addRemoteUserLeftListener(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
    call.addEventListener("Engine:OnRemoteUserLeft", listener);
 }
-// export function addRemoteUserLeftListener(){
-//    call.addEventListener("Engine:OnRemoteUserLeft",(res:any)=>{
-//       console.log(res);
-//    })
-// }
+
+/**
+ * 邀请用户
+ * @param userIds 被邀请用户id列表
+ * @param observerUserIds 被邀请观察者id列表 (只能听或看，不能推流的用户)
+ */
+export function inviteUsers(userIds: string[], observerUserIds: string[]){
+   call.inviteUsers(userIds, observerUserIds);
+}
 /**
  * 移除监听-接收到通话呼入
  */
@@ -265,5 +278,5 @@ export function currentCamera(){
 * 
 */
 export function enableCamera(isOpen:boolean,camera:RCCallIWCamera){
-   call.enableCamera(isOpen,camera)
+   call.enableCamera(isOpen,camera);
 }

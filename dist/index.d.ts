@@ -1,9 +1,51 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 47a3f97b125872a8e583927b9dd9b8a98aae45a0
- * Wed Oct 27 2021 14:42:35 GMT+0800 (中国标准时间)
+ * CommitId - ce2c9a31f29a091dfae62648d76deeee88d66b5b
+ * Fri Oct 29 2021 17:40:56 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
+declare enum RCCallIWCamera {
+    NONE = -1,
+    FRONT = 0,
+    BACK = 1
+}
+declare enum RCCallIWCallDisconnectedReason {
+    CANCEL = 0,
+    REJECT = 1,
+    HANGUP = 2,
+    BUSY_LINE = 3,
+    NO_RESPONSE = 4,
+    ENGINE_UNSUPPORTED = 5,
+    NETWORK_ERROR = 6,
+    RESOURCE_GET_ERROR = 7,
+    RESOURCE_PUBLISH_ERROR = 8,
+    RESOURCE_SUBSCRIBE_ERROR = 9,
+    REMOTE_CANCEL = 10,
+    REMOTE_REJECT = 11,
+    REMOTE_HANGUP = 12,
+    REMOTE_BUSY_LINE = 13,
+    REMOTE_NO_RESPONSE = 14,
+    REMOTE_ENGINE_UNSUPPORTED = 15,
+    REMOTE_NETWORK_ERROR = 16,
+    REMOTE_RESOURCE_GET_ERROR = 17,
+    REMOTE_RESOURCE_PUBLISH_ERROR = 18,
+    REMOTE_RESOURCE_SUBSCRIBE_ERROR = 19,
+    KICKED_BY_OTHER_CALL = 20,
+    IN_OTHER_CALL = 21,
+    KICKED_BY_SERVER = 22,
+    REMOTE_KICKED_BY_OTHER_CALL = 23,
+    REMOTE_IN_OTHER_CALL = 24,
+    REMOTE_KICKED_BY_SERVER = 25,
+    ACCEPT_BY_OTHER_CLIENT = 26,
+    HANGUP_BY_OTHER_CLIENT = 27,
+    REJECTED_BY_BLACKLIST = 28,
+    SERVICE_NOT_OPENED = 29,
+    DROP_TO_OBSERVER = 30,
+    INIT_VIDEO_ERROR = 31,
+    OTHER_DEVICE_HAD_ACCEPTED = 32,
+    SERVICE_DISCONNECTED = 33
+}
+
 interface UniListenerResult<T> {
     module: string;
     type: string;
@@ -32,12 +74,7 @@ interface ReceivedListenerResult {
     callId: string;
 }
 interface ListenerResultRes {
-    reason?: number;
-}
-declare enum RCCallIWCamera {
-    NONE = -1,
-    FRONT = 0,
-    BACK = 1
+    reason?: RCCallIWCallDisconnectedReason;
 }
 
 /**
@@ -77,10 +114,21 @@ declare function addOnCallConnectedListener(listener: (result: UniListenerResult
 */
 declare function addRemoteUserInvited(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
 /**
+ * 对端用户加入了通话
+ * @param listener 回调函数
+ */
+declare function addRemoteUserJoinedListener(listener: (result: UniListenerResult<usersParams>) => void): void;
+/**
  * 对端用户挂断 (实际测试，只在群聊时用触发)
  * @param listener 回调函数
  */
 declare function addRemoteUserLeftListener(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+/**
+ * 邀请用户
+ * @param userIds 被邀请用户id列表
+ * @param observerUserIds 被邀请观察者id列表 (只能听或看，不能推流的用户)
+ */
+declare function inviteUsers(userIds: string[], observerUserIds: string[]): void;
 /**
  * 移除监听-接收到通话呼入
  */
@@ -213,4 +261,4 @@ declare function currentCamera(): any;
 */
 declare function enableCamera(isOpen: boolean, camera: RCCallIWCamera): void;
 
-export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, addRemoteUserInvited, addRemoteUserLeftListener, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
+export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, addRemoteUserInvited, addRemoteUserJoinedListener, addRemoteUserLeftListener, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, inviteUsers, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };

@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 47a3f97b125872a8e583927b9dd9b8a98aae45a0
- * Wed Oct 27 2021 14:42:35 GMT+0800 (中国标准时间)
+ * CommitId - ce2c9a31f29a091dfae62648d76deeee88d66b5b
+ * Fri Oct 29 2021 17:40:56 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 const call = uni.requireNativePlugin('RongCloud-Call-RCUniCall');
@@ -54,17 +54,27 @@ function addRemoteUserInvited(listener) {
     call.addEventListener("Engine:OnRemoteUserInvited", listener);
 }
 /**
+ * 对端用户加入了通话
+ * @param listener 回调函数
+ */
+function addRemoteUserJoinedListener(listener) {
+    call.addEventListener("Engine:OnRemoteUserJoined", listener);
+}
+/**
  * 对端用户挂断 (实际测试，只在群聊时用触发)
  * @param listener 回调函数
  */
 function addRemoteUserLeftListener(listener) {
     call.addEventListener("Engine:OnRemoteUserLeft", listener);
 }
-// export function addRemoteUserLeftListener(){
-//    call.addEventListener("Engine:OnRemoteUserLeft",(res:any)=>{
-//       console.log(res);
-//    })
-// }
+/**
+ * 邀请用户
+ * @param userIds 被邀请用户id列表
+ * @param observerUserIds 被邀请观察者id列表 (只能听或看，不能推流的用户)
+ */
+function inviteUsers(userIds, observerUserIds) {
+    call.inviteUsers(userIds, observerUserIds);
+}
 /**
  * 移除监听-接收到通话呼入
  */
@@ -249,4 +259,4 @@ function enableCamera(isOpen, camera) {
     call.enableCamera(isOpen, camera);
 }
 
-export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, addRemoteUserInvited, addRemoteUserLeftListener, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
+export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, addRemoteUserInvited, addRemoteUserJoinedListener, addRemoteUserLeftListener, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, inviteUsers, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
