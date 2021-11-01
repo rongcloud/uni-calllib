@@ -265,15 +265,15 @@
 			})
 			// call.removeRemoteUserLeftListener()
 			console.log(call)
-			// uni.getStorage({
-			// 	key:"login-params",
-			// 	success:(res)=>{
-			// 		console.log(res)
-			// 		this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
-			// 		this.form.token = res.data&&res.data.token?res.data.token:'';
-			// 		this.form.navi = res.data&&res.data.navi?res.data.navi:'';
-			// 	}
-			// })
+			uni.getStorage({
+				key:"login-params",
+				success:(res)=>{
+					console.log(res)
+					this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
+					this.form.token = res.data&&res.data.token?res.data.token:'';
+					this.form.navi = res.data&&res.data.navi?res.data.navi:'';
+				}
+			})
 		},
 		onUnload:function(){
 			call.unInit();
