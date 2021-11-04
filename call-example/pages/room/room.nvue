@@ -55,7 +55,8 @@
 		</text>
 	</view>
     <view class="container" :style="{width:windowWidth+'px'}">
-		<text class="hangup" @click="hangup">挂断 </text> 
+		<text class="hangup" @click="hangup">挂断 </text>
+		<text v-if="mediaTypeCur === 'video' " class="hangup" @click="changeMediaType">切换语音 </text>
 	</view>
 	<view 
 		class="box-mark" 
@@ -102,17 +103,15 @@
 		users:[],
 		currentCallSession:{},
 		isMark:false,
-		inviteUsersIds:''
+		inviteUsersIds:'',
+		mediaTypeCur:'audio'
       }
     },
     onLoad: function() {
 		var _this=this;
-		console.log('是否执行自组件onLoad')
-		console.log(call);
 		uni.getStorage({
 			key: "room-parameters",
 			success: (res) => {
-				console.log(res)
 				this.mediaType = res.data.mediaType;
 				this.callType = res.data.callType?res.data.callType:'in';
 				// this.callSelect = res.data.callSelect;
@@ -148,13 +147,16 @@
       }
     },
 	onHide(){
-		console.log(页面隐藏触发);
 	    const session = call.getCurrentCallSession();
 		if (session) {
 		  call.hangup();
 		}
 	},
     methods: {
+	  changeMediaType(){
+		this.mediaTypeCur = 'audio';  
+		call.changeMediaType(0);  
+	  },
 	  inviteUsers(flag){
 		  if(flag){
 			 if(this.inviteUsersIds === ''){
@@ -168,16 +170,13 @@
 			 let userIdsArr = this.inviteUsersIds.split(',');
 			 call.inviteUsers(userIdsArr,[]); 
 		  }
-		  // console.log(this.$refs.inviteInput.blur());
 		  this.$refs.inviteInput.blur();  
 		  this.isMark =false;
 	  },
 	  switchVideo(){
 		this.isMe = !this.isMe;
 		let session = call.getCurrentCallSession();
-		console.log(session)
 		if(this.isMe){
-			console.log(true)
 			switch(uni.getSystemInfoSync().platform){
 			    case 'android':
 					call.setVideoView(session.targetId, this.$refs.bigVideoView.ref, 0,false);
@@ -194,10 +193,8 @@
 			       break;
 			}
 		}else{
-			console.log(false)
 			switch(uni.getSystemInfoSync().platform){
 			    case 'android':
-				console.log(this.targetId)
 					call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0,false);
 					call.setVideoView(session.targetId, this.$refs.smallVideoView.ref, 0,true);
 			       break;
@@ -233,7 +230,6 @@
 	  },
       hangup() {
 		this.isSelf = true;
-		console.log('挂断中')
         call.hangup();
 		uni.navigateBack({
 			delta:1
@@ -246,10 +242,8 @@
       },
       startCall() {
 		  const type = this.mediaType === 'audio' ? 0 : 1;
-		  console.log('startCall')
-		  console.log(this.targetId)
+		  this.mediaTypeCur = this.mediaType;
 		  if (this.targetId.length > 0) {
-			  console.log('呼叫')
 			call.enableSpeaker(true);
 			call.startSingleCall(this.targetId, type, null);
 			this.currentCallSession = call.getCurrentCallSession();
@@ -262,40 +256,32 @@
 			  this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
 			  // this.currentCallSession = session;
 		  }
-		  console.log(this.currentCallSession.mine.userId)
 		  this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
       },
       onCallConnected() {
 		  let context = this;
-		  console.log('oncallconnected接收了')
-		  console.log(this.mediaType);
+		  console.log('oncallconnected接收了');
+		  this.mediaTypeCur = this.mediaType;
         // if (this.mediaType === 'video') {
 			call.enableSpeaker(true);
 			// let session = call.getCurrentCallSession();
 			this.currentCallSession = call.getCurrentCallSession();
 			this.callWay = this.currentCallSession.callType;
-			console.log(this.currentCallSession);
 			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
-			// console.log(this.currentCallSession)
 			let isHasMine = this.users.findIndex((item)=>{
 				return item.userId === this.currentCallSession.mine.userId;
 			});
 			if(isHasMine === -1){
 				this.users.push(this.currentCallSession.mine);
 			}
-			console.log(this.users);
 			if (this.currentCallSession && this.currentCallSession.users.length > 0 ) {
 				//视频是两个的时候
-				console.log('2')
 				if(this.currentCallSession.users.length<=2){
-					console.log(this.currentCallSession)
-					console.log(this.$refs)
 					setTimeout(()=>{
 						this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.smallVideoView.ref,true);
 						this.viewArr = this.currentCallSession.users.filter((item)=>{
 							return item.userId !== this.currentCallSession.mine.userId;
 						});
-						console.log(this.viewArr)
 						// this.$nextTick(()=>{
 						// setTimeout(()=>{
 							this.viewArr.forEach((itm)=>{
@@ -307,35 +293,23 @@
 					
 				}else{
 					// 视频超过三个
-					console.log('3')
 					this.$nextTick(()=>{
 						this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
 						this.viewArr = this.currentCallSession.users.filter((item)=>{
 							return item.userId !== this.currentCallSession.mine.userId;
 						});
-						console.log(this.viewArr)
-						console.log(this.$refs)
 						setTimeout(()=>{
-							console.log(this.viewArr)
-							console.log(this.$refs)
 							this.viewArr.forEach((itm)=>{
 								this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,false);
 							});
 						},100)
 					})
-					// console.log(this.viewArr)
-					// this.$nextTick(()=>{
-					// 	this.viewArr.forEach((itm)=>{
-					// 		this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,true);
-					// 	});
-					// })
 				}
 			}
 		// }
         // this.isConnected = true;
       },
 	  systemInfoSync(userId,ref,isZOrderOnTop){
-		  console.log('systemInfoSync')
 		  switch(uni.getSystemInfoSync().platform){
 		  	case 'android':
 		  		call.setVideoView(userId, ref, 0,isZOrderOnTop);
@@ -349,7 +323,6 @@
 		  }	
 	  },
       onCallDisconnected() {
-		  console.log('挂断');
 		  this.isMe = true;
 		  if(!this.isSelf){
 			  uni.navigateBack({
@@ -394,12 +367,14 @@
   }
   .container {
 	  position: absolute;
-	  bottom: 0;
+	  bottom: 20upx;
 	  height: 100upx;
-	  background: red;
+	  /* background: red; */
 	  flex-direction: row;
 	  justify-content: center;
-	  
+	  /* justify-content: space-between; */
+	  /* padding-left: 20upx; */
+	  /* padding-right: 20upx; */
 	  /* justify-content: space-between; */
   }
   .nav{
@@ -420,13 +395,18 @@
 	  /* background-color: #ccc; */
 	  justify-content: center;
 	  align-items: center;
+	  
   }
   .hangup{
-	  flex: 1;
+	  /* flex: 1; */
+	  width: 200upx;
 	  height: 100upx;
 	  color: #fff;
 	  text-align: center;
 	  line-height: 100upx;
+	  background: red;
+	  margin-right: 50upx;
+	  border-radius: 50upx;
 	  /* background: blue; */
   }
   .box-mark{

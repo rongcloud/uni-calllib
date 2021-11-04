@@ -32,3 +32,9 @@ export interface ReceivedListenerResult{
 export interface ListenerResultRes{
   reason?:RCCallIWCallDisconnectedReason
 }
+export interface ListenerResultData{
+  userId?:string,
+  user?:usersParams,
+  mediaType?:string
+
+}

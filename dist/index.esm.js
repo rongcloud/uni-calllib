@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - ce2c9a31f29a091dfae62648d76deeee88d66b5b
- * Fri Oct 29 2021 17:40:56 GMT+0800 (中国标准时间)
+ * CommitId - 878188349bd3fcb52ec8051c9c6090b1e7cfe8b8
+ * Wed Nov 03 2021 10:24:55 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 const call = uni.requireNativePlugin('RongCloud-Call-RCUniCall');
@@ -26,7 +26,7 @@ function unInit() {
 *
 * @param listener 回调函数
 */
-function addOnCallReceivedListener(listener) {
+function onCallReceived(listener) {
     call.addEventListener("Engine:OnCallReceived", listener);
 }
 /**
@@ -34,7 +34,7 @@ function addOnCallReceivedListener(listener) {
 *
 * @param listener 回调函数
 */
-function addOnCallDisconnectedListener(listener) {
+function onCallDisconnected(listener) {
     call.addEventListener("Engine:OnCallDisconnected", listener);
 }
 /**
@@ -42,7 +42,7 @@ function addOnCallDisconnectedListener(listener) {
 *
 * @param listener 回调函数
 */
-function addOnCallConnectedListener(listener) {
+function onCallConnected(listener) {
     call.addEventListener("Engine:OnCallConnected", listener);
 }
 /**
@@ -50,22 +50,50 @@ function addOnCallConnectedListener(listener) {
 *
 * @param listener 回调函数
 */
-function addRemoteUserInvited(listener) {
+function onRemoteUserInvited(listener) {
     call.addEventListener("Engine:OnRemoteUserInvited", listener);
 }
 /**
  * 对端用户加入了通话
  * @param listener 回调函数
  */
-function addRemoteUserJoinedListener(listener) {
+function onRemoteUserJoined(listener) {
     call.addEventListener("Engine:OnRemoteUserJoined", listener);
 }
 /**
  * 对端用户挂断 (实际测试，只在群聊时用触发)
  * @param listener 回调函数
  */
-function addRemoteUserLeftListener(listener) {
+function onRemoteUserLeft(listener) {
     call.addEventListener("Engine:OnRemoteUserLeft", listener);
+}
+/**
+ * 电话已拨出 主叫端拨出电话后，通过回调 onCallOutgoing 通知当前 call 的详细信息
+ * @param listener 回调函数
+ */
+function onCallOutgoing(listener) {
+    call.addEventListener("Engine:OnCallOutgoing", listener);
+}
+/**
+ * 被叫端正在振铃，主叫端拨出电话，被叫端收到请求，发出振铃响应时监听
+ * @param listener 回调函数
+ */
+function onRemoteUserRinging(listener) {
+    call.addEventListener("Engine:OnRemoteUserRinging", listener);
+}
+/**
+ * 通话出现错误的回调
+ * @param listener 回调函数
+ */
+function onError(listener) {
+    call.addEventListener("Engine:OnError", listener);
+}
+/**
+ * 对端用户切换了媒体类型
+ * @param listener 回调函数
+ */
+function onRemoteUserMediaTypeChanged(listener) {
+    call.addEventListener("Engine:OnRemoteUserMediaTypeChanged", listener);
 }
 /**
  * 邀请用户
@@ -107,6 +135,12 @@ function removeRemoteUserLeftListener() {
     call.removeAllListeners('Engine:OnRemoteUserLeft');
 }
 /**
+* 移除监听-有用户被邀请加入通话
+*/
+function removeRemoteUserInvited() {
+    call.removeAllListeners('Engine:OnRemoteUserInvited');
+}
+/**
  * 移除监听-开启或关闭摄像头的回调
  */
 function removeEnableCameraListener() {
@@ -135,12 +169,6 @@ function removeCallOutgoingListener() {
  */
 function removeRemoteUserRingingListener() {
     call.removeAllListeners('Engine:OnRemoteUserRinging');
-}
-/**
- * 移除监听-有用户被邀请加入通话
- */
-function removeRemoteUserInvited() {
-    call.removeAllListeners('Engine:OnRemoteUserInvited');
 }
 /**
  * 移除监听-对端用户切换了媒体类型
@@ -258,5 +286,12 @@ function currentCamera() {
 function enableCamera(isOpen, camera) {
     call.enableCamera(isOpen, camera);
 }
+/**
+ * 修改通话类型
+ * @param type
+ */
+function changeMediaType(type) {
+    call.changeMediaType(type);
+}
 
-export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, addRemoteUserInvited, addRemoteUserJoinedListener, addRemoteUserLeftListener, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, inviteUsers, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
+export { accept, changeMediaType, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, inviteUsers, onCallConnected, onCallDisconnected, onCallOutgoing, onCallReceived, onError, onRemoteUserInvited, onRemoteUserJoined, onRemoteUserLeft, onRemoteUserMediaTypeChanged, onRemoteUserRinging, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };

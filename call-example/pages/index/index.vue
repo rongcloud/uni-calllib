@@ -210,83 +210,86 @@
 		onLoad() {
 			// 初始化 CallLib
 			// console.log('初始化call')
-			console.log(permision);
+			console.log(call);
 			// permision.gotoAppPermissionSetting();
 			// console.log(permision.judgeIosPermission('record'))
 			im.disconnect();
 			call.init({});
-			console.log(call)
-			call.addOnCallReceivedListener( (res)=> {
-				console.log('我接收到了')
-				console.log(res)
+			call.onCallReceived( (res)=> {
+				console.log("Engine:OnCallReceived=>"+"监听通话呼入, 目标id=>", res.data.targetId);
 				this.isCut=true;
 				this.localSession = res.data;
 			});
-			call.addOnCallDisconnectedListener((res)=>{
-				console.log('挂断1');
-				// console.log(reasonDeal(res.data.reason));
+			call.onCallDisconnected((res)=>{
+				console.log("Engine:OnCallDisconnected=>"+"挂断成功, 挂断原因=>", res.data.reason);
 				this.isCut=false;
+				// 重新渲染视频视图
 				uni.$emit('OnCallDisconnected');
-				// let camera = call.currentCamera();
-				// console.log(camera);
-				// call.enableCamera(false,camera)
-				// call.hangup();
 				uni.showToast({
 					title:reasonDeal(res.data.reason),
 					error:"error",
 					icon:'none',
-					duration:4000
+					duration:2000
 				})
 			});
-			call.addOnCallConnectedListener((res)=>{
-				console.log('对端接收')
-				uni.$emit('OnCallConnected');
+			call.onCallConnected((res)=>{
+				console.log("Engine:OnCallConnected=>"+"已建立通话通话接通时，通过回调 onCallConnected 通知当前 call 的详细信息", res);
+				// uni.$emit('OnCallConnected');
 			});
-			call.addRemoteUserInvited((res)=>{
-				console.log('邀请远端客户加入')
+			call.onRemoteUserInvited((res)=>{
+				console.log('1')
+				console.log("Engine:OnRemoteUserInvited=>"+"通话中的某一个参与者，邀请好友加入通话，发出邀请请求后,远端Id为=>", res.data.userId);
 				uni.$emit('OnCallConnected');
 			})
-			call.addRemoteUserJoinedListener((res)=>{
-				console.log('对端用户加入了通话')
-				console.log(res);
+			call.onRemoteUserJoined((res)=>{
+				console.log("Engine:OnRemoteUserJoined=>"+"主叫端拨出电话，被叫端收到请求后，加入通话，对端Id为=>", res.data.userId);
 				uni.$emit('OnCallConnected');
 			})
-			call.addRemoteUserLeftListener((res)=>{
+			call.onRemoteUserLeft((res)=>{
+				console.log("Engine:OnRemoteUserLeft=>"+"远端用户挂断，远端Id为=>", res.data.reason);
+				uni.$emit('OnCallConnected');
+				uni.showToast({
+					title:reasonDeal(res.data.reason),
+					error:"error",
+					icon:'none',
+					duration:2000
+				})
+			})
+			call.onCallOutgoing((res)=>{
+				console.log('电话已拨出 主叫端拨出电话后，通过回调 onCallOutgoing 通知当前 call 的详细信息')
 				console.log(res)
-				console.log('远端用户挂断')
-				uni.$emit('OnCallConnected');
+			})
+			call.onRemoteUserRinging((res)=>{
+				console.log('被叫端正在振铃，主叫端拨出电话，被叫端收到请求，发出振铃响应时，回调 onRemoteUserRingin,对端Id为=>', res.data.userId)
+				console.log(res)
+			})
+			call.onError((res)=>{
+				console.log('通话过程中，发生异常')
 				uni.showToast({
 					title:reasonDeal(res.data.reason),
 					error:"error",
 					icon:'none',
-					duration:4000
-				})
-				
+					duration:2000
+				});
+			})
+			call.onRemoteUserMediaTypeChanged((res)=>{
+				console.log('当通话中的某一个参与者切换通话类型，例如由 audio 切换至 video，回调 onMediaTypeChanged,切换媒体类型的Id为=>',res.data.user.userId);
+				// console.log(res)
 			})
 			// call.removeRemoteUserLeftListener()
-			console.log(call)
-			uni.getStorage({
-				key:"login-params",
-				success:(res)=>{
-					console.log(res)
-					this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
-					this.form.token = res.data&&res.data.token?res.data.token:'';
-					this.form.navi = res.data&&res.data.navi?res.data.navi:'';
-				}
-			})
+			// console.log(call)
+			// uni.getStorage({
+			// 	key:"login-params",
+			// 	success:(res)=>{
+			// 		console.log(res)
+			// 		this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
+			// 		this.form.token = res.data&&res.data.token?res.data.token:'';
+			// 		this.form.navi = res.data&&res.data.navi?res.data.navi:'';
+			// 	}
+			// })
 		},
 		onUnload:function(){
-			call.unInit();
-			//移除监听-接收到通话呼入
-			call.removeCallReceivedListener();
-			// 移除监听-通话已结束
-			call.removeCallDisconnectedListener();
-			// 移除监听-通话已接通
-			call.removeCallConnectedListener();
-			// 移除监听-对端用户挂断
-			call.removeRemoteUserLeftListener();
-			// 移除监听-有用户被邀请加入通话
-			call.removeRemoteUserInvited();
+			this.removeAllListeners();
 		},
 		onBackPress(){
 			if(this.showMask) {  
@@ -310,6 +313,30 @@
 			   }
 		},
 		methods: {
+			removeAllListeners(){
+				call.unInit();
+				//移除监听-接收到通话呼入
+				call.removeCallReceivedListener();
+				// 移除监听-开始呼叫通话的回调
+				call.removeCallOutgoingListener();
+				// 移除监听-通话已接通
+				call.removeCallReceivedListener();
+				// 移除监听-通话已结束
+				call.removeCallDisconnectedListener();
+				// 移除监听-对端用户正在振铃
+				call.removeRemoteUserRingingListener();
+				// 移除监听-对端用户加入了通话
+				call.removeRemoteUserJoinedListener();
+				// 移除监听-有用户被邀请加入通话
+				call.removeRemoteUserInvited();
+				// 移除监听-对端用户挂断
+				call.removeRemoteUserLeftListener();
+				// 移除监听-对端用户切换了媒体类型
+				call.removeRemoteUserMediaTypeChangedListener();
+				// 移除监听-通话出现错误的回调
+				call.removeErrorListener();
+				
+			},
 			//是否接入
 			cutFn(isFlag){
 				//确认接入
@@ -392,7 +419,7 @@
 					return;
 				}
 				return new Promise((resolve,reject)=>{
-					setTimeout(()=>{
+					// setTimeout(()=>{
 						im.connect(this.form.token,(res)=> {
 							console.log('im已连接')
 							console.log(res)
@@ -408,7 +435,7 @@
 								reject(Error(res.error));
 							}
 						});
-					},0)
+					// },0)
 				});
 				
 			},

@@ -1,13 +1,26 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - ce2c9a31f29a091dfae62648d76deeee88d66b5b
- * Fri Oct 29 2021 17:40:56 GMT+0800 (中国标准时间)
+ * CommitId - 878188349bd3fcb52ec8051c9c6090b1e7cfe8b8
+ * Wed Nov 03 2021 10:24:55 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 declare enum RCCallIWCamera {
     NONE = -1,
     FRONT = 0,
     BACK = 1
+}
+/**
+ * 通话媒体类型
+ */
+declare enum RCCallIWMediaType {
+    /**
+     * 音频通话
+     */
+    AUDIO = 0,
+    /**
+     * 视频通话
+     */
+    AUDIO_VIDEO = 1
 }
 declare enum RCCallIWCallDisconnectedReason {
     CANCEL = 0,
@@ -94,35 +107,55 @@ declare function unInit(): void;
 *
 * @param listener 回调函数
 */
-declare function addOnCallReceivedListener(listener: (result: UniListenerResult<ReceivedListenerResult>) => void): void;
+declare function onCallReceived(listener: (result: UniListenerResult<ReceivedListenerResult>) => void): void;
 /**
 * 添加挂断监听函数
 *
 * @param listener 回调函数
 */
-declare function addOnCallDisconnectedListener(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+declare function onCallDisconnected(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
 /**
 * 添加连接监听函数
 *
 * @param listener 回调函数
 */
-declare function addOnCallConnectedListener(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+declare function onCallConnected(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
 /**
 * 添加有用户被邀请加入通话监听函数
 *
 * @param listener 回调函数
 */
-declare function addRemoteUserInvited(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+declare function onRemoteUserInvited(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
 /**
  * 对端用户加入了通话
  * @param listener 回调函数
  */
-declare function addRemoteUserJoinedListener(listener: (result: UniListenerResult<usersParams>) => void): void;
+declare function onRemoteUserJoined(listener: (result: UniListenerResult<usersParams>) => void): void;
 /**
  * 对端用户挂断 (实际测试，只在群聊时用触发)
  * @param listener 回调函数
  */
-declare function addRemoteUserLeftListener(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+declare function onRemoteUserLeft(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+/**
+ * 电话已拨出 主叫端拨出电话后，通过回调 onCallOutgoing 通知当前 call 的详细信息
+ * @param listener 回调函数
+ */
+declare function onCallOutgoing(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+/**
+ * 被叫端正在振铃，主叫端拨出电话，被叫端收到请求，发出振铃响应时监听
+ * @param listener 回调函数
+ */
+declare function onRemoteUserRinging(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+/**
+ * 通话出现错误的回调
+ * @param listener 回调函数
+ */
+declare function onError(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+/**
+ * 对端用户切换了媒体类型
+ * @param listener 回调函数
+ */
+declare function onRemoteUserMediaTypeChanged(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
 /**
  * 邀请用户
  * @param userIds 被邀请用户id列表
@@ -151,6 +184,10 @@ declare function removeRemoteUserJoinedListener(): void;
  */
 declare function removeRemoteUserLeftListener(): void;
 /**
+* 移除监听-有用户被邀请加入通话
+*/
+declare function removeRemoteUserInvited(): void;
+/**
  * 移除监听-开启或关闭摄像头的回调
  */
 declare function removeEnableCameraListener(): void;
@@ -170,10 +207,6 @@ declare function removeCallOutgoingListener(): void;
  * 移除监听-对端用户正在振铃
  */
 declare function removeRemoteUserRingingListener(): void;
-/**
- * 移除监听-有用户被邀请加入通话
- */
-declare function removeRemoteUserInvited(): void;
 /**
  * 移除监听-对端用户切换了媒体类型
  */
@@ -260,5 +293,10 @@ declare function currentCamera(): any;
 *
 */
 declare function enableCamera(isOpen: boolean, camera: RCCallIWCamera): void;
+/**
+ * 修改通话类型
+ * @param type
+ */
+declare function changeMediaType(type: RCCallIWMediaType): void;
 
-export { accept, addOnCallConnectedListener, addOnCallDisconnectedListener, addOnCallReceivedListener, addRemoteUserInvited, addRemoteUserJoinedListener, addRemoteUserLeftListener, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, inviteUsers, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
+export { accept, changeMediaType, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, inviteUsers, onCallConnected, onCallDisconnected, onCallOutgoing, onCallReceived, onError, onRemoteUserInvited, onRemoteUserJoined, onRemoteUserLeft, onRemoteUserMediaTypeChanged, onRemoteUserRinging, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };

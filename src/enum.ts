@@ -3,6 +3,19 @@ export enum RCCallIWCamera {
   FRONT = 0,
   BACK = 1
 }
+/**
+ * 通话媒体类型
+ */
+ export enum RCCallIWMediaType {
+  /**
+   * 音频通话
+   */
+  AUDIO = 0,
+  /**
+   * 视频通话
+   */
+  AUDIO_VIDEO = 1
+}
 export enum RCCallIWCallDisconnectedReason{
     // 己方取消已发出的通话请求
   CANCEL = 0,
