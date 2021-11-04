@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - acf66c0b729d427aa021f182b32b893f7a321ec0
- * Thu Nov 04 2021 17:56:32 GMT+0800 (中国标准时间)
+ * CommitId - 0ed6fe865de7c6b6a2a3e43c6be5afa83765fd65
+ * Thu Nov 04 2021 18:07:53 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 'use strict';
@@ -239,6 +239,7 @@ function startGroupCall(groupId, userIds, observerUserIds, type, extra) {
 */
 function setVideoView(userId, ref, type, isZOrderOnTop) {
     let userAgent = navigator.userAgent;
+    console.log(navigator);
     console.log(userAgent);
     console.log('isZOrderOnTop:' + isZOrderOnTop);
     if (isZOrderOnTop === undefined) {

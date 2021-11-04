@@ -259,7 +259,9 @@ export function startGroupCall(groupId:string,userIds:Array<string>,observerUser
 */
 export function setVideoView(userId:string,ref:string,type:number,isZOrderOnTop?:boolean){
    let userAgent = navigator.userAgent;
-   console.log(navigator)
+   console.log(uni.getSystemInfoSync())
+   let userAgent1 = uni?uni.getSystemInfoSync():'';
+   console.log(userAgent1)
    console.log(userAgent);
    console.log('isZOrderOnTop:'+isZOrderOnTop)
    if(isZOrderOnTop === undefined){
