@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 878188349bd3fcb52ec8051c9c6090b1e7cfe8b8
- * Wed Nov 03 2021 10:24:55 GMT+0800 (中国标准时间)
+ * CommitId - acf66c0b729d427aa021f182b32b893f7a321ec0
+ * Thu Nov 04 2021 17:56:32 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 'use strict';
@@ -229,14 +229,17 @@ function startGroupCall(groupId, userIds, observerUserIds, type, extra) {
     call.startGroupCall(groupId, userIds, observerUserIds, type, extra);
 }
 /**
-* 设置音视频视图到视频组件，做音视频呈现
+* 设置预览窗口，此方法需要在视图更新渲染完成后执行
 *
 * @param userId 用户id
 * @param ref ref ID 对应组件的标识
 * @param type 视频视图个性化设置 0 铺满 1 自适应
+* @param isZOrderOnTop android only 是否置顶
 *
 */
 function setVideoView(userId, ref, type, isZOrderOnTop) {
+    let userAgent = navigator.userAgent;
+    console.log(userAgent);
     console.log('isZOrderOnTop:' + isZOrderOnTop);
     if (isZOrderOnTop === undefined) {
         call.setVideoView(userId, ref, type);
