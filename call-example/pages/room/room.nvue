@@ -310,6 +310,7 @@
         // this.isConnected = true;
       },
 	  systemInfoSync(userId,ref,isZOrderOnTop){
+		  // call.setVideoView(userId, ref, 0,isZOrderOnTop,systemInfo);
 		  switch(uni.getSystemInfoSync().platform){
 		  	case 'android':
 		  		call.setVideoView(userId, ref, 0,isZOrderOnTop);

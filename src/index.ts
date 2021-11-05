@@ -255,19 +255,21 @@ export function startGroupCall(groupId:string,userIds:Array<string>,observerUser
 * @param ref ref ID 对应组件的标识
 * @param type 视频视图个性化设置 0 铺满 1 自适应
 * @param isZOrderOnTop android only 是否置顶
-* 
+* @param systemInfo 判断是哪个平台
 */
 export function setVideoView(userId:string,ref:string,type:number,isZOrderOnTop?:boolean){
-   let userAgent = navigator.userAgent;
-   console.log(uni.getSystemInfoSync())
-   let userAgent1 = uni?uni.getSystemInfoSync():'';
-   console.log(userAgent1)
-   console.log(userAgent);
-   console.log('isZOrderOnTop:'+isZOrderOnTop)
-   if(isZOrderOnTop === undefined){
-      call.setVideoView(userId,ref,type);
-   }else{
+   // let userAgent = navigator.userAgent;
+   if(uni.getSystemInfoSync().platform === 'android' && isZOrderOnTop === undefined){
+      console.log('安卓')
+      call.setVideoView(userId,ref,type,false);
+      return ;
+   }
+   if(uni.getSystemInfoSync().platform === 'android'){
+      console.log('安卓')
       call.setVideoView(userId,ref,type,isZOrderOnTop);
+   }else{
+      console.log('ios')
+      call.setVideoView(userId,ref,type);
    }
 }
 /**

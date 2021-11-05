@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 0ed6fe865de7c6b6a2a3e43c6be5afa83765fd65
- * Thu Nov 04 2021 18:07:53 GMT+0800 (中国标准时间)
+ * CommitId - 54bd3d1aedbb5d0598038239cf3a000d8dcc3773
+ * Thu Nov 04 2021 19:59:19 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 'use strict';
@@ -235,19 +235,19 @@ function startGroupCall(groupId, userIds, observerUserIds, type, extra) {
 * @param ref ref ID 对应组件的标识
 * @param type 视频视图个性化设置 0 铺满 1 自适应
 * @param isZOrderOnTop android only 是否置顶
-*
+* @param systemInfo 判断是哪个平台
 */
 function setVideoView(userId, ref, type, isZOrderOnTop) {
-    let userAgent = navigator.userAgent;
-    console.log(navigator);
-    console.log(userAgent);
-    console.log('isZOrderOnTop:' + isZOrderOnTop);
-    if (isZOrderOnTop === undefined) {
-        call.setVideoView(userId, ref, type);
-    }
-    else {
+    // let userAgent = navigator.userAgent;
+    if (uni.getSystemInfoSync().platform === 'android') {
+        console.log('安卓');
         call.setVideoView(userId, ref, type, isZOrderOnTop);
     }
+    // if(isZOrderOnTop === undefined){
+    //    call.setVideoView(userId,ref,type);
+    // }else{
+    //    call.setVideoView(userId,ref,type,isZOrderOnTop);
+    // }
 }
 /**
 * 设置callib是否开启扬声器
