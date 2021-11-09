@@ -1,6 +1,66 @@
 export const formate = function(arr){
 	return JSON.parse('['+ arr.join(',') + ']');
 }
+
+export const errorDeal = function(code){
+	let tit ='';
+	switch(code){
+		case 0:
+			tit = '成功';
+			break;
+		case 1:
+			tit = '开通的音视频服务没有及时生效或音视频服务已关闭，请等待3-5小时后重新安装应用或开启音视频服务再进行测试';
+			break;
+		case 2:
+			tit = '网络不可用';
+			break;
+		case 3:
+			tit = '已经处于通话中了';
+			break;
+		case 4:
+			tit = '无效操作';
+			break;
+		case 5:
+			tit = '参数错误';
+			break;
+		case 6:
+			tit = '网络不稳定';
+			break;
+		case 7:
+			tit = '媒体服务请求失败';
+			break;
+		case 8:
+			tit = '媒体服务初始化失败';
+			break;
+		case 9:
+			tit = '媒体服务未初始化';
+			break;
+		case 10:
+			tit = '媒体服务请求超时';
+			break;
+		case 11:
+			tit = '未知的媒体服务错误';
+			break;
+		case 12:
+			tit = '已被禁止通话';
+			break;
+		case 13:
+			tit = '音视频服务已关闭';
+			break;
+		case 14:
+			tit = '音视频发布资源失败';
+			break;
+		case 15:
+			tit = '音视频订阅资源失败';
+			break;
+		case 16:
+			tit = '其他端已在通话中错误';
+			break;
+		default:
+			tit='';
+		
+	}
+}
 export const reasonDeal = function(code){
 	let tit ='';
 	switch(code){

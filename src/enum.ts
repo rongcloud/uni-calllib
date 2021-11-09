@@ -16,6 +16,60 @@ export enum RCCallIWCamera {
    */
   AUDIO_VIDEO = 1
 }
+export enum RCUNICallErrorCode {
+
+  // 成功
+  SUCCESS = 0,
+
+  // android only 开通的音视频服务没有及时生效或音视频服务已关闭，请等待3-5小时后重新安装应用或开启音视频服务再进行测试
+  ENGINE_NOT_FOUND = 1,
+
+  // ios only 网络不可用
+  NETWORK_UNAVAILABLE = 2,
+
+  // ios only 已经处于通话中了
+  ONE_CALL_EXISTED = 3,
+
+  // ios only 无效操作
+  OPERATION_UNAVAILABLE = 4,
+
+  // ios only 参数错误
+  INVALID_PARAM = 5,
+
+  // ios only 网络不稳定
+  NETWORK_UNSTABLE = 6,
+
+  // ios only 媒体服务请求失败
+  MEDIA_REQUEST_FAILED = 7,
+
+  // ios only 媒体服务初始化失败
+  MEDIA_SERVER_NOT_READY = 8,
+
+  // ios only  媒体服务未初始化
+  MEDIA_SERVER_NOT_INITIALIZED = 9,
+
+  // ios only  媒体服务请求超时
+  MEDIA_REQUEST_TIMEOUT = 10,
+
+  // ios only  未知的媒体服务错误
+  MEDIA_UNKOWN_ERROR = 11,
+
+  // ios only  已被禁止通话
+  MEDIA_KICKED_BY_SERVER_ERROR = 12,
+
+  // ios only 音视频服务已关闭
+  MEDIA_SERVER_CLOSED_ERROR = 13,
+
+  // ios only 音视频发布资源失败
+  MEDIA_SERVER_PUBLISH_ERROR = 14,
+
+  // ios only 音视频订阅资源失败
+  MEDIA_SERVER_SUBSCRIBE_ERROR = 15,
+
+  // ios only 其他端已在通话中错误
+  MEDIA_JOIN_ROOM_REFUSE_ERROR = 16
+
+}
 export enum RCCallIWCallDisconnectedReason{
     // 己方取消已发出的通话请求
   CANCEL = 0,

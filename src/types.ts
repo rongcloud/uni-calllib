@@ -1,5 +1,6 @@
 import {
-  RCCallIWCallDisconnectedReason
+  RCCallIWCallDisconnectedReason,
+  RCUNICallErrorCode
 } 
 from './enum';
 export interface UniListenerResult <T>{
@@ -31,6 +32,9 @@ export interface ReceivedListenerResult{
 }
 export interface ListenerResultRes{
   reason?:RCCallIWCallDisconnectedReason
+}
+export interface ListenerResultError{
+  reason?:RCUNICallErrorCode
 }
 export interface ListenerResultData{
   userId?:string,

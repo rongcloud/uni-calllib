@@ -155,7 +155,7 @@
 	import * as call from "@rongcloud/calllib-uni"
 	import * as im from "@rongcloud/imlib-uni"
 	import permision from "@/js_sdk/wa-permission/permission.js"
-	import {reasonDeal} from '../../utils/util.js'
+	import {reasonDeal,errorDeal} from '../../utils/util.js'
 	export default {
 		data() {
 			return {
@@ -166,7 +166,7 @@
 				isInitIm: false,
 				form:{
 					appkey:'c9kqb3rdkbb8j',
-					token:'gXBEhCrJUcitLzrpQ+YcH233zkQsbE8eVSFdUMVanNuQ9rN9eNSS5WR31db/YADxs39z6c5rQzaaVj7qk3rqE54PiKUD5Xpx',
+					token:'fBsTKu1WSiANi7pTWnHRyf+f0IjfzRkyUpTVecImFcPNrpMY6GzeS/sRCrHjCiQD+FKPw5HyKn95+fgPzxzcLgS1YXhQ15eZ',
 					navi:'https://nav-ucqa.rongcloud.net',
 					mediaServer:''
 				},
@@ -209,19 +209,17 @@
 		},
 		onLoad() {
 			// 初始化 CallLib
-			// console.log('初始化call')
-			console.log(call);
-			// permision.gotoAppPermissionSetting();
-			// console.log(permision.judgeIosPermission('record'))
 			im.disconnect();
 			call.init({});
 			call.onCallReceived( (res)=> {
+				console.log(res)
 				console.log("Engine:OnCallReceived=>"+"监听通话呼入, 目标id=>", res.data.targetId);
 				this.isCut=true;
 				this.localSession = res.data;
 			});
 			call.onCallDisconnected((res)=>{
-				console.log("Engine:OnCallDisconnected=>"+"挂断成功, 挂断原因=>", res.data.reason);
+				console.log(res)
+				console.log("Engine:OnCallDisconnected=>"+"通话挂断/拒绝, 挂断原因=>", res.data.reason);
 				this.isCut=false;
 				// 重新渲染视频视图
 				uni.$emit('OnCallDisconnected');
@@ -233,12 +231,12 @@
 				})
 			});
 			call.onCallConnected((res)=>{
+				console.log(res)
 				console.log("Engine:OnCallConnected=>"+"已建立通话通话接通时，通过回调 onCallConnected 通知当前 call 的详细信息", res);
 				// uni.$emit('OnCallConnected');
 			});
 			call.onRemoteUserInvited((res)=>{
-				console.log('1')
-				console.log("Engine:OnRemoteUserInvited=>"+"通话中的某一个参与者，邀请好友加入通话，发出邀请请求后,远端Id为=>", res.data.userId);
+				console.log("Engine:OnRemoteUserInvited=>"+"通话中的某一个参与者，邀请好友加入通话 ,远端Id为=>", res.data.userId);
 				uni.$emit('OnCallConnected');
 			})
 			call.onRemoteUserJoined((res)=>{
@@ -246,7 +244,7 @@
 				uni.$emit('OnCallConnected');
 			})
 			call.onRemoteUserLeft((res)=>{
-				console.log("Engine:OnRemoteUserLeft=>"+"远端用户挂断，远端Id为=>", res.data.reason);
+				console.log("Engine:OnRemoteUserLeft=>"+"远端用户挂断(群聊触发)，远端Id为=>", res.data.reason);
 				uni.$emit('OnCallConnected');
 				uni.showToast({
 					title:reasonDeal(res.data.reason),
@@ -257,16 +255,16 @@
 			})
 			call.onCallOutgoing((res)=>{
 				console.log('电话已拨出 主叫端拨出电话后，通过回调 onCallOutgoing 通知当前 call 的详细信息')
-				console.log(res)
+				// console.log(res)
 			})
 			call.onRemoteUserRinging((res)=>{
 				console.log('被叫端正在振铃，主叫端拨出电话，被叫端收到请求，发出振铃响应时，回调 onRemoteUserRingin,对端Id为=>', res.data.userId)
-				console.log(res)
+				// console.log(res)
 			})
 			call.onError((res)=>{
 				console.log('通话过程中，发生异常')
 				uni.showToast({
-					title:reasonDeal(res.data.reason),
+					title:errorDeal(res.data.reason),
 					error:"error",
 					icon:'none',
 					duration:2000

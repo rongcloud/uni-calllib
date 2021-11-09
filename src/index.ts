@@ -4,24 +4,26 @@ import {
 	ReceivedListenerResult,
 	ListenerResultRes,
    usersParams,
-   ListenerResultData
+   ListenerResultData,
+   ListenerResultError
 } 
 from './types';
 import {
    RCCallIWCamera,
-   RCCallIWMediaType,
-   RCCallIWCallDisconnectedReason
+   RCCallIWMediaType
  } 
- from './enum';
-
+from './enum';
+import logger from './logger'
 const call = uni.requireNativePlugin('__RC_UNI_CALL__');
-
+const Platform = uni.getSystemInfoSync().platform;
+logger.log('已进入index.js')
 /**
 * 初始化 SDK，只需要调用一次  
 *
 * calllib初始化默认不传参数
 */
 export function init(){
+   logger.log(`init Platform->${Platform}`)
    call.init({});
 }
 /**
@@ -30,6 +32,7 @@ export function init(){
 * 注销calllib默认不传参数
 */
 export function unInit(){
+   logger.log(`unInit Platform->${Platform}`)
    call.unInit();
 }
 /**
@@ -38,7 +41,9 @@ export function unInit(){
 * @param listener 回调函数
 */
 export function onCallReceived(listener:(result:UniListenerResult<ReceivedListenerResult>)=>void){
+   logger.log(`Engine:OnCallReceived 监听通话呼入 Platform->${Platform}`)
    call.addEventListener("Engine:OnCallReceived", listener);
+   
 }
 /**
 * 添加挂断监听函数  
@@ -46,6 +51,7 @@ export function onCallReceived(listener:(result:UniListenerResult<ReceivedListen
 * @param listener 回调函数
 */
 export function onCallDisconnected(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+   logger.log(`Engine:OnCallDisconnected 监听通话结束 Platform->${Platform}`)
    call.addEventListener("Engine:OnCallDisconnected", listener);
 }
 /**
@@ -54,15 +60,17 @@ export function onCallDisconnected(listener:(result:UniListenerResult<ListenerRe
 * @param listener 回调函数
 */
 export function onCallConnected(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+   logger.log(`Engine:OnCallConnected 已建立通话通话接通 Platform->${Platform}`)
    call.addEventListener("Engine:OnCallConnected", listener);
 }
 /**
-* 添加有用户被邀请加入通话监听函数  
+* 通话中的某一个参与者，邀请好友加入通话 
 * 
 * @param listener 回调函数
 */
 
 export function onRemoteUserInvited(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+   logger.log(`Engine:OnRemoteUserInvited 通话中的某一个参与者，邀请好友加入通话  Platform->${Platform}`)
    call.addEventListener("Engine:OnRemoteUserInvited", listener);
 }
 /**
@@ -70,6 +78,7 @@ export function onRemoteUserInvited(listener:(result:UniListenerResult<ListenerR
  * @param listener 回调函数 
  */
  export function onRemoteUserJoined(listener:(result:UniListenerResult<usersParams>)=>void){
+   logger.log(`Engine:OnRemoteUserJoined 对端用户加入通话 Platform->${Platform}`)
    call.addEventListener("Engine:OnRemoteUserJoined",listener);
 }
 /**
@@ -77,6 +86,7 @@ export function onRemoteUserInvited(listener:(result:UniListenerResult<ListenerR
  * @param listener 回调函数
  */
  export function onRemoteUserLeft(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+   logger.log(`Engine:OnRemoteUserLeft 对端用户挂断(群聊触发) Platform->${Platform}`)
    call.addEventListener("Engine:OnRemoteUserLeft", listener);
 }
 /**
@@ -84,6 +94,7 @@ export function onRemoteUserInvited(listener:(result:UniListenerResult<ListenerR
  * @param listener 回调函数
  */
  export function onCallOutgoing(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+   logger.log(`Engine:OnCallOutgoing 电话已拨出，通知当前 call 的详细信息 Platform->${Platform}`)
    call.addEventListener("Engine:OnCallOutgoing", listener);
 }
 /**
@@ -91,13 +102,15 @@ export function onRemoteUserInvited(listener:(result:UniListenerResult<ListenerR
  * @param listener 回调函数
  */
  export function onRemoteUserRinging(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+   logger.log(`Engine:OnRemoteUserRinging 被叫端收到请求，发出振铃响应时监听 Platform->${Platform}`)
    call.addEventListener("Engine:OnRemoteUserRinging", listener);
 }
 /**
  * 通话出现错误的回调
  * @param listener 回调函数
  */
- export function onError(listener:(result:UniListenerResult<ListenerResultRes>)=>void){
+ export function onError(listener:(result:UniListenerResult<ListenerResultError>)=>void){
+   logger.log(`Engine:OnError 通话出现错误 Platform->${Platform}`)
    call.addEventListener("Engine:OnError", listener);
 }
 /**
@@ -105,6 +118,7 @@ export function onRemoteUserInvited(listener:(result:UniListenerResult<ListenerR
  * @param listener 回调函数
  */
  export function onRemoteUserMediaTypeChanged(listener:(result:UniListenerResult<ListenerResultData>)=>void){
+   logger.log(`Engine:OnRemoteUserMediaTypeChanged 对端用户切换了媒体类型 Platform->${Platform}`)
    call.addEventListener("Engine:OnRemoteUserMediaTypeChanged", listener);
 }
 /**
@@ -113,12 +127,14 @@ export function onRemoteUserInvited(listener:(result:UniListenerResult<ListenerR
  * @param observerUserIds 被邀请观察者id列表 (只能听或看，不能推流的用户)
  */
 export function inviteUsers(userIds: string[], observerUserIds: string[]){
+   logger.log(`inviteUsers 邀请用户->${userIds} Platform->${Platform}`)
    call.inviteUsers(userIds, observerUserIds);
 }
 /**
  * 移除监听-接收到通话呼入
  */
 export function removeCallReceivedListener () {
+   logger.log(`removeCallReceivedListener`)
    call.removeAllListeners('Engine:OnCallReceived')
 }
  
@@ -126,6 +142,7 @@ export function removeCallReceivedListener () {
   * 移除监听-通话已接通
   */
 export function removeCallConnectedListener () {
+   logger.log(`removeCallConnectedListener`)
    call.removeAllListeners('Engine:OnCallConnected')
 }
  
@@ -134,6 +151,7 @@ export function removeCallConnectedListener () {
   * @param 挂断原因
   */
 export function removeCallDisconnectedListener () {
+   logger.log(`removeCallDisconnectedListener`)
    call.removeAllListeners('Engine:OnCallDisconnected')
 }
  
@@ -141,6 +159,7 @@ export function removeCallDisconnectedListener () {
   * 移除监听-对端用户加入了通话
   */
 export function removeRemoteUserJoinedListener () {
+   logger.log(`removeRemoteUserJoinedListener`)
    call.removeAllListeners('Engine:OnRemoteUserJoined')
  }
  
@@ -148,26 +167,29 @@ export function removeRemoteUserJoinedListener () {
   * 移除监听-对端用户挂断
   */
   export function removeRemoteUserLeftListener () {
+   logger.log(`removeRemoteUserLeftListener`)
    call.removeAllListeners('Engine:OnRemoteUserLeft')
  }
   /**
   * 移除监听-有用户被邀请加入通话
   */
 export function removeRemoteUserInvited () {
+   logger.log(`removeRemoteUserInvited`)
    call.removeAllListeners('Engine:OnRemoteUserInvited')
 }
  
  /**
   * 移除监听-开启或关闭摄像头的回调
   */
-  export function removeEnableCameraListener () {
+export function removeEnableCameraListener () {
+   logger.log(`removeEnableCameraListener`)
    call.removeAllListeners('Engine:OnEnableCamera')
- }
- 
+}
  /**
   * 移除监听-切换摄像头回调
   */
-  export function removeSwitchCameraListener () {
+export function removeSwitchCameraListener () {
+   logger.log(`removeSwitchCameraListener`)
    call.removeAllListeners('Engine:OnSwitchCamera')
  }
  
@@ -175,28 +197,30 @@ export function removeRemoteUserInvited () {
   * 移除监听-通话出现错误的回调
   */
 export function removeErrorListener () {
+   logger.log(`removeErrorListener`)
    call.removeAllListeners('Engine:OnError')
- }
+}
  
  /**
   * 移除监听-开始呼叫通话的回调
   */
-  export function removeCallOutgoingListener () {
+export function removeCallOutgoingListener () {
+   logger.log(`removeCallOutgoingListener`)
    call.removeAllListeners('Engine:OnCallOutgoing')
- }
+}
  
  /**
   * 移除监听-对端用户正在振铃
   */
 export function removeRemoteUserRingingListener () {
+   logger.log(`removeRemoteUserRingingListener`)
    call.removeAllListeners('Engine:OnRemoteUserRinging')
 }
- 
-
- /**
-  * 移除监听-对端用户切换了媒体类型
-  */
+/**
+ * 移除监听-对端用户切换了媒体类型
+ */
 export function removeRemoteUserMediaTypeChangedListener () {
+   logger.log(`removeRemoteUserMediaTypeChangedListener`)
    call.removeAllListeners('Engine:OnRemoteUserMediaTypeChanged')
 }
  
@@ -206,6 +230,7 @@ export function removeRemoteUserMediaTypeChangedListener () {
 * 默认不传参数
 */
 export function getCurrentCallSession(){
+  logger.log(`getCurrentCallSession Platform->${Platform}`)
    return call.getCurrentCallSession()
 }
 /**
@@ -214,6 +239,7 @@ export function getCurrentCallSession(){
 * 默认不传参数
 */
 export function hangup(){
+   logger.log(`hangup Platform->${Platform}`)
    call.hangup()
 }
 /**
@@ -222,6 +248,7 @@ export function hangup(){
 * 默认不传参数
 */
 export function accept(){
+   logger.log(`accept Platform->${Platform}`)
    call.accept()
 }
 /**
@@ -229,11 +256,12 @@ export function accept(){
 * 
 * @param targetId 目标ID
 * @param type 呼叫类型（0:音频 1:音视频）
-* @param custom 传null
+* @param extra 默认传''
 * 
 */
-export function startSingleCall(targetId:string,type:number,custom:null){
-   call.startSingleCall(targetId,type,custom);
+export function startSingleCall(targetId:string,type:number,extra:null){
+   logger.log(`startSingleCall targetId->${targetId} type=>${type} extra=>${extra} Platform->${Platform}`)
+   call.startSingleCall(targetId,type,extra);
 }
 /**
 * 发起组呼呼叫
@@ -246,6 +274,7 @@ export function startSingleCall(targetId:string,type:number,custom:null){
 * 
 */
 export function startGroupCall(groupId:string,userIds:Array<string>,observerUserIds:Array<string>,type:number,extra:string){
+   logger.log(`startGroupCall groupId->${groupId} userIds=>${userIds} observerUserIds=>${observerUserIds} type=>${type} extra=>${extra} Platform->${Platform}`)
    call.startGroupCall(groupId,userIds,observerUserIds,type,extra);
 }
 /**
@@ -253,33 +282,22 @@ export function startGroupCall(groupId:string,userIds:Array<string>,observerUser
 * 
 * @param userId 用户id
 * @param ref ref ID 对应组件的标识
-* @param type 视频视图个性化设置 0 铺满 1 自适应
+* @param type 视频显示模式 0 铺满 1 自适应
 * @param isZOrderOnTop android only 是否置顶
-* @param systemInfo 判断是哪个平台
 */
-export function setVideoView(userId:string,ref:string,type:number,isZOrderOnTop?:boolean){
-   // let userAgent = navigator.userAgent;
-   if(uni.getSystemInfoSync().platform === 'android' && isZOrderOnTop === undefined){
-      console.log('安卓')
-      call.setVideoView(userId,ref,type,false);
-      return ;
-   }
-   if(uni.getSystemInfoSync().platform === 'android'){
-      console.log('安卓')
-      call.setVideoView(userId,ref,type,isZOrderOnTop);
-   }else{
-      console.log('ios')
-      call.setVideoView(userId,ref,type);
-   }
+export function setVideoView(userId:string,ref:string,type:number,isZOrderOnTop:boolean = false){
+   logger.log(`setVideoView userId->${userId} ref=>${ref} type=>${type} isZOrderOnTop=>${isZOrderOnTop} Platform->${Platform}`)
+   Platform === 'android' ? call.setVideoView(userId,ref,type,isZOrderOnTop) : call.setVideoView(userId,ref,type);
 }
 /**
 * 设置callib是否开启扬声器
 * 
-* @param isOPen 默认开启
+* @param isOpen 默认开启
 * 
 */
-export function enableSpeaker(isOPen:boolean){
-   call.enableSpeaker(isOPen);
+export function enableSpeaker(isOpen:boolean){
+   logger.log(`enableSpeaker isOPen->${isOpen} Platform->${Platform}`)
+   call.enableSpeaker(isOpen);
 }
 /**
 * 设置callib是否开启麦克风
@@ -288,6 +306,7 @@ export function enableSpeaker(isOPen:boolean){
 * 
 */
 export function enableMicrophone(isOpen:boolean){
+   logger.log(`enableMicrophone isOPen->${isOpen} Platform->${Platform}`)
    call.enableMicrophone(isOpen);
 }
 /**
@@ -297,6 +316,7 @@ export function enableMicrophone(isOpen:boolean){
 * 
 */
 export function switchCamera(){
+   logger.log(`switchCamera Platform->${Platform}`)
    call.switchCamera();
 }
 /**
@@ -305,6 +325,7 @@ export function switchCamera(){
 * 默认不传参数
 */
 export function currentCamera(){
+   logger.log(`currentCamera Platform->${Platform}`)
    return call.currentCamera()
 }
 /**
@@ -315,6 +336,7 @@ export function currentCamera(){
 * 
 */
 export function enableCamera(isOpen:boolean,camera:RCCallIWCamera){
+   logger.log(`enableCamera isOpen=>${isOpen} camera=>${camera} Platform->${Platform}`)
    call.enableCamera(isOpen,camera);
 }
 /**
@@ -322,5 +344,6 @@ export function enableCamera(isOpen:boolean,camera:RCCallIWCamera){
  * @param type
  */
 export function changeMediaType(type:RCCallIWMediaType){
+   logger.log(`changeMediaType type=>${type}  Platform->${Platform}`)
    call.changeMediaType(type);
 }

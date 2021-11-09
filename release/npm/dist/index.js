@@ -1,20 +1,37 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 54bd3d1aedbb5d0598038239cf3a000d8dcc3773
- * Thu Nov 04 2021 19:59:19 GMT+0800 (中国标准时间)
+ * CommitId - 54f52e160998a5dbd0dde67929515b5123d1f288
+ * Fri Nov 05 2021 16:22:08 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+class Logger {
+    /**
+     *
+     * @param tag 标签
+     */
+    constructor(tag) {
+        this.tag = tag;
+    }
+    log(str) {
+        console.log(`[${this.tag}] ${new Date().toISOString()} ${str}`);
+    }
+}
+const logger = new Logger('RCUNICallLib');
+
 const call = uni.requireNativePlugin('RongCloud-Call-RCUniCall');
+const Platform = uni.getSystemInfoSync().platform;
+logger.log('已进入index.js');
 /**
 * 初始化 SDK，只需要调用一次
 *
 * calllib初始化默认不传参数
 */
 function init() {
+    logger.log(`init Platform->${Platform}`);
     call.init({});
 }
 /**
@@ -23,6 +40,7 @@ function init() {
 * 注销calllib默认不传参数
 */
 function unInit() {
+    logger.log(`unInit Platform->${Platform}`);
     call.unInit();
 }
 /**
@@ -31,6 +49,7 @@ function unInit() {
 * @param listener 回调函数
 */
 function onCallReceived(listener) {
+    logger.log(`Engine:OnCallReceived 监听通话呼入 Platform->${Platform}`);
     call.addEventListener("Engine:OnCallReceived", listener);
 }
 /**
@@ -39,6 +58,7 @@ function onCallReceived(listener) {
 * @param listener 回调函数
 */
 function onCallDisconnected(listener) {
+    logger.log(`Engine:OnCallDisconnected 监听通话结束 Platform->${Platform}`);
     call.addEventListener("Engine:OnCallDisconnected", listener);
 }
 /**
@@ -47,14 +67,16 @@ function onCallDisconnected(listener) {
 * @param listener 回调函数
 */
 function onCallConnected(listener) {
+    logger.log(`Engine:OnCallConnected 已建立通话通话接通 Platform->${Platform}`);
     call.addEventListener("Engine:OnCallConnected", listener);
 }
 /**
-* 添加有用户被邀请加入通话监听函数
+* 通话中的某一个参与者，邀请好友加入通话
 *
 * @param listener 回调函数
 */
 function onRemoteUserInvited(listener) {
+    logger.log(`Engine:OnRemoteUserInvited 通话中的某一个参与者，邀请好友加入通话  Platform->${Platform}`);
     call.addEventListener("Engine:OnRemoteUserInvited", listener);
 }
 /**
@@ -62,6 +84,7 @@ function onRemoteUserInvited(listener) {
  * @param listener 回调函数
  */
 function onRemoteUserJoined(listener) {
+    logger.log(`Engine:OnRemoteUserJoined 对端用户加入通话 Platform->${Platform}`);
     call.addEventListener("Engine:OnRemoteUserJoined", listener);
 }
 /**
@@ -69,6 +92,7 @@ function onRemoteUserJoined(listener) {
  * @param listener 回调函数
  */
 function onRemoteUserLeft(listener) {
+    logger.log(`Engine:OnRemoteUserLeft 对端用户挂断(群聊触发) Platform->${Platform}`);
     call.addEventListener("Engine:OnRemoteUserLeft", listener);
 }
 /**
@@ -76,6 +100,7 @@ function onRemoteUserLeft(listener) {
  * @param listener 回调函数
  */
 function onCallOutgoing(listener) {
+    logger.log(`Engine:OnCallOutgoing 电话已拨出，通知当前 call 的详细信息 Platform->${Platform}`);
     call.addEventListener("Engine:OnCallOutgoing", listener);
 }
 /**
@@ -83,6 +108,7 @@ function onCallOutgoing(listener) {
  * @param listener 回调函数
  */
 function onRemoteUserRinging(listener) {
+    logger.log(`Engine:OnRemoteUserRinging 被叫端收到请求，发出振铃响应时监听 Platform->${Platform}`);
     call.addEventListener("Engine:OnRemoteUserRinging", listener);
 }
 /**
@@ -90,6 +116,7 @@ function onRemoteUserRinging(listener) {
  * @param listener 回调函数
  */
 function onError(listener) {
+    logger.log(`Engine:OnError 通话出现错误 Platform->${Platform}`);
     call.addEventListener("Engine:OnError", listener);
 }
 /**
@@ -97,6 +124,7 @@ function onError(listener) {
  * @param listener 回调函数
  */
 function onRemoteUserMediaTypeChanged(listener) {
+    logger.log(`Engine:OnRemoteUserMediaTypeChanged 对端用户切换了媒体类型 Platform->${Platform}`);
     call.addEventListener("Engine:OnRemoteUserMediaTypeChanged", listener);
 }
 /**
@@ -105,18 +133,21 @@ function onRemoteUserMediaTypeChanged(listener) {
  * @param observerUserIds 被邀请观察者id列表 (只能听或看，不能推流的用户)
  */
 function inviteUsers(userIds, observerUserIds) {
+    logger.log(`inviteUsers 邀请用户->${userIds} Platform->${Platform}`);
     call.inviteUsers(userIds, observerUserIds);
 }
 /**
  * 移除监听-接收到通话呼入
  */
 function removeCallReceivedListener() {
+    logger.log(`removeCallReceivedListener`);
     call.removeAllListeners('Engine:OnCallReceived');
 }
 /**
  * 移除监听-通话已接通
  */
 function removeCallConnectedListener() {
+    logger.log(`removeCallConnectedListener`);
     call.removeAllListeners('Engine:OnCallConnected');
 }
 /**
@@ -124,60 +155,70 @@ function removeCallConnectedListener() {
  * @param 挂断原因
  */
 function removeCallDisconnectedListener() {
+    logger.log(`removeCallDisconnectedListener`);
     call.removeAllListeners('Engine:OnCallDisconnected');
 }
 /**
  * 移除监听-对端用户加入了通话
  */
 function removeRemoteUserJoinedListener() {
+    logger.log(`removeRemoteUserJoinedListener`);
     call.removeAllListeners('Engine:OnRemoteUserJoined');
 }
 /**
  * 移除监听-对端用户挂断
  */
 function removeRemoteUserLeftListener() {
+    logger.log(`removeRemoteUserLeftListener`);
     call.removeAllListeners('Engine:OnRemoteUserLeft');
 }
 /**
 * 移除监听-有用户被邀请加入通话
 */
 function removeRemoteUserInvited() {
+    logger.log(`removeRemoteUserInvited`);
     call.removeAllListeners('Engine:OnRemoteUserInvited');
 }
 /**
  * 移除监听-开启或关闭摄像头的回调
  */
 function removeEnableCameraListener() {
+    logger.log(`removeEnableCameraListener`);
     call.removeAllListeners('Engine:OnEnableCamera');
 }
 /**
  * 移除监听-切换摄像头回调
  */
 function removeSwitchCameraListener() {
+    logger.log(`removeSwitchCameraListener`);
     call.removeAllListeners('Engine:OnSwitchCamera');
 }
 /**
  * 移除监听-通话出现错误的回调
  */
 function removeErrorListener() {
+    logger.log(`removeErrorListener`);
     call.removeAllListeners('Engine:OnError');
 }
 /**
  * 移除监听-开始呼叫通话的回调
  */
 function removeCallOutgoingListener() {
+    logger.log(`removeCallOutgoingListener`);
     call.removeAllListeners('Engine:OnCallOutgoing');
 }
 /**
  * 移除监听-对端用户正在振铃
  */
 function removeRemoteUserRingingListener() {
+    logger.log(`removeRemoteUserRingingListener`);
     call.removeAllListeners('Engine:OnRemoteUserRinging');
 }
 /**
  * 移除监听-对端用户切换了媒体类型
  */
 function removeRemoteUserMediaTypeChangedListener() {
+    logger.log(`removeRemoteUserMediaTypeChangedListener`);
     call.removeAllListeners('Engine:OnRemoteUserMediaTypeChanged');
 }
 /**
@@ -186,6 +227,7 @@ function removeRemoteUserMediaTypeChangedListener() {
 * 默认不传参数
 */
 function getCurrentCallSession() {
+    logger.log(`getCurrentCallSession Platform->${Platform}`);
     return call.getCurrentCallSession();
 }
 /**
@@ -194,6 +236,7 @@ function getCurrentCallSession() {
 * 默认不传参数
 */
 function hangup() {
+    logger.log(`hangup Platform->${Platform}`);
     call.hangup();
 }
 /**
@@ -202,6 +245,7 @@ function hangup() {
 * 默认不传参数
 */
 function accept() {
+    logger.log(`accept Platform->${Platform}`);
     call.accept();
 }
 /**
@@ -209,11 +253,12 @@ function accept() {
 *
 * @param targetId 目标ID
 * @param type 呼叫类型（0:音频 1:音视频）
-* @param custom 传null
+* @param extra 默认传''
 *
 */
-function startSingleCall(targetId, type, custom) {
-    call.startSingleCall(targetId, type, custom);
+function startSingleCall(targetId, type, extra) {
+    logger.log(`startSingleCall targetId->${targetId} type=>${type} extra=>${extra} Platform->${Platform}`);
+    call.startSingleCall(targetId, type, extra);
 }
 /**
 * 发起组呼呼叫
@@ -226,6 +271,7 @@ function startSingleCall(targetId, type, custom) {
 *
 */
 function startGroupCall(groupId, userIds, observerUserIds, type, extra) {
+    logger.log(`startGroupCall groupId->${groupId} userIds=>${userIds} observerUserIds=>${observerUserIds} type=>${type} extra=>${extra} Platform->${Platform}`);
     call.startGroupCall(groupId, userIds, observerUserIds, type, extra);
 }
 /**
@@ -233,30 +279,22 @@ function startGroupCall(groupId, userIds, observerUserIds, type, extra) {
 *
 * @param userId 用户id
 * @param ref ref ID 对应组件的标识
-* @param type 视频视图个性化设置 0 铺满 1 自适应
+* @param type 视频显示模式 0 铺满 1 自适应
 * @param isZOrderOnTop android only 是否置顶
-* @param systemInfo 判断是哪个平台
 */
-function setVideoView(userId, ref, type, isZOrderOnTop) {
-    // let userAgent = navigator.userAgent;
-    if (uni.getSystemInfoSync().platform === 'android') {
-        console.log('安卓');
-        call.setVideoView(userId, ref, type, isZOrderOnTop);
-    }
-    // if(isZOrderOnTop === undefined){
-    //    call.setVideoView(userId,ref,type);
-    // }else{
-    //    call.setVideoView(userId,ref,type,isZOrderOnTop);
-    // }
+function setVideoView(userId, ref, type, isZOrderOnTop = false) {
+    logger.log(`setVideoView userId->${userId} ref=>${ref} type=>${type} isZOrderOnTop=>${isZOrderOnTop} Platform->${Platform}`);
+    Platform === 'android' ? call.setVideoView(userId, ref, type, isZOrderOnTop) : call.setVideoView(userId, ref, type);
 }
 /**
 * 设置callib是否开启扬声器
 *
-* @param isOPen 默认开启
+* @param isOpen 默认开启
 *
 */
-function enableSpeaker(isOPen) {
-    call.enableSpeaker(isOPen);
+function enableSpeaker(isOpen) {
+    logger.log(`enableSpeaker isOPen->${isOpen} Platform->${Platform}`);
+    call.enableSpeaker(isOpen);
 }
 /**
 * 设置callib是否开启麦克风
@@ -265,6 +303,7 @@ function enableSpeaker(isOPen) {
 *
 */
 function enableMicrophone(isOpen) {
+    logger.log(`enableMicrophone isOPen->${isOpen} Platform->${Platform}`);
     call.enableMicrophone(isOpen);
 }
 /**
@@ -274,6 +313,7 @@ function enableMicrophone(isOpen) {
 *
 */
 function switchCamera() {
+    logger.log(`switchCamera Platform->${Platform}`);
     call.switchCamera();
 }
 /**
@@ -282,6 +322,7 @@ function switchCamera() {
 * 默认不传参数
 */
 function currentCamera() {
+    logger.log(`currentCamera Platform->${Platform}`);
     return call.currentCamera();
 }
 /**
@@ -292,6 +333,7 @@ function currentCamera() {
 *
 */
 function enableCamera(isOpen, camera) {
+    logger.log(`enableCamera isOpen=>${isOpen} camera=>${camera} Platform->${Platform}`);
     call.enableCamera(isOpen, camera);
 }
 /**
@@ -299,6 +341,7 @@ function enableCamera(isOpen, camera) {
  * @param type
  */
 function changeMediaType(type) {
+    logger.log(`changeMediaType type=>${type}  Platform->${Platform}`);
     call.changeMediaType(type);
 }
 
