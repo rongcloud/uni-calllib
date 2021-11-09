@@ -141,10 +141,14 @@
 		uni.$off('OnCallConnected');
 	},
     onUnload() {
-      const session = call.getCurrentCallSession();
-      if (session) {
-        call.hangup();
-      }
+   //    const session = call.getCurrentCallSession();
+	  // console.log(session)
+	  // console.log('2222')
+	  call.hangup();
+    //   if (session) {
+		  // console.log('1111111')
+		  // call.hangup();
+    //   }
     },
 	onHide(){
 	    const session = call.getCurrentCallSession();

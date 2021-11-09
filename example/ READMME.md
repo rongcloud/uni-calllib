@@ -1,6 +1,6 @@
 # 开发测试说明
 
-## call-example 项目
+## example 项目
 
 ### 开发环境初始化
 
