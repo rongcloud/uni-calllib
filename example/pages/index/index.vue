@@ -155,7 +155,7 @@
 	import * as call from "@rongcloud/calllib-uni"
 	import * as im from "@rongcloud/imlib-uni"
 	import permision from "@/js_sdk/wa-permission/permission.js"
-	import {reasonDeal,errorDeal} from '../../utils/util.js'
+	import {reasonDeal,errorDeal,imCode} from '../../utils/code.js'
 	export default {
 		data() {
 			return {
@@ -389,7 +389,7 @@
 						console.log(e)
 						console.log("连接IM发生错误... code=",e.message);
 						uni.showToast({
-							title:"错误码: "+ e.message,
+							title:imCode(e),
 							icon: "error",
 							duration:2000
 						})
@@ -430,8 +430,7 @@
 								});
 								resolve(res.userId);
 							} else {
-								console.log(123)
-								reject(Error(res.error));
+								reject(res.code);
 							}
 						});
 					// },0)
