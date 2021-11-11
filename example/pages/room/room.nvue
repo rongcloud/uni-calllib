@@ -86,7 +86,7 @@
 		<view class="beauty-btn">
 			<view class="change-btn">
 				<text class="ch-tit">美颜</text><switch :checked="isChecked" @change="switchChange" />
-				<text class="ch-res">重置</text>
+				<text class="ch-res" @click="reset">重置</text>
 			</view>
 			<text class="close-btn" @click="isBeauty=false">关闭</text>
 			<!-- <switch @change="switch2Change" /> -->
@@ -244,6 +244,10 @@
 	  })
 	  uni.$on('OnCallConnected',this.onCallConnected)
 	  uni.$on('OnCallDisconnected',this.onCallDisconnected)
+	  console.log('获取当前滤镜')
+	  console.log(call.getCurrentBeautyFilter());
+	  console.log('获取当前美颜参数')
+	  console.log(call.getCurrentBeautyOption())
     },
 	beforeDestroy(){
 		uni.$off('OnCallDisconnected');
@@ -460,28 +464,32 @@
 			smoothLevel:this.buffingVal,
 			brightLevel:this.brightnessVal
 		}
-		console.log(call)
-		console.log(this.isChecked)
+		// console.log(call)
+		// console.log(this.isChecked)
 		console.log(option)
 		call.setBeautyOption(this.isChecked,option);
 	  },
 	  //美白
 	  whiteChange(e){
+		  console.log('美白',e.detail.value);
 		this.whiteVal = e.detail.value;
 		this.setBeautyOption();
 	  },
 	  //红润
-	  ruddyValChange(e){
+	  ruddyChange(e){
+		  console.log('红润',e.detail.value);
 		this.ruddyVal = e.detail.value;
 		this.setBeautyOption();
 	  },
 	  //磨皮
-	  buffingValChange(e){
+	  buffingChange(e){
+		console.log('磨皮',e.detail.value);
 	  	this.buffingVal = e.detail.value;
 		this.setBeautyOption();
 	  },
 	  //亮度
 	  brightnessChange(e){
+		  console.log('亮度',e.detail.value);
 	  	this.brightnessVal = e.detail.value;
 		this.setBeautyOption();
 	  },
@@ -490,6 +498,13 @@
 		  console.log(id)
 		  this.curFilte = id;
 		  call.setBeautyFilter(Number(this.curFilte));
+	  },
+	  reset(){
+		  call.resetBeauty();
+		  console.log('获取当前滤镜')
+		  console.log(call.getCurrentBeautyFilter());
+		  console.log('获取当前美颜参数')
+		  console.log(call.getCurrentBeautyOption())
 	  }
     }
   }

@@ -354,7 +354,7 @@ export function changeMediaType(type:RCCallIWMediaType){
  * @param filter 
  */
  export function setBeautyFilter(filter:RCCallIWBeautyFilterType){
-   logger.log(`setBeautyFilter type=>${filter}  Platform->${Platform}`)
+   logger.log(`setBeautyFilter filter=>${filter}  Platform->${Platform}`)
    call.setBeautyFilter(filter);
 }
 /**
@@ -371,7 +371,7 @@ export function changeMediaType(type:RCCallIWMediaType){
  * @param RCCallIWBeautyOption 美颜参数 
  */
  export function setBeautyOption(enable:boolean = false,option:RCCallIWBeautyOption){
-   logger.log(`setBeautyOption Platform->${Platform}`)
+   logger.log(`setBeautyOption enable=>${enable} option=>${option} Platform->${Platform}`)
    call.setBeautyOption(enable,option);
 }
 
