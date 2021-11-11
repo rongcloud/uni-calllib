@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 54f52e160998a5dbd0dde67929515b5123d1f288
- * Fri Nov 05 2021 16:22:08 GMT+0800 (中国标准时间)
+ * CommitId - def59c22012463c5b10fcae752b5dd691d95e528
+ * Thu Nov 11 2021 10:42:30 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 declare enum RCCallIWCamera {
@@ -21,6 +21,25 @@ declare enum RCCallIWMediaType {
      * 视频通话
      */
     AUDIO_VIDEO = 1
+}
+declare enum RCUNICallErrorCode {
+    SUCCESS = 0,
+    ENGINE_NOT_FOUND = 1,
+    NETWORK_UNAVAILABLE = 2,
+    ONE_CALL_EXISTED = 3,
+    OPERATION_UNAVAILABLE = 4,
+    INVALID_PARAM = 5,
+    NETWORK_UNSTABLE = 6,
+    MEDIA_REQUEST_FAILED = 7,
+    MEDIA_SERVER_NOT_READY = 8,
+    MEDIA_SERVER_NOT_INITIALIZED = 9,
+    MEDIA_REQUEST_TIMEOUT = 10,
+    MEDIA_UNKOWN_ERROR = 11,
+    MEDIA_KICKED_BY_SERVER_ERROR = 12,
+    MEDIA_SERVER_CLOSED_ERROR = 13,
+    MEDIA_SERVER_PUBLISH_ERROR = 14,
+    MEDIA_SERVER_SUBSCRIBE_ERROR = 15,
+    MEDIA_JOIN_ROOM_REFUSE_ERROR = 16
 }
 declare enum RCCallIWCallDisconnectedReason {
     CANCEL = 0,
@@ -58,6 +77,12 @@ declare enum RCCallIWCallDisconnectedReason {
     OTHER_DEVICE_HAD_ACCEPTED = 32,
     SERVICE_DISCONNECTED = 33
 }
+declare enum RCCallIWBeautyFilterType {
+    NONE = 0,
+    ESTHETIC = 1,
+    FRESH = 2,
+    ROMANTIC = 3
+}
 
 interface UniListenerResult<T> {
     module: string;
@@ -89,10 +114,19 @@ interface ReceivedListenerResult {
 interface ListenerResultRes {
     reason?: RCCallIWCallDisconnectedReason;
 }
+interface ListenerResultError {
+    reason?: RCUNICallErrorCode;
+}
 interface ListenerResultData {
     userId?: string;
     user?: usersParams;
     mediaType?: string;
+}
+interface RCCallIWBeautyOption {
+    whitenessLevel: number;
+    smoothLevel: number;
+    ruddyLevel: number;
+    brightLevel: number;
 }
 
 /**
@@ -155,7 +189,7 @@ declare function onRemoteUserRinging(listener: (result: UniListenerResult<Listen
  * 通话出现错误的回调
  * @param listener 回调函数
  */
-declare function onError(listener: (result: UniListenerResult<ListenerResultRes>) => void): void;
+declare function onError(listener: (result: UniListenerResult<ListenerResultError>) => void): void;
 /**
  * 对端用户切换了媒体类型
  * @param listener 回调函数
@@ -303,5 +337,31 @@ declare function enableCamera(isOpen: boolean, camera: RCCallIWCamera): void;
  * @param type
  */
 declare function changeMediaType(type: RCCallIWMediaType): void;
+/**
+ * 设置滤镜
+ * @param filter
+ */
+declare function setBeautyFilter(filter: RCCallIWBeautyFilterType): void;
+/**
+ * 获取当前的滤镜
+ * 默认不传参数
+ */
+declare function getCurrentBeautyFilter(): any;
+/**
+ * 设置美颜参数
+ * @param enable 默认关闭
+ * @param RCCallIWBeautyOption 美颜参数
+ */
+declare function setBeautyOption(enable: boolean | undefined, option: RCCallIWBeautyOption): void;
+/**
+ * 获取当前的美颜参数
+ * 默认不传参数
+ */
+declare function getCurrentBeautyOption(): any;
+/**
+ * 重置美颜参数和滤镜
+ * 默认不传参数
+ */
+declare function resetBeauty(): void;
 
-export { accept, changeMediaType, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, inviteUsers, onCallConnected, onCallDisconnected, onCallOutgoing, onCallReceived, onError, onRemoteUserInvited, onRemoteUserJoined, onRemoteUserLeft, onRemoteUserMediaTypeChanged, onRemoteUserRinging, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
+export { accept, changeMediaType, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentBeautyFilter, getCurrentBeautyOption, getCurrentCallSession, hangup, init, inviteUsers, onCallConnected, onCallDisconnected, onCallOutgoing, onCallReceived, onError, onRemoteUserInvited, onRemoteUserJoined, onRemoteUserLeft, onRemoteUserMediaTypeChanged, onRemoteUserRinging, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, resetBeauty, setBeautyFilter, setBeautyOption, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };

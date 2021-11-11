@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - 54f52e160998a5dbd0dde67929515b5123d1f288
- * Fri Nov 05 2021 16:22:08 GMT+0800 (中国标准时间)
+ * CommitId - def59c22012463c5b10fcae752b5dd691d95e528
+ * Thu Nov 11 2021 10:42:30 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 class Logger {
@@ -340,5 +340,46 @@ function changeMediaType(type) {
     logger.log(`changeMediaType type=>${type}  Platform->${Platform}`);
     call.changeMediaType(type);
 }
+/**
+ * 设置滤镜
+ * @param filter
+ */
+function setBeautyFilter(filter) {
+    logger.log(`setBeautyFilter type=>${filter}  Platform->${Platform}`);
+    call.setBeautyFilter(filter);
+}
+/**
+ * 获取当前的滤镜
+ * 默认不传参数
+ */
+function getCurrentBeautyFilter() {
+    logger.log(`getCurrentBeautyFilter Platform->${Platform}`);
+    return call.getCurrentBeautyFilter();
+}
+/**
+ * 设置美颜参数
+ * @param enable 默认关闭
+ * @param RCCallIWBeautyOption 美颜参数
+ */
+function setBeautyOption(enable = false, option) {
+    logger.log(`setBeautyOption Platform->${Platform}`);
+    call.setBeautyOption(enable, option);
+}
+/**
+ * 获取当前的美颜参数
+ * 默认不传参数
+ */
+function getCurrentBeautyOption() {
+    logger.log(`getCurrentBeautyOption Platform->${Platform}`);
+    return call.getCurrentBeautyOption();
+}
+/**
+ * 重置美颜参数和滤镜
+ * 默认不传参数
+ */
+function resetBeauty() {
+    logger.log(`resetBeauty Platform->${Platform}`);
+    call.resetBeauty();
+}
 
-export { accept, changeMediaType, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentCallSession, hangup, init, inviteUsers, onCallConnected, onCallDisconnected, onCallOutgoing, onCallReceived, onError, onRemoteUserInvited, onRemoteUserJoined, onRemoteUserLeft, onRemoteUserMediaTypeChanged, onRemoteUserRinging, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
+export { accept, changeMediaType, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentBeautyFilter, getCurrentBeautyOption, getCurrentCallSession, hangup, init, inviteUsers, onCallConnected, onCallDisconnected, onCallOutgoing, onCallReceived, onError, onRemoteUserInvited, onRemoteUserJoined, onRemoteUserLeft, onRemoteUserMediaTypeChanged, onRemoteUserRinging, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, resetBeauty, setBeautyFilter, setBeautyOption, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };

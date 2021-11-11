@@ -1,3 +1,4 @@
+//通话异常错误处理
 export const errorDeal = function(code){
 	let tit ='';
 	switch(code){
@@ -57,6 +58,7 @@ export const errorDeal = function(code){
 		
 	}
 }
+//挂断原因错误处理
 export const reasonDeal = function(code){
 	let tit ='';
 	switch(code){
@@ -167,6 +169,7 @@ export const reasonDeal = function(code){
 	}
 	return tit;
 }
+//im连接错误处理
 export const imCode = function (code){
 	let tit = '';
 	switch(code){

@@ -42,3 +42,9 @@ export interface ListenerResultData{
   mediaType?:string
 
 }
+export interface RCCallIWBeautyOption{
+  whitenessLevel:number,
+  smoothLevel:number,
+  ruddyLevel:number,
+  brightLevel:number
+}

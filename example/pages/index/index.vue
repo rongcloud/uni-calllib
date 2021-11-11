@@ -1,5 +1,5 @@
 <template>
-	<view class="content" >
+	<view class="content" @click.sop="">
 		<!-- IM连接 -->
 		<view v-if="!libPage" class="user">
 			<!-- <p>User1</p> -->
@@ -135,18 +135,6 @@
 				</view>
 			</view>
 		</view>
-		<!-- <view class="boxs" v-if="isPermission">
-			<view class="boxs-cen">
-				<view class="boxs-des">
-					是否设置本地相机和麦克风权限？
-				</view>
-				<view class="boxs-btn">
-					<button type="default" @click="setPermission(false)">取消</button>
-					<button type="default" @click="setPermission(false)">确定</button>
-				</view>
-			</view>
-		</view> -->
-		<!-- <mask v-if="showMask"></mask> -->
 	</view>
 </template>
 
@@ -197,14 +185,15 @@
 						label:'音视频'
 					}
 				],
-				targetId:'13811396855',
+				targetId:'13811392222',
 				isRoom:false,
 				groupId:'88888888',
 				userIds:'13811396855',
 				isCut:false,
 				localSession:'',
 				showMask:false,
-				isPermission:false
+				isPermission:false,
+				isBeauty:false
 			}
 		},
 		onLoad() {

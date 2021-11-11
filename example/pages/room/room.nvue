@@ -53,6 +53,9 @@
 		<text class="nav-com" @click="enableSpeaker">
 			{{isEnableSpeaker?'关闭':'开启'}}扬声器
 		</text>
+		<text class="nav-com" v-if="mediaTypeCur === 'video'" @click.stop="isBeauty=!isBeauty">
+			美颜
+		</text>
 	</view>
     <view class="container" :style="{width:windowWidth+'px'}">
 		<text class="hangup" @click="hangup">挂断 </text>
@@ -75,9 +78,67 @@
 			</view>
 		</view>
 	</view>
+	
+	<view class="beauty" 
+		v-if="isBeauty"
+		:style="{width:windowWidth+'px'}"
+	>
+		<view class="beauty-btn">
+			<view class="change-btn">
+				<text class="ch-tit">美颜</text><switch :checked="isChecked" @change="switchChange" />
+				<text class="ch-res">重置</text>
+			</view>
+			<text class="close-btn" @click="isBeauty=false">关闭</text>
+			<!-- <switch @change="switch2Change" /> -->
+		</view>
+		<view class="beauty-view">
+			<view v-if="curIndex === '0'" class="beauty-tab filte-view">
+				<view 
+					class="tab-item"
+					v-for="(item) in filteArr"
+					:key="item.id" 
+					@click="cutFilte(item.id)"
+					:class = "{current: item.id === curFilte}"
+				>
+					<text>{{item.name}}</text> 
+				</view>
+			</view>
+			<!-- 美白 -->
+			<view v-if="curIndex === '1'" class="white-view">
+				<view>
+				    <slider :value="whiteVal" min="0" max="9" @change="whiteChange" show-value />
+				</view>
+			</view>
+			<!-- 红润 -->
+			<view v-if="curIndex === '2'" class="ruddy-view">
+				<slider :value="ruddyVal" min="0" max="9" @change="ruddyChange" show-value />
+			</view>
+			<!-- 磨皮 -->
+			<view v-if="curIndex === '3'" class="buffing-view">
+				<slider :value="buffingVal" min="0" max="9" @change="buffingChange" show-value />
+			</view>
+			<!-- 亮度 -->
+			<view v-if="curIndex === '4'" class="brightness-view">
+				<slider :value="brightnessVal" min="0" max="9" @change="brightnessChange" show-value />
+			</view>
+		</view>
+		<view class="beauty-tab">
+			<view 
+				class="tab-item" 
+				v-for="(item) in tabArr" 
+				:key="item.id" 
+				@click="curIndex = item.id"
+				:class = "{current: item.id === curIndex}"
+			>
+				<text>{{item.text}}</text> 
+			</view>
+		</view>
+	</view>
+	
   </view>
 </template>
 <script>
+  // import * as call from "@rongcloud/calllib-uni"
   import * as call from "@rongcloud/calllib-uni"
   export default {
     data() {
@@ -104,7 +165,55 @@
 		currentCallSession:{},
 		isMark:false,
 		inviteUsersIds:'',
-		mediaTypeCur:'audio'
+		mediaTypeCur:'audio',
+		isBeauty:false,
+		tabArr:[
+			{
+				id:'0',
+				text:'滤镜'
+			},
+			{
+				id:'1',
+				text:'美白'
+			},
+			{
+				id:'2',
+				text:'红润'
+			},
+			{
+				id:'3',
+				text:'磨皮'
+			},
+			{
+				id:'4',
+				text:'亮度'
+			},
+		],
+		filteArr:[
+			{
+				id:'0',
+				name:'原画'
+			},
+			{
+				id:'1',
+				name:'唯美'
+			},
+			{
+				id:'2',
+				name:'清新'
+			},
+			{
+				id:'3',
+				name:'浪漫'
+			}
+		],
+		curIndex:'0',
+		curFilte:'0',
+		whiteVal:0,
+		ruddyVal:0,
+		buffingVal:0,
+		brightnessVal:5,
+		isChecked:false
       }
     },
     onLoad: function() {
@@ -157,6 +266,9 @@
 		}
 	},
     methods: {
+		ceshi(){
+			console.log('父')
+		},
 	  changeMediaType(){
 		this.mediaTypeCur = 'audio';  
 		call.changeMediaType(0);  
@@ -334,7 +446,51 @@
 			  	delta:1
 			  })
 		  }
-      }
+      },
+	  //美颜开关
+	  switchChange(){
+		this.isChecked = !this.isChecked;
+		this.setBeautyOption();
+	  },
+	  //设置美颜
+	  setBeautyOption(){
+		let option = {
+			whitenessLevel:this.whiteVal,
+			ruddyLevel:this.ruddyVal,
+			smoothLevel:this.buffingVal,
+			brightLevel:this.brightnessVal
+		}
+		console.log(call)
+		console.log(this.isChecked)
+		console.log(option)
+		call.setBeautyOption(this.isChecked,option);
+	  },
+	  //美白
+	  whiteChange(e){
+		this.whiteVal = e.detail.value;
+		this.setBeautyOption();
+	  },
+	  //红润
+	  ruddyValChange(e){
+		this.ruddyVal = e.detail.value;
+		this.setBeautyOption();
+	  },
+	  //磨皮
+	  buffingValChange(e){
+	  	this.buffingVal = e.detail.value;
+		this.setBeautyOption();
+	  },
+	  //亮度
+	  brightnessChange(e){
+	  	this.brightnessVal = e.detail.value;
+		this.setBeautyOption();
+	  },
+	  //切换滤镜
+	  cutFilte(id){
+		  console.log(id)
+		  this.curFilte = id;
+		  call.setBeautyFilter(Number(this.curFilte));
+	  }
     }
   }
 </script>
@@ -466,6 +622,80 @@
 	  padding: 0 30upx;
   }
   .box-btn{
-	  padding:0 20upx;
+	padding:0 20upx;
+  }
+  .beauty{
+	height: 500upx;
+	position: fixed;
+	bottom: 0;
+	background: #000;
+  }
+  .beauty-btn{
+	  height: 100upx;
+	  /* padding-top:20upx; */
+	  padding-right: 20upx;
+	  flex-direction: row;
+	  justify-content: space-between;
+	  background: pink;
+  }
+  .change-btn{
+	  padding-top:20upx;
+	  flex-direction: row;
+	  /* justify-content: space-between; */
+  }
+  .ch-tit{
+	margin-top: 8upx;
+	color: #fff;
+  }
+  .ch-res{
+	  margin-top: -10upx;
+	  margin-left: 20upx;
+	  color: #fff;
+	  padding:15upx;
+	  border-radius: 10upx;
+	  justify-content: center;
+	  align-items: center;
+	  background: #000;
+  }
+  .close-btn{
+	  padding: 15upx;
+	  /* padding: 20upx; */
+	  background: rgba(255,255,255,.5);
+	  border-radius: 10upx;
+  }
+  .beauty-view{
+	  flex: 1;
+	  background: #ccc;
+  }
+  
+  .beauty-tab{
+	  padding: 0 20upx;
+  	  flex: 1;
+  	  background: pink;
+	  flex-direction: row;
+	  justify-content: space-between;
+	  padding-top: 40upx;
+  }
+  .filte-view{
+	  /* padding-top: 40upx; */
+  	  background: #ccc;
+  }
+  .tab-item{
+	  /* flex: 1; */
+	  width: 100upx;
+	  height: 100upx;
+	  border:1px;
+	  border-color: #000000;
+	  /* padding-right: 20upx; */
+	  /* width: 100upx; */
+	  justify-content: center;
+	  align-items: center;
+  }
+  .current{
+	  background: yellow;
+  }
+  .white-view{
+	 /* justify-content: center;
+	  align-items: center; */
   }
 </style>

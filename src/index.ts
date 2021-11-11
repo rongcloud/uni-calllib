@@ -5,12 +5,14 @@ import {
 	ListenerResultRes,
    usersParams,
    ListenerResultData,
-   ListenerResultError
+   ListenerResultError,
+   RCCallIWBeautyOption
 } 
 from './types';
 import {
    RCCallIWCamera,
-   RCCallIWMediaType
+   RCCallIWMediaType,
+   RCCallIWBeautyFilterType
  } 
 from './enum';
 import logger from './logger'
@@ -346,4 +348,46 @@ export function enableCamera(isOpen:boolean,camera:RCCallIWCamera){
 export function changeMediaType(type:RCCallIWMediaType){
    logger.log(`changeMediaType type=>${type}  Platform->${Platform}`)
    call.changeMediaType(type);
+}
+/**
+ * 设置滤镜
+ * @param filter 
+ */
+ export function setBeautyFilter(filter:RCCallIWBeautyFilterType){
+   logger.log(`setBeautyFilter type=>${filter}  Platform->${Platform}`)
+   call.setBeautyFilter(filter);
+}
+/**
+ * 获取当前的滤镜
+ * 默认不传参数
+ */
+ export function getCurrentBeautyFilter(){
+   logger.log(`getCurrentBeautyFilter Platform->${Platform}`)
+   return call.getCurrentBeautyFilter();
+}
+/**
+ * 设置美颜参数
+ * @param enable 默认关闭 
+ * @param RCCallIWBeautyOption 美颜参数 
+ */
+ export function setBeautyOption(enable:boolean = false,option:RCCallIWBeautyOption){
+   logger.log(`setBeautyOption Platform->${Platform}`)
+   call.setBeautyOption(enable,option);
+}
+
+/**
+ * 获取当前的美颜参数
+ * 默认不传参数
+ */
+ export function getCurrentBeautyOption(){
+   logger.log(`getCurrentBeautyOption Platform->${Platform}`)
+   return call.getCurrentBeautyOption();
+}
+/**
+ * 重置美颜参数和滤镜
+ * 默认不传参数
+ */
+ export function resetBeauty(){
+   logger.log(`resetBeauty Platform->${Platform}`)
+   call.resetBeauty();
 }

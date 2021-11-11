@@ -173,3 +173,10 @@ export enum RCCallIWCallDisconnectedReason{
   // im ipc服务已断开
   SERVICE_DISCONNECTED = 33
 }
+export enum RCCallIWBeautyFilterType {
+  NONE = 0,
+  ESTHETIC = 1,
+  FRESH = 2,
+  ROMANTIC = 3 
+
+}
