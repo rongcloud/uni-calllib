@@ -1,7 +1,7 @@
 /*
  * RCCallUni - v0.0.1-alpha.5
- * CommitId - def59c22012463c5b10fcae752b5dd691d95e528
- * Thu Nov 11 2021 10:42:30 GMT+0800 (中国标准时间)
+ * CommitId - 401efdbb552ab94047e79269498a0168a9aad57e
+ * Fri Nov 12 2021 17:17:09 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 declare enum RCCallIWCamera {

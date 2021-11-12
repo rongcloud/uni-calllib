@@ -457,8 +457,10 @@
 		if(!this.isChecked){
 			// console.log('res')
 			this.reset();
+		}else{
+			this.setBeautyOption();
 		}
-		this.setBeautyOption();
+		
 	  },
 	  //设置美颜
 	  setBeautyOption(){
@@ -474,8 +476,7 @@
 	  },
 	  //切换滤镜
 	  cutFilte(id){
-		//打开美颜
-		// this.isChecked = true;
+		//切换滤镜打开美颜
 		if(!this.isChecked){
 			this.isChecked = true;
 		}
@@ -487,6 +488,7 @@
 	  //美白
 	  whiteChange(e){
 		console.log('美白',e.detail.value);
+		//打开美颜
 		if(!this.isChecked){
 			this.isChecked = true;
 		}
@@ -496,6 +498,7 @@
 	  //红润
 	  ruddyChange(e){
 		console.log('红润',e.detail.value);
+		//打开美颜
 		if(!this.isChecked){
 			this.isChecked = true;
 		}
@@ -505,6 +508,7 @@
 	  //磨皮
 	  buffingChange(e){
 		console.log('磨皮',e.detail.value);
+		//打开美颜
 		if(!this.isChecked){
 			this.isChecked = true;
 		}
@@ -514,6 +518,7 @@
 	  //亮度
 	  brightnessChange(e){
 		console.log('亮度',e.detail.value);
+		//打开美颜
 		if(!this.isChecked){
 			this.isChecked = true;
 		}
@@ -527,16 +532,17 @@
 	  },
 	  initBeautyOpton(){
 		  //初始化滤镜
-		  setTimeout(()=>{
-			  this.curFilte = call.getCurrentBeautyFilter();
-			  //初始化美颜参数
-			  let beautyOption = call.getCurrentBeautyOption();
-			  console.log(beautyOption)
-			  this.whiteVal = beautyOption.whitenessLevel;
-			  this.ruddyVal= beautyOption.ruddyLevel;
-			  this.buffingVal = beautyOption.smoothLevel;
-			  this.brightnessVal=beautyOption.brightLevel;
-		  },200)
+		  // setTimeout(()=>{
+		  console.log(111111111111)
+		  this.curFilte = call.getCurrentBeautyFilter();
+		  //初始化美颜参数
+		  let beautyOption = call.getCurrentBeautyOption();
+		  console.log(beautyOption)
+		  this.whiteVal = beautyOption.whitenessLevel;
+		  this.ruddyVal= beautyOption.ruddyLevel;
+		  this.buffingVal = beautyOption.smoothLevel;
+		  this.brightnessVal=beautyOption.brightLevel;
+		  // },200)
 		  
 		  // },200)
 		  
