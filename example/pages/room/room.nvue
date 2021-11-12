@@ -87,11 +87,12 @@
 	>
 		<view class="beauty-btn">
 			<view class="change-btn">
-				<text class="ch-tit">美颜</text><switch :checked="isChecked" @change="switchChange" />
+				<text class="ch-tit">美颜</text><text class="switch-btn" @click="switchChange">{{isChecked?'开启':'关闭'}}</text>
+				<!-- <switch :checked="isChecked" @change="switchChange" /> -->
 				<!-- <text class="ch-res" @click="reset">重置</text> -->
 			</view>
 			<view class="close-btn">
-				<text class="close-tit" @click="isBeauty=false">关闭</text>
+				<text class="close-tit" @click="isBeauty=false">X</text>
 			</view>
 		</view>
 		<view class="beauty-view">
@@ -449,18 +450,25 @@
 		  }
       },
 	  //美颜开关
-	  switchChange(e){
-		  console.log(e)
-		  this.isChecked = e.detail.value;
-		// this.isChecked = !this.isChecked;
-		// console.log(e)
-		if(!this.isChecked){
-			// console.log('res')
-			this.reset();
-		}else{
-			this.setBeautyOption();
-		}
+	 //  switchChange(e){
+		//   this.isChecked = e.detail.value;
+		// // this.isChecked = !this.isChecked;
+		// // console.log(e)
+		// if(!this.isChecked){
+		// 	// console.log('res')
+		// 	this.reset();
+		// }else{
+		// 	this.setBeautyOption();
+		// }
 		
+	 //  },
+	  switchChange(){
+		 this.isChecked = !this.isChecked;
+		 if(!this.isChecked){
+			 this.reset();
+		 }else{
+			 this.setBeautyOption();
+		 }
 	  },
 	  //设置美颜
 	  setBeautyOption(){
@@ -471,6 +479,7 @@
 			brightLevel:this.brightnessVal
 		}
 		if(this.isChecked){//开启
+			console.log('设置美颜')
 			call.setBeautyOption(this.isChecked,option);
 		}
 	  },
@@ -480,9 +489,15 @@
 		if(!this.isChecked){
 			this.isChecked = true;
 		}
-		// this.setBeautyOption();
+		let option = {
+			whitenessLevel:this.whiteVal,
+			ruddyLevel:this.ruddyVal,
+			smoothLevel:this.buffingVal,
+			brightLevel:this.brightnessVal
+		}
 		//打开滤镜
 		this.curFilte = id;
+		this.isChecked?call.setBeautyOption(this.isChecked,option):'';
 		call.setBeautyFilter(this.curFilte);
 	  },
 	  //美白
@@ -533,11 +548,9 @@
 	  initBeautyOpton(){
 		  //初始化滤镜
 		  // setTimeout(()=>{
-		  console.log(111111111111)
 		  this.curFilte = call.getCurrentBeautyFilter();
 		  //初始化美颜参数
 		  let beautyOption = call.getCurrentBeautyOption();
-		  console.log(beautyOption)
 		  this.whiteVal = beautyOption.whitenessLevel;
 		  this.ruddyVal= beautyOption.ruddyLevel;
 		  this.buffingVal = beautyOption.smoothLevel;
@@ -699,6 +712,15 @@
 	  flex-direction: row;
 	  /* justify-content: space-between; */
   }
+  .switch-btn{
+	  border: 1upx;
+	  border-color: #fff;
+	  padding: 20upx;
+	  background: blue;
+	  color: #fff;
+	  margin-left: 20upx;
+	  margin-top: -10upx;
+  }
   .ch-tit{
 	margin-top: 8upx;
 	color: #fff;
@@ -718,6 +740,7 @@
   }
   .close-tit{
 	   color: #fff;
+	   /* font-size: 20upx; */
   }
   .beauty-view{
 	  flex: 1;

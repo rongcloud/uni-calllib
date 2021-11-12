@@ -154,7 +154,7 @@
 				isInitIm: false,
 				form:{
 					appkey:'c9kqb3rdkbb8j',
-					token:'Vkafr5qiuToYHDO1aR8Cav+f0IjfzRkyUpTVecImFcPNrpMY6GzeSz/4+vc27/gmLkdUk0mUaL1lzb59dLb8/WYaUf7+nBJ+',
+					token:'fBsTKu1WSiANi7pTWnHRyf+f0IjfzRkyUpTVecImFcPNrpMY6GzeS/sRCrHjCiQD+FKPw5HyKn95+fgPzxzcLgS1YXhQ15eZ',
 					navi:'https://nav-ucqa.rongcloud.net',
 					mediaServer:''
 				},
