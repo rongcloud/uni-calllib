@@ -88,7 +88,7 @@
 		<view class="beauty-btn">
 			<view class="change-btn">
 				<text class="ch-tit">美颜</text><switch :checked="isChecked" @change="switchChange" />
-				<text class="ch-res" @click="reset">重置</text>
+				<!-- <text class="ch-res" @click="reset">重置</text> -->
 			</view>
 			<view class="close-btn">
 				<text class="close-tit" @click="isBeauty=false">关闭</text>
@@ -268,9 +268,6 @@
 		}
 	},
     methods: {
-		ceshi(){
-			console.log('父')
-		},
 	  changeMediaType(){
 		this.mediaTypeCur = 'audio';  
 		call.changeMediaType(0);  
@@ -348,6 +345,8 @@
 	  },
       hangup() {
 		this.isSelf = true;
+		console.log('12321332')
+		call.resetBeauty();
         call.hangup();
 		uni.navigateBack({
 			delta:1
@@ -450,8 +449,15 @@
 		  }
       },
 	  //美颜开关
-	  switchChange(){
-		this.isChecked = !this.isChecked;
+	  switchChange(e){
+		  console.log(e)
+		  this.isChecked = e.detail.value;
+		// this.isChecked = !this.isChecked;
+		// console.log(e)
+		if(!this.isChecked){
+			// console.log('res')
+			this.reset();
+		}
 		this.setBeautyOption();
 	  },
 	  //设置美颜
@@ -462,36 +468,55 @@
 			smoothLevel:this.buffingVal,
 			brightLevel:this.brightnessVal
 		}
-		// if(this.isChecked){
-		call.setBeautyOption(this.isChecked,option);
-		// }
+		if(this.isChecked){//开启
+			call.setBeautyOption(this.isChecked,option);
+		}
 	  },
 	  //切换滤镜
 	  cutFilte(id){
+		//打开美颜
+		// this.isChecked = true;
+		if(!this.isChecked){
+			this.isChecked = true;
+		}
+		// this.setBeautyOption();
+		//打开滤镜
 		this.curFilte = id;
 		call.setBeautyFilter(this.curFilte);
 	  },
 	  //美白
 	  whiteChange(e){
 		console.log('美白',e.detail.value);
+		if(!this.isChecked){
+			this.isChecked = true;
+		}
 		this.whiteVal = e.detail.value;
 		this.setBeautyOption();
 	  },
 	  //红润
 	  ruddyChange(e){
 		console.log('红润',e.detail.value);
+		if(!this.isChecked){
+			this.isChecked = true;
+		}
 		this.ruddyVal = e.detail.value;
 		this.setBeautyOption();
 	  },
 	  //磨皮
 	  buffingChange(e){
 		console.log('磨皮',e.detail.value);
+		if(!this.isChecked){
+			this.isChecked = true;
+		}
 	  	this.buffingVal = e.detail.value;
 		this.setBeautyOption();
 	  },
 	  //亮度
 	  brightnessChange(e){
 		console.log('亮度',e.detail.value);
+		if(!this.isChecked){
+			this.isChecked = true;
+		}
 	  	this.brightnessVal = e.detail.value;
 		this.setBeautyOption();
 	  },
@@ -502,14 +527,18 @@
 	  },
 	  initBeautyOpton(){
 		  //初始化滤镜
-		  // console.log(call.getCurrentBeautyFilter())
-		  this.curFilte = call.getCurrentBeautyFilter();
-		  //初始化美颜参数
-		  let beautyOption = call.getCurrentBeautyOption();
-		  this.whiteVal = beautyOption.whitenessLevel;
-		  this.ruddyVal= beautyOption.ruddyLevel;
-		  this.buffingVal = beautyOption.smoothLevel;
-		  this.brightnessVal=beautyOption.brightLevel;
+		  setTimeout(()=>{
+			  this.curFilte = call.getCurrentBeautyFilter();
+			  //初始化美颜参数
+			  let beautyOption = call.getCurrentBeautyOption();
+			  console.log(beautyOption)
+			  this.whiteVal = beautyOption.whitenessLevel;
+			  this.ruddyVal= beautyOption.ruddyLevel;
+			  this.buffingVal = beautyOption.smoothLevel;
+			  this.brightnessVal=beautyOption.brightLevel;
+		  },200)
+		  
+		  // },200)
 		  
 	  }
     }

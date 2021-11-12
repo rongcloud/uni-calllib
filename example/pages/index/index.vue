@@ -154,7 +154,7 @@
 				isInitIm: false,
 				form:{
 					appkey:'c9kqb3rdkbb8j',
-					token:'fBsTKu1WSiANi7pTWnHRyf+f0IjfzRkyUpTVecImFcPNrpMY6GzeS/sRCrHjCiQD+FKPw5HyKn95+fgPzxzcLgS1YXhQ15eZ',
+					token:'Vkafr5qiuToYHDO1aR8Cav+f0IjfzRkyUpTVecImFcPNrpMY6GzeSz/4+vc27/gmLkdUk0mUaL1lzb59dLb8/WYaUf7+nBJ+',
 					navi:'https://nav-ucqa.rongcloud.net',
 					mediaServer:''
 				},
@@ -185,7 +185,7 @@
 						label:'音视频'
 					}
 				],
-				targetId:'13811392222',
+				targetId:'13811396855',
 				isRoom:false,
 				groupId:'88888888',
 				userIds:'13811396855',
@@ -265,15 +265,15 @@
 			})
 			// call.removeRemoteUserLeftListener()
 			// console.log(call)
-			uni.getStorage({
-				key:"login-params",
-				success:(res)=>{
-					console.log(res)
-					this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
-					this.form.token = res.data&&res.data.token?res.data.token:'';
-					this.form.navi = res.data&&res.data.navi?res.data.navi:'';
-				}
-			})
+			// uni.getStorage({
+			// 	key:"login-params",
+			// 	success:(res)=>{
+			// 		console.log(res)
+			// 		this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
+			// 		this.form.token = res.data&&res.data.token?res.data.token:'';
+			// 		this.form.navi = res.data&&res.data.navi?res.data.navi:'';
+			// 	}
+			// })
 		},
 		onUnload:function(){
 			this.removeAllListeners();
