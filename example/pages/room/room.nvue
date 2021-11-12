@@ -65,6 +65,7 @@
 		class="box-mark" 
 		v-if="isMark"
 		:style="{width:windowWidth+'px',height:windowHeight+'px'}"
+		@click.stop=""
 	>
 		<view class="box-cen">
 			<text class="box-des">被邀请者ID:</text>
@@ -82,14 +83,16 @@
 	<view class="beauty" 
 		v-if="isBeauty"
 		:style="{width:windowWidth+'px'}"
+		@click.stop=""
 	>
 		<view class="beauty-btn">
 			<view class="change-btn">
 				<text class="ch-tit">美颜</text><switch :checked="isChecked" @change="switchChange" />
 				<text class="ch-res" @click="reset">重置</text>
 			</view>
-			<text class="close-btn" @click="isBeauty=false">关闭</text>
-			<!-- <switch @change="switch2Change" /> -->
+			<view class="close-btn">
+				<text class="close-tit" @click="isBeauty=false">关闭</text>
+			</view>
 		</view>
 		<view class="beauty-view">
 			<view v-if="curIndex === '0'" class="beauty-tab filte-view">
@@ -104,21 +107,19 @@
 				</view>
 			</view>
 			<!-- 美白 -->
-			<view v-if="curIndex === '1'" class="white-view">
-				<view>
-				    <slider :value="whiteVal" min="0" max="9" @change="whiteChange" show-value />
-				</view>
+			<view v-if="curIndex === '1'" class="white-view com-view">
+				<slider :value="whiteVal" min="0" max="9" @change="whiteChange" show-value />
 			</view>
 			<!-- 红润 -->
-			<view v-if="curIndex === '2'" class="ruddy-view">
+			<view v-if="curIndex === '2'" class="ruddy-view com-view">
 				<slider :value="ruddyVal" min="0" max="9" @change="ruddyChange" show-value />
 			</view>
 			<!-- 磨皮 -->
-			<view v-if="curIndex === '3'" class="buffing-view">
+			<view v-if="curIndex === '3'" class="buffing-view com-view">
 				<slider :value="buffingVal" min="0" max="9" @change="buffingChange" show-value />
 			</view>
 			<!-- 亮度 -->
-			<view v-if="curIndex === '4'" class="brightness-view">
+			<view v-if="curIndex === '4'" class="brightness-view com-view">
 				<slider :value="brightnessVal" min="0" max="9" @change="brightnessChange" show-value />
 			</view>
 		</view>
@@ -191,24 +192,24 @@
 		],
 		filteArr:[
 			{
-				id:'0',
+				id:0,
 				name:'原画'
 			},
 			{
-				id:'1',
+				id:1,
 				name:'唯美'
 			},
 			{
-				id:'2',
+				id:2,
 				name:'清新'
 			},
 			{
-				id:'3',
+				id:3,
 				name:'浪漫'
 			}
 		],
 		curIndex:'0',
-		curFilte:'0',
+		curFilte:0,
 		whiteVal:0,
 		ruddyVal:0,
 		buffingVal:0,
@@ -244,10 +245,7 @@
 	  })
 	  uni.$on('OnCallConnected',this.onCallConnected)
 	  uni.$on('OnCallDisconnected',this.onCallDisconnected)
-	  console.log('获取当前滤镜')
-	  console.log(call.getCurrentBeautyFilter());
-	  console.log('获取当前美颜参数')
-	  console.log(call.getCurrentBeautyOption())
+	  this.initBeautyOpton();
     },
 	beforeDestroy(){
 		uni.$off('OnCallDisconnected');
@@ -464,20 +462,24 @@
 			smoothLevel:this.buffingVal,
 			brightLevel:this.brightnessVal
 		}
-		// console.log(call)
-		// console.log(this.isChecked)
-		console.log(option)
+		// if(this.isChecked){
 		call.setBeautyOption(this.isChecked,option);
+		// }
+	  },
+	  //切换滤镜
+	  cutFilte(id){
+		this.curFilte = id;
+		call.setBeautyFilter(this.curFilte);
 	  },
 	  //美白
 	  whiteChange(e){
-		  console.log('美白',e.detail.value);
+		console.log('美白',e.detail.value);
 		this.whiteVal = e.detail.value;
 		this.setBeautyOption();
 	  },
 	  //红润
 	  ruddyChange(e){
-		  console.log('红润',e.detail.value);
+		console.log('红润',e.detail.value);
 		this.ruddyVal = e.detail.value;
 		this.setBeautyOption();
 	  },
@@ -489,22 +491,26 @@
 	  },
 	  //亮度
 	  brightnessChange(e){
-		  console.log('亮度',e.detail.value);
+		console.log('亮度',e.detail.value);
 	  	this.brightnessVal = e.detail.value;
 		this.setBeautyOption();
 	  },
-	  //切换滤镜
-	  cutFilte(id){
-		  console.log(id)
-		  this.curFilte = id;
-		  call.setBeautyFilter(Number(this.curFilte));
-	  },
+	  //重置
 	  reset(){
-		  call.resetBeauty();
-		  console.log('获取当前滤镜')
-		  console.log(call.getCurrentBeautyFilter());
-		  console.log('获取当前美颜参数')
-		  console.log(call.getCurrentBeautyOption())
+		call.resetBeauty();
+		this.initBeautyOpton();
+	  },
+	  initBeautyOpton(){
+		  //初始化滤镜
+		  // console.log(call.getCurrentBeautyFilter())
+		  this.curFilte = call.getCurrentBeautyFilter();
+		  //初始化美颜参数
+		  let beautyOption = call.getCurrentBeautyOption();
+		  this.whiteVal = beautyOption.whitenessLevel;
+		  this.ruddyVal= beautyOption.ruddyLevel;
+		  this.buffingVal = beautyOption.smoothLevel;
+		  this.brightnessVal=beautyOption.brightLevel;
+		  
 	  }
     }
   }
@@ -651,7 +657,7 @@
 	  padding-right: 20upx;
 	  flex-direction: row;
 	  justify-content: space-between;
-	  background: pink;
+	  /* background: pink; */
   }
   .change-btn{
 	  padding-top:20upx;
@@ -666,34 +672,44 @@
 	  margin-top: -10upx;
 	  margin-left: 20upx;
 	  color: #fff;
-	  padding:15upx;
+	  padding:20upx;
 	  border-radius: 10upx;
 	  justify-content: center;
 	  align-items: center;
-	  background: #000;
+	  background: #4e6ef2;
   }
   .close-btn{
-	  padding: 15upx;
-	  /* padding: 20upx; */
-	  background: rgba(255,255,255,.5);
-	  border-radius: 10upx;
+	padding-top:20upx;
+  }
+  .close-tit{
+	   color: #fff;
   }
   .beauty-view{
 	  flex: 1;
 	  background: #ccc;
   }
-  
+  .com-view{
+	 /* border-top:1upx;
+	  border-top-color: #fff; */
+	  padding-top: 40upx;
+	  background: #ccc;
+	  padding-left: 30upx;
+	  padding-right: 30upx;
+	  
+  }
   .beauty-tab{
+	  border-top:1px;
+	  border-top-color: #000000;
 	  padding: 0 20upx;
   	  flex: 1;
-  	  background: pink;
+  	  background: #fff;
 	  flex-direction: row;
 	  justify-content: space-between;
 	  padding-top: 40upx;
   }
   .filte-view{
 	  /* padding-top: 40upx; */
-  	  background: #ccc;
+  	  /* background: #ccc; */
   }
   .tab-item{
 	  /* flex: 1; */
