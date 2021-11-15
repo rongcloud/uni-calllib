@@ -14,7 +14,7 @@
         "dev": "node scripts/release.dev && cd release/npm && npm link",
         "release": "node scripts/release.prod",
         "release:dev": "node scripts/release.dev",
-        "doc": "typedoc src/index.ts --out ./docs --readme ./apidoc-cover.md"
+        "doc": "npx typedoc src/index.ts"
     },
     "repository": {
         "type": "git"
