@@ -342,7 +342,7 @@
 	  },
 	  enableSpeaker(){
 		  this.isEnableSpeaker = !this.isEnableSpeaker;
-		  call.enableSpeaker(this.enableSpeaker);
+		  call.enableSpeaker(this.isEnableSpeaker);
 	  },
       hangup() {
 		this.isSelf = true;

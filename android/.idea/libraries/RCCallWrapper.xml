@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="RCCallWrapper">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/RCUniCall/libs/RCCallWrapper.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

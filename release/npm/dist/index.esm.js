@@ -1,7 +1,7 @@
 /*
- * RCCallUni - v0.0.1-alpha.5
- * CommitId - 401efdbb552ab94047e79269498a0168a9aad57e
- * Fri Nov 12 2021 17:17:09 GMT+0800 (中国标准时间)
+ * RCCallUni - v0.0.1-alpha.12
+ * CommitId - 9984a0fd2a8203a0c7d47c6e6016ffefe0af8828
+ * Fri Nov 12 2021 14:37:23 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 class Logger {
