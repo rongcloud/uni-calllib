@@ -7,19 +7,12 @@
 			:style="{width:windowWidth+'px',height:windowHeight+'px'}"
 			ref="bigVideoView">
 		</RongCloud-Call-RCUniCallView>
-		<!-- @click="switchVideo" -->
 		<RongCloud-Call-RCUniCallView
 			class="smallVideoView"
 			:style="{width:200+'upx',height:200+'upx'}"
 			ref="smallVideoView"
 		>
 		</RongCloud-Call-RCUniCallView>
-		<!-- <RongCloud-Call-RCUniCallView
-			v-for="(item,index) in viewArr" 
-			:key="item.userId"
-			class="smallVideoView"
-			:ref="item.userId">
-		</RongCloud-Call-RCUniCallView> -->
 	</view>
 	<!-- 多人视频 -->
 	<view v-else>
@@ -88,8 +81,6 @@
 		<view class="beauty-btn">
 			<view class="change-btn">
 				<text class="ch-tit">美颜</text><text class="switch-btn" @click="switchChange">{{isChecked?'开启':'关闭'}}</text>
-				<!-- <switch :checked="isChecked" @change="switchChange" /> -->
-				<!-- <text class="ch-res" @click="reset">重置</text> -->
 			</view>
 			<view class="close-btn">
 				<text class="close-tit" @click="isBeauty=false">X</text>
@@ -140,7 +131,6 @@
   </view>
 </template>
 <script>
-  // import * as call from "@rongcloud/calllib-uni"
   import * as call from "@rongcloud/calllib-uni"
   export default {
     data() {
@@ -225,7 +215,6 @@
 			success: (res) => {
 				this.mediaType = res.data.mediaType;
 				this.callType = res.data.callType?res.data.callType:'in';
-				// this.callSelect = res.data.callSelect;
 				this.groupId = res.data.groupId?res.data.groupId:'';
 				this.userIds = res.data.userIds?res.data.userIds:'';
 				if (this.callType === 'out') {
@@ -253,14 +242,7 @@
 		uni.$off('OnCallConnected');
 	},
     onUnload() {
-   //    const session = call.getCurrentCallSession();
-	  // console.log(session)
-	  // console.log('2222')
 	  call.hangup();
-    //   if (session) {
-		  // console.log('1111111')
-		  // call.hangup();
-    //   }
     },
 	onHide(){
 	    const session = call.getCurrentCallSession();
@@ -301,8 +283,6 @@
 			    case 'ios':
 					call.setVideoView(session.targetId, this.$refs.bigVideoView.ref, 0);
 					call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
-				   // call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
-			    //    call.setVideoView(this.targetId, this.$refs.smallVideoView.ref, 0);
 			       break;
 			    default:
 			       console.log('运行在开发者工具上')
@@ -352,8 +332,6 @@
 		uni.navigateBack({
 			delta:1
 		})
-		//挂断返回上一级
-		// uni.navigateBack();
       },
       accept() {
 		  call.accept();
@@ -366,13 +344,10 @@
 			call.startSingleCall(this.targetId, type, null);
 			this.currentCallSession = call.getCurrentCallSession();
 			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
-			// call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
-			// this.currentCallSession = session;
 		  }else{
 			  call.startGroupCall(this.groupId, this.userIds,[] , type, '');
 			  this.currentCallSession = call.getCurrentCallSession();
 			  this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
-			  // this.currentCallSession = session;
 		  }
 		  this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
       },
@@ -380,9 +355,7 @@
 		  let context = this;
 		  console.log('oncallconnected接收了');
 		  this.mediaTypeCur = this.mediaType;
-        // if (this.mediaType === 'video') {
 			call.enableSpeaker(true);
-			// let session = call.getCurrentCallSession();
 			this.currentCallSession = call.getCurrentCallSession();
 			this.callWay = this.currentCallSession.callType;
 			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
@@ -400,13 +373,10 @@
 						this.viewArr = this.currentCallSession.users.filter((item)=>{
 							return item.userId !== this.currentCallSession.mine.userId;
 						});
-						// this.$nextTick(()=>{
-						// setTimeout(()=>{
 							this.viewArr.forEach((itm)=>{
 								this.targetId = itm.userId;
 								this.systemInfoSync(itm.userId,this.$refs.bigVideoView.ref,false);
 							});
-						// },100);
 					},100);
 					
 				}else{
@@ -424,11 +394,8 @@
 					})
 				}
 			}
-		// }
-        // this.isConnected = true;
       },
 	  systemInfoSync(userId,ref,isZOrderOnTop){
-		  // call.setVideoView(userId, ref, 0,isZOrderOnTop,systemInfo);
 		  switch(uni.getSystemInfoSync().platform){
 		  	case 'android':
 		  		call.setVideoView(userId, ref, 0,isZOrderOnTop);
@@ -449,19 +416,6 @@
 			  })
 		  }
       },
-	  //美颜开关
-	 //  switchChange(e){
-		//   this.isChecked = e.detail.value;
-		// // this.isChecked = !this.isChecked;
-		// // console.log(e)
-		// if(!this.isChecked){
-		// 	// console.log('res')
-		// 	this.reset();
-		// }else{
-		// 	this.setBeautyOption();
-		// }
-		
-	 //  },
 	  switchChange(){
 		 this.isChecked = !this.isChecked;
 		 if(!this.isChecked){
@@ -547,7 +501,6 @@
 	  },
 	  initBeautyOpton(){
 		  //初始化滤镜
-		  // setTimeout(()=>{
 		  this.curFilte = call.getCurrentBeautyFilter();
 		  //初始化美颜参数
 		  let beautyOption = call.getCurrentBeautyOption();
@@ -555,10 +508,6 @@
 		  this.ruddyVal= beautyOption.ruddyLevel;
 		  this.buffingVal = beautyOption.smoothLevel;
 		  this.brightnessVal=beautyOption.brightLevel;
-		  // },200)
-		  
-		  // },200)
-		  
 	  }
     }
   }
@@ -569,11 +518,8 @@
     flex: 1;
 	flex-direction: column;
     position: relative;
-	/* background: pink; */
   }
   .bigVideoView{
-	  /* flex: 1; */
-	  /* background: blue; */
 	  background: #000;
   }
   .smallVideoView{
@@ -582,7 +528,6 @@
 	  top: 50upx;
 	  width: 200upx;
 	  height: 200upx;
-	  /* background: pink; */
   }
   .smallViews{
 	  flex-wrap: wrap;
@@ -599,36 +544,27 @@
 	  position: absolute;
 	  bottom: 20upx;
 	  height: 100upx;
-	  /* background: red; */
 	  flex-direction: row;
 	  justify-content: center;
-	  /* justify-content: space-between; */
-	  /* padding-left: 20upx; */
-	  /* padding-right: 20upx; */
-	  /* justify-content: space-between; */
   }
   .nav{
 	  position: fixed;
 	  bottom: 200upx;
 	  right: 0;
-	  /* z-index:999; */
   }
   
   .camera{
 	  background: #ccc;
   }
   .nav-com{
-	  /* flex:1; */
 	  margin-top: 10upx;
 	  color: #fff;
 	  background: rgba(0,0,0,0.5);
-	  /* background-color: #ccc; */
 	  justify-content: center;
 	  align-items: center;
 	  
   }
   .hangup{
-	  /* flex: 1; */
 	  width: 200upx;
 	  height: 100upx;
 	  color: #fff;
@@ -637,35 +573,22 @@
 	  background: red;
 	  margin-right: 50upx;
 	  border-radius: 50upx;
-	  /* background: blue; */
   }
   .box-mark{
 	  position: fixed;
 	  left: 0;
 	  top: 0;
 	  background: rgba(0,0,0,.5);
-	  /* color: #fff; */
 	  z-index: 9999;
 	  justify-content: center;
 	  align-items: center;
 	  color: #fff;
-	  /* padding: 0 50upx; */
-	  
   }
   .box-cen{
-	  /* line-height: 1.2; */
-	  /* position: fixed; */
 	  padding: 30upx;
 	  width: 500upx;
 	  height: 500upx;
 	  background: #222831;
-	 /* left: 0;
-	  right: 0;
-	  top: 0;
-	  bottom: 0;
-	  margin: auto;
-	  border-radius: 4upx; */
-	  /* padding-top: 100upx; */
   }
   .box-des{
 	color: #fff;
@@ -678,12 +601,9 @@
   .box-tit{
 	margin-top: 30upx;
 	color: #fff;
-	/* font-size: 10upx */
-	/* border: 1upx solid #fff;     */
   }
   .box-btn{
 	  margin-top: 30upx;
-	  /* background: blue; */
   }
   .box-btns{
 	  flex-direction: row;
@@ -701,16 +621,13 @@
   }
   .beauty-btn{
 	  height: 100upx;
-	  /* padding-top:20upx; */
 	  padding-right: 20upx;
 	  flex-direction: row;
 	  justify-content: space-between;
-	  /* background: pink; */
   }
   .change-btn{
 	  padding-top:20upx;
 	  flex-direction: row;
-	  /* justify-content: space-between; */
   }
   .switch-btn{
 	  border: 1upx;
@@ -740,15 +657,12 @@
   }
   .close-tit{
 	   color: #fff;
-	   /* font-size: 20upx; */
   }
   .beauty-view{
 	  flex: 1;
 	  background: #ccc;
   }
   .com-view{
-	 /* border-top:1upx;
-	  border-top-color: #fff; */
 	  padding-top: 40upx;
 	  background: #ccc;
 	  padding-left: 30upx;
@@ -766,17 +680,12 @@
 	  padding-top: 40upx;
   }
   .filte-view{
-	  /* padding-top: 40upx; */
-  	  /* background: #ccc; */
   }
   .tab-item{
-	  /* flex: 1; */
 	  width: 100upx;
 	  height: 100upx;
 	  border:1px;
 	  border-color: #000000;
-	  /* padding-right: 20upx; */
-	  /* width: 100upx; */
 	  justify-content: center;
 	  align-items: center;
   }
@@ -784,7 +693,5 @@
 	  background: yellow;
   }
   .white-view{
-	 /* justify-content: center;
-	  align-items: center; */
   }
 </style>

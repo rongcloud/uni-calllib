@@ -33,15 +33,6 @@
 					</view>
 				</view>
 			</view>
-			<!-- <view class="content-lab">
-				<view class="content-flex">
-					<span class="flex-des">MediaSever:</span>
-					<view class="flex1">
-						<input v-model="form.mediaServer" class="flex1" type="text" placeholder="请输入 MediaSever 地址">
-						<view>非必填；</view>	
-					</view>
-				</view>
-			</view> -->
 			<view class="content-lab">
 				<button @click="connect" class="btn">
 					连接
@@ -74,7 +65,6 @@
 						<span class="flex-des">媒体类型:</span>
 						<view class="flex1">
 							<radio-group @change="mediaChange">
-								 <!-- class="uni-list-cell uni-list-cell-pd" -->
 								<label style="margin-top:20upx" v-for="(item, index) in mediaTypeArr" :key="item.id">
 									<view class="radio-style">
 										<radio :value="item.id" :checked="index === cur" />
@@ -112,11 +102,6 @@
 						</view>
 					</view>
 				</view>
-				<!-- <view class="permision-btn">
-					<button @click="openPermission" class="btn">
-						开启权限
-					</button>
-				</view> -->
 				<view class="content-lab">
 					<button @click="callOut" class="btn">
 						呼叫
@@ -139,7 +124,6 @@
 </template>
 
 <script>
-	// import mask from "../component/mask.vue"
 	import * as call from "@rongcloud/calllib-uni"
 	import * as im from "@rongcloud/imlib-uni"
 	import permision from "@/js_sdk/wa-permission/permission.js"
@@ -222,7 +206,6 @@
 			call.onCallConnected((res)=>{
 				console.log(res)
 				console.log("Engine:OnCallConnected=>"+"已建立通话通话接通时，通过回调 onCallConnected 通知当前 call 的详细信息", res);
-				// uni.$emit('OnCallConnected');
 			});
 			call.onRemoteUserInvited((res)=>{
 				console.log("Engine:OnRemoteUserInvited=>"+"通话中的某一个参与者，邀请好友加入通话 ,远端Id为=>", res.data.userId);
@@ -244,11 +227,9 @@
 			})
 			call.onCallOutgoing((res)=>{
 				console.log('电话已拨出 主叫端拨出电话后，通过回调 onCallOutgoing 通知当前 call 的详细信息')
-				// console.log(res)
 			})
 			call.onRemoteUserRinging((res)=>{
 				console.log('被叫端正在振铃，主叫端拨出电话，被叫端收到请求，发出振铃响应时，回调 onRemoteUserRingin,对端Id为=>', res.data.userId)
-				// console.log(res)
 			})
 			call.onError((res)=>{
 				console.log('通话过程中，发生异常')
@@ -261,19 +242,7 @@
 			})
 			call.onRemoteUserMediaTypeChanged((res)=>{
 				console.log('当通话中的某一个参与者切换通话类型，例如由 audio 切换至 video，回调 onMediaTypeChanged,切换媒体类型的Id为=>',res.data.user.userId);
-				// console.log(res)
 			})
-			// call.removeRemoteUserLeftListener()
-			// console.log(call)
-			// uni.getStorage({
-			// 	key:"login-params",
-			// 	success:(res)=>{
-			// 		console.log(res)
-			// 		this.form.appkey = res.data&&res.data.appkey?res.data.appkey:'';
-			// 		this.form.token = res.data&&res.data.token?res.data.token:'';
-			// 		this.form.navi = res.data&&res.data.navi?res.data.navi:'';
-			// 	}
-			// })
 		},
 		onUnload:function(){
 			this.removeAllListeners();
@@ -341,7 +310,6 @@
 			},
 			//连接IM
 			connect(){
-				// console.log(this.form);
 				if(!this.form.appkey){
 					uni.showToast({
 						title:"请输入appKey",
@@ -359,7 +327,6 @@
 				    return;
 				  }
 				  this.connectIM().then((userId)=>{
-					  // console.log(userId)
 					  this.libPage = true;
 					  this.loginUserId = userId;
 					  uni.showToast({
@@ -395,7 +362,6 @@
 						console.log(this.form.navi)
 						im.setServerInfo(this.form.navi,'')
 					};
-					// console.log(im.init)
 					im.init(this.form.appkey)
 					this.isInitIm = true;
 				}else{
@@ -407,7 +373,6 @@
 					return;
 				}
 				return new Promise((resolve,reject)=>{
-					// setTimeout(()=>{
 						im.connect(this.form.token,(res)=> {
 							console.log('im已连接')
 							console.log(res)
@@ -422,7 +387,6 @@
 								reject(res.code);
 							}
 						});
-					// },0)
 				});
 				
 			},
@@ -527,16 +491,13 @@
 		align-items: center;
 		justify-content: center;
 		background: #222831;
-		/* background: blue; */
 		color: #FFFFFF;
 		height: 90vh;
 		overflow:hidden;
-		/* background: #eeeeee1c; */
 		padding: 30upx 50upx;
 		
 	}
 	.user{
-		/* text-align: center; */
 		padding: 20px;
 		background: #eeeeee1c;
 	}
@@ -544,7 +505,6 @@
 		text-align: center;
 	}
 	.content-center{
-		/* margin-top: 50upx; */
 		text-align: center;
 	}
 	.content-lab{
@@ -553,7 +513,6 @@
 	.content-flex{
 		display: flex;
 		margin-top: 30upx;
-		/* background: #eeeeee1c; */
 	}
 	.flex-des{
 		width: 30%;
@@ -572,7 +531,6 @@
 	.flex1 select{
 		width: 100%;
 		height: 60upx;
-		/* color: #ccc; */
 	}
 	.btn{
 		margin-top: 30upx;
@@ -586,7 +544,6 @@
 	.shade-call{
 		position: absolute;
 		width: 100%;
-		/* height: 100%; */
 		background: blue;
 		
 	}
@@ -597,9 +554,7 @@
 		width: 100%;
 		height: 100%;
 		background: rgba(0,0,0,.5);
-		/* color: #fff; */
 		z-index: 9999;
-		/* padding: 0 50upx; */
 	
 	}
 	.boxs-cen{
@@ -613,7 +568,6 @@
 		bottom: 0;
 		margin: auto;
 		border-radius: 4upx;
-		/* padding-top: 100upx; */
 	}
 	.boxs-des{
 		margin-top: 50upx;

@@ -1,7 +1,7 @@
 /*
- * RCCallUni - v0.0.1-alpha.12
- * CommitId - 9984a0fd2a8203a0c7d47c6e6016ffefe0af8828
- * Fri Nov 12 2021 14:37:23 GMT+0800 (中国标准时间)
+ * RCCallUni - v5.1.14-release
+ * CommitId - 17c2a6b1b412675a5621306907a6abd72c5ccdb3
+ * Wed Dec 22 2021 16:12:08 GMT+0800 (中国标准时间)
  * ©2020 RongCloud, Inc. All rights reserved.
  */
 declare enum RCCallIWCamera {
@@ -196,6 +196,16 @@ declare function onError(listener: (result: UniListenerResult<ListenerResultErro
  */
 declare function onRemoteUserMediaTypeChanged(listener: (result: UniListenerResult<ListenerResultData>) => void): void;
 /**
+ * 对端用户关闭了摄像头
+ * @param listener 回调函数
+ */
+declare function onRemoteUserCameraStateChanged(listener: (result: UniListenerResult<ListenerResultData>) => void): void;
+/**
+ * 对端用户关闭了麦克风
+ * @param listener 回调函数
+ */
+declare function onRemoteUserMicrophoneStateChanged(listener: (result: UniListenerResult<ListenerResultData>) => void): void;
+/**
  * 邀请用户
  * @param userIds 被邀请用户id列表
  * @param observerUserIds 被邀请观察者id列表 (只能听或看，不能推流的用户)
@@ -364,4 +374,4 @@ declare function getCurrentBeautyOption(): any;
  */
 declare function resetBeauty(): void;
 
-export { accept, changeMediaType, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentBeautyFilter, getCurrentBeautyOption, getCurrentCallSession, hangup, init, inviteUsers, onCallConnected, onCallDisconnected, onCallOutgoing, onCallReceived, onError, onRemoteUserInvited, onRemoteUserJoined, onRemoteUserLeft, onRemoteUserMediaTypeChanged, onRemoteUserRinging, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, resetBeauty, setBeautyFilter, setBeautyOption, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };
+export { accept, changeMediaType, currentCamera, enableCamera, enableMicrophone, enableSpeaker, getCurrentBeautyFilter, getCurrentBeautyOption, getCurrentCallSession, hangup, init, inviteUsers, onCallConnected, onCallDisconnected, onCallOutgoing, onCallReceived, onError, onRemoteUserCameraStateChanged, onRemoteUserInvited, onRemoteUserJoined, onRemoteUserLeft, onRemoteUserMediaTypeChanged, onRemoteUserMicrophoneStateChanged, onRemoteUserRinging, removeCallConnectedListener, removeCallDisconnectedListener, removeCallOutgoingListener, removeCallReceivedListener, removeEnableCameraListener, removeErrorListener, removeRemoteUserInvited, removeRemoteUserJoinedListener, removeRemoteUserLeftListener, removeRemoteUserMediaTypeChangedListener, removeRemoteUserRingingListener, removeSwitchCameraListener, resetBeauty, setBeautyFilter, setBeautyOption, setVideoView, startGroupCall, startSingleCall, switchCamera, unInit };

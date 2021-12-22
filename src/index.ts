@@ -124,6 +124,22 @@ export function onRemoteUserInvited(listener:(result:UniListenerResult<ListenerR
    call.addEventListener("Engine:OnRemoteUserMediaTypeChanged", listener);
 }
 /**
+ * 对端用户关闭了摄像头
+ * @param listener 回调函数
+ */
+ export function onRemoteUserCameraStateChanged(listener:(result:UniListenerResult<ListenerResultData>)=>void){
+   logger.log(`Engine:OnRemoteUserCameraStateChanged 对端用户关闭了摄像头 Platform->${Platform}`)
+   call.addEventListener("Engine:OnRemoteUserCameraStateChanged", listener);
+}
+/**
+ * 对端用户关闭了麦克风
+ * @param listener 回调函数
+ */
+ export function onRemoteUserMicrophoneStateChanged(listener:(result:UniListenerResult<ListenerResultData>)=>void){
+   logger.log(`Engine:OnRemoteUserMicrophoneStateChanged 对端用户关闭了麦克风 Platform->${Platform}`)
+   call.addEventListener("Engine:OnRemoteUserMicrophoneStateChanged", listener);
+}
+/**
  * 邀请用户
  * @param userIds 被邀请用户id列表
  * @param observerUserIds 被邀请观察者id列表 (只能听或看，不能推流的用户)
@@ -137,7 +153,7 @@ export function inviteUsers(userIds: string[], observerUserIds: string[]){
  */
 export function removeCallReceivedListener () {
    logger.log(`removeCallReceivedListener`)
-   call.removeAllListeners('Engine:OnCallReceived')
+   call.removeAllEventListeners('Engine:OnCallReceived');
 }
  
  /**
@@ -145,7 +161,7 @@ export function removeCallReceivedListener () {
   */
 export function removeCallConnectedListener () {
    logger.log(`removeCallConnectedListener`)
-   call.removeAllListeners('Engine:OnCallConnected')
+   call.removeAllEventListeners('Engine:OnCallConnected')
 }
  
  /**
@@ -154,7 +170,7 @@ export function removeCallConnectedListener () {
   */
 export function removeCallDisconnectedListener () {
    logger.log(`removeCallDisconnectedListener`)
-   call.removeAllListeners('Engine:OnCallDisconnected')
+   call.removeAllEventListeners('Engine:OnCallDisconnected')
 }
  
  /**
@@ -162,7 +178,7 @@ export function removeCallDisconnectedListener () {
   */
 export function removeRemoteUserJoinedListener () {
    logger.log(`removeRemoteUserJoinedListener`)
-   call.removeAllListeners('Engine:OnRemoteUserJoined')
+   call.removeAllEventListeners('Engine:OnRemoteUserJoined')
  }
  
  /**
@@ -170,14 +186,14 @@ export function removeRemoteUserJoinedListener () {
   */
   export function removeRemoteUserLeftListener () {
    logger.log(`removeRemoteUserLeftListener`)
-   call.removeAllListeners('Engine:OnRemoteUserLeft')
+   call.removeAllEventListeners('Engine:OnRemoteUserLeft')
  }
   /**
   * 移除监听-有用户被邀请加入通话
   */
 export function removeRemoteUserInvited () {
    logger.log(`removeRemoteUserInvited`)
-   call.removeAllListeners('Engine:OnRemoteUserInvited')
+   call.removeAllEventListeners('Engine:OnRemoteUserInvited')
 }
  
  /**
@@ -185,14 +201,14 @@ export function removeRemoteUserInvited () {
   */
 export function removeEnableCameraListener () {
    logger.log(`removeEnableCameraListener`)
-   call.removeAllListeners('Engine:OnEnableCamera')
+   call.removeAllEventListeners('Engine:OnEnableCamera')
 }
  /**
   * 移除监听-切换摄像头回调
   */
 export function removeSwitchCameraListener () {
    logger.log(`removeSwitchCameraListener`)
-   call.removeAllListeners('Engine:OnSwitchCamera')
+   call.removeAllEventListeners('Engine:OnSwitchCamera')
  }
  
  /**
@@ -200,7 +216,7 @@ export function removeSwitchCameraListener () {
   */
 export function removeErrorListener () {
    logger.log(`removeErrorListener`)
-   call.removeAllListeners('Engine:OnError')
+   call.removeAllEventListeners('Engine:OnError')
 }
  
  /**
@@ -208,7 +224,7 @@ export function removeErrorListener () {
   */
 export function removeCallOutgoingListener () {
    logger.log(`removeCallOutgoingListener`)
-   call.removeAllListeners('Engine:OnCallOutgoing')
+   call.removeAllEventListeners('Engine:OnCallOutgoing')
 }
  
  /**
@@ -216,14 +232,14 @@ export function removeCallOutgoingListener () {
   */
 export function removeRemoteUserRingingListener () {
    logger.log(`removeRemoteUserRingingListener`)
-   call.removeAllListeners('Engine:OnRemoteUserRinging')
+   call.removeAllEventListeners('Engine:OnRemoteUserRinging')
 }
 /**
  * 移除监听-对端用户切换了媒体类型
  */
 export function removeRemoteUserMediaTypeChangedListener () {
    logger.log(`removeRemoteUserMediaTypeChangedListener`)
-   call.removeAllListeners('Engine:OnRemoteUserMediaTypeChanged')
+   call.removeAllEventListeners('Engine:OnRemoteUserMediaTypeChanged')
 }
  
 /**
