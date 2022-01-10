@@ -8,14 +8,16 @@
 
 3. 运行 -> 运行到手机 -> 制作自定义调试基座。
 
-4. 安装 @rongcloud/imlib-uni @rongcloud/calllib-uni
+4. 安装 @rongcloud/imlib-uni
    ```
-        npm i @rongcloud/calllib-uni @rongcloud/calllib-uni -S 
+     npm i @rongcloud/imlib-uni -S 
    ```
-5. 在项目中引入并使用其方法 
+5. 安装 (RongCloud-CallWrapper)[https://ext.dcloud.net.cn/plugin?id=7136]
+
+6. 在项目中引入并使用其方法 
    
    import * as im from "@rongcloud/imlib-uni" 
-   import * as call from "@rongcloud/calllib-uni" 
+   import * as call from "@/uni_modules/RongCloud-CallWrapper/lib/index"
    ```
         im.init()
         im.connect()

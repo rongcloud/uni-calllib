@@ -124,7 +124,7 @@
 </template>
 
 <script>
-	import * as call from "@rongcloud/calllib-uni"
+	import * as call from "@/uni_modules/RongCloud-CallWrapper/lib/index"
 	import * as im from "@rongcloud/imlib-uni"
 	import permision from "@/js_sdk/wa-permission/permission.js"
 	import {reasonDeal,errorDeal,imCode} from '../../utils/code.js'
@@ -217,7 +217,7 @@
 			})
 			call.onRemoteUserLeft((res)=>{
 				console.log("Engine:OnRemoteUserLeft=>"+"远端用户挂断(群聊触发)，远端Id为=>", res.data.reason);
-				uni.$emit('OnCallConnected');
+				// uni.$emit('OnCallConnected');
 				uni.showToast({
 					title:reasonDeal(res.data.reason),
 					error:"error",

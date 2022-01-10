@@ -131,7 +131,10 @@
   </view>
 </template>
 <script>
-  import * as call from "@rongcloud/calllib-uni"
+
+  import * as call from "@/uni_modules/RongCloud-CallWrapper/lib/index"
+  import * as im from "@rongcloud/imlib-uni"
+  
   export default {
     data() {
       return {
@@ -342,15 +345,23 @@
 		  if (this.targetId.length > 0) {
 			call.enableSpeaker(true);
 			call.startSingleCall(this.targetId, type, null);
-			this.currentCallSession = call.getCurrentCallSession();
-			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
+			// this.currentCallSession = call.getCurrentCallSession();
+			// this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
 		  }else{
 			  call.startGroupCall(this.groupId, this.userIds,[] , type, '');
-			  this.currentCallSession = call.getCurrentCallSession();
-			  this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
+			  this.users = this.userIds;
+			  
+			  console.log(this.users);
+			  // this.currentCallSession = call.getCurrentCallSession();
+			  // this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
 		  }
-		  this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
+		  let _this=this;
+		  im.getCurrentUserId(function(result){
+		  	 _this.systemInfoSync(result.userId,_this.$refs.bigVideoView.ref,false);
+		  })
+		  // this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
       },
+
       onCallConnected() {
 		  let context = this;
 		  console.log('oncallconnected接收了');

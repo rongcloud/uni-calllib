@@ -19,6 +19,7 @@ import logger from './logger'
 const call = uni.requireNativePlugin('__RC_UNI_CALL__');
 const Platform = uni.getSystemInfoSync().platform;
 logger.log('已进入index.js')
+
 /**
 * 初始化 SDK，只需要调用一次  
 *
@@ -407,3 +408,5 @@ export function changeMediaType(type:RCCallIWMediaType){
    logger.log(`resetBeauty Platform->${Platform}`)
    call.resetBeauty();
 }
+
+export * from './enum'
