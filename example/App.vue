@@ -1,6 +1,17 @@
 <script>
 	export default {
 		onLaunch: function() {
+			uni.configMTLS({
+			    certificates: [{
+			        'host': 'im.irenfang.cn:1444',
+			    }],
+			    success ({code}) {
+						console.log(code);
+					},
+					fail ({code}) {
+						console.log(code);
+					}
+			});
 			console.log('App Launch')
 		},
 		onShow: function() {

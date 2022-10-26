@@ -1,708 +1,711 @@
 <template>
-  <view class="content">
-	   <!-- 单人视频 -->
-	<view v-if="users.length<=2">
-		<RongCloud-Call-RCUniCallView 
-			class="bigVideoView" 
-			:style="{width:windowWidth+'px',height:windowHeight+'px'}"
-			ref="bigVideoView">
-		</RongCloud-Call-RCUniCallView>
-		<RongCloud-Call-RCUniCallView
-			class="smallVideoView"
-			:style="{width:200+'upx',height:200+'upx'}"
-			ref="smallVideoView"
-		>
-		</RongCloud-Call-RCUniCallView>
-	</view>
-	<!-- 多人视频 -->
-	<view v-else>
-		<RongCloud-Call-RCUniCallView
-			class="bigVideoView" 
-			:style="{width:windowWidth+'px',height:300+'px'}"
-			ref="bigVideoView">
-		</RongCloud-Call-RCUniCallView>
-		<view class="smallViews">
-			<RongCloud-Call-RCUniCallView
-				v-for="(item,index) in viewArr" 
-				:key="item.userId"
-				class="smallView"
-				:ref="item.userId">
+	<view class="content">
+		<!-- 单人视频 -->
+		<view v-if="users.length<=2">
+			<RongCloud-Call-RCUniCallView class="bigVideoView"
+				:style="{width:windowWidth+'px',height:windowHeight+'px'}" ref="bigVideoView">
+			</RongCloud-Call-RCUniCallView>
+			<RongCloud-Call-RCUniCallView class="smallVideoView" :style="{width:200+'upx',height:200+'upx'}"
+				ref="smallVideoView">
 			</RongCloud-Call-RCUniCallView>
 		</view>
-	</view>
-	<view class="nav">
-		<text class="nav-com" v-if="callWay === 1" @click="isMark=true">
-			邀请
-		</text>
-		<text class="nav-com" @click="closeCameraCur">
-			{{curCamera?'关闭':'开启'}}摄像头
-		</text>
-		<text class="nav-com" @click="switchCamera">
-			切换摄像头
-		</text>
-		<text class="nav-com"  @click="microphone">
-			{{isMicrophone?'关闭':'开启'}}麦克风
-		</text>
-		<text class="nav-com" @click="enableSpeaker">
-			{{isEnableSpeaker?'关闭':'开启'}}扬声器
-		</text>
-		<text class="nav-com" v-if="mediaTypeCur === 'video'" @click.stop="isBeauty=!isBeauty">
-			美颜
-		</text>
-	</view>
-    <view class="container" :style="{width:windowWidth+'px'}">
-		<text class="hangup" @click="hangup">挂断 </text>
-		<text v-if="mediaTypeCur === 'video' " class="hangup" @click="changeMediaType">切换语音 </text>
-	</view>
-	<view 
-		class="box-mark" 
-		v-if="isMark"
-		:style="{width:windowWidth+'px',height:windowHeight+'px'}"
-		@click.stop=""
-	>
-		<view class="box-cen">
-			<text class="box-des">被邀请者ID:</text>
-			<view class="box-bot">
-				<input v-model="inviteUsersIds" ref="inviteInput" class="box-input" type="text" placeholder="请输入被邀请者ID">
-				<text class="box-tit">必填；需加入群后，方可收到邀请，多个userId用英文半角逗号分开</text>	
-			</view>
-			<view class="box-btns">
-				<button class="box-btn"  type="default" @click="inviteUsers(false)">取消</button>
-				<button class="box-btn" type="default" @click="inviteUsers(true)">确定</button>
+		<!-- 多人视频 -->
+		<view v-else>
+			<RongCloud-Call-RCUniCallView class="bigVideoView" :style="{width:windowWidth+'px',height:300+'px'}"
+				ref="bigVideoView">
+			</RongCloud-Call-RCUniCallView>
+			<view class="smallViews">
+				<RongCloud-Call-RCUniCallView v-for="(item,index) in viewArr" :key="item.userId" class="smallView"
+					:ref="item.userId">
+				</RongCloud-Call-RCUniCallView>
 			</view>
 		</view>
-	</view>
-	
-	<view class="beauty" 
-		v-if="isBeauty"
-		:style="{width:windowWidth+'px'}"
-		@click.stop=""
-	>
-		<view class="beauty-btn">
-			<view class="change-btn">
-				<text class="ch-tit">美颜</text><text class="switch-btn" @click="switchChange">{{isChecked?'开启':'关闭'}}</text>
-			</view>
-			<view class="close-btn">
-				<text class="close-tit" @click="isBeauty=false">X</text>
-			</view>
+		<view class="nav">
+			<text class="nav-com" v-if="callWay === 1" @click="isMark=true">
+				邀请
+			</text>
+			<text class="nav-com" @click="closeCameraCur">
+				{{curCamera?'关闭':'开启'}}摄像头
+			</text>
+			<text class="nav-com" @click="switchCamera">
+				切换摄像头
+			</text>
+			<text class="nav-com" @click="microphone">
+				{{isMicrophone?'关闭':'开启'}}麦克风
+			</text>
+			<text class="nav-com" @click="enableSpeaker">
+				{{isEnableSpeaker?'关闭':'开启'}}扬声器
+			</text>
+			<text class="nav-com" v-if="mediaTypeCur === 'video'" @click.stop="isBeauty=!isBeauty">
+				美颜
+			</text>
 		</view>
-		<view class="beauty-view">
-			<view v-if="curIndex === '0'" class="beauty-tab filte-view">
-				<view 
-					class="tab-item"
-					v-for="(item) in filteArr"
-					:key="item.id" 
-					@click="cutFilte(item.id)"
-					:class = "{current: item.id === curFilte}"
-				>
-					<text>{{item.name}}</text> 
+		<view class="container" :style="{width:windowWidth+'px'}">
+			<text class="hangup" @click="hangup">挂断 </text>
+			<text v-if="mediaTypeCur === 'video' " class="hangup" @click="changeMediaType">切换语音 </text>
+		</view>
+		<view class="box-mark" v-if="isMark" :style="{width:windowWidth+'px',height:windowHeight+'px'}" @click.stop="">
+			<view class="box-cen">
+				<text class="box-des">被邀请者ID:</text>
+				<view class="box-bot">
+					<input v-model="inviteUsersIds" ref="inviteInput" class="box-input" type="text"
+						placeholder="请输入被邀请者ID">
+					<text class="box-tit">必填；需加入群后，方可收到邀请，多个userId用英文半角逗号分开</text>
+				</view>
+				<view class="box-btns">
+					<button class="box-btn" type="default" @click="inviteUsers(false)">取消</button>
+					<button class="box-btn" type="default" @click="inviteUsers(true)">确定</button>
 				</view>
 			</view>
-			<!-- 美白 -->
-			<view v-if="curIndex === '1'" class="white-view com-view">
-				<slider :value="whiteVal" min="0" max="9" @change="whiteChange" show-value />
+		</view>
+
+		<view class="beauty" v-if="isBeauty" :style="{width:windowWidth+'px'}" @click.stop="">
+			<view class="beauty-btn">
+				<view class="change-btn">
+					<text class="ch-tit">美颜</text><text class="switch-btn"
+						@click="switchChange">{{isChecked?'开启':'关闭'}}</text>
+				</view>
+				<view class="close-btn">
+					<text class="close-tit" @click="isBeauty=false">X</text>
+				</view>
 			</view>
-			<!-- 红润 -->
-			<view v-if="curIndex === '2'" class="ruddy-view com-view">
-				<slider :value="ruddyVal" min="0" max="9" @change="ruddyChange" show-value />
+			<view class="beauty-view">
+				<view v-if="curIndex === '0'" class="beauty-tab filte-view">
+					<view class="tab-item" v-for="(item) in filteArr" :key="item.id" @click="cutFilte(item.id)"
+						:class="{current: item.id === curFilte}">
+						<text>{{item.name}}</text>
+					</view>
+				</view>
+				<!-- 美白 -->
+				<view v-if="curIndex === '1'" class="white-view com-view">
+					<slider :value="whiteVal" min="0" max="9" @change="whiteChange" show-value />
+				</view>
+				<!-- 红润 -->
+				<view v-if="curIndex === '2'" class="ruddy-view com-view">
+					<slider :value="ruddyVal" min="0" max="9" @change="ruddyChange" show-value />
+				</view>
+				<!-- 磨皮 -->
+				<view v-if="curIndex === '3'" class="buffing-view com-view">
+					<slider :value="buffingVal" min="0" max="9" @change="buffingChange" show-value />
+				</view>
+				<!-- 亮度 -->
+				<view v-if="curIndex === '4'" class="brightness-view com-view">
+					<slider :value="brightnessVal" min="0" max="9" @change="brightnessChange" show-value />
+				</view>
 			</view>
-			<!-- 磨皮 -->
-			<view v-if="curIndex === '3'" class="buffing-view com-view">
-				<slider :value="buffingVal" min="0" max="9" @change="buffingChange" show-value />
-			</view>
-			<!-- 亮度 -->
-			<view v-if="curIndex === '4'" class="brightness-view com-view">
-				<slider :value="brightnessVal" min="0" max="9" @change="brightnessChange" show-value />
+			<view class="beauty-tab">
+				<view class="tab-item" v-for="(item) in tabArr" :key="item.id" @click="curIndex = item.id"
+					:class="{current: item.id === curIndex}">
+					<text>{{item.text}}</text>
+				</view>
 			</view>
 		</view>
-		<view class="beauty-tab">
-			<view 
-				class="tab-item" 
-				v-for="(item) in tabArr" 
-				:key="item.id" 
-				@click="curIndex = item.id"
-				:class = "{current: item.id === curIndex}"
-			>
-				<text>{{item.text}}</text> 
-			</view>
-		</view>
+
 	</view>
-	
-  </view>
 </template>
 <script>
-
-  import * as call from "@/uni_modules/RongCloud-CallWrapper/lib/index"
-  import * as im from "@rongcloud/imlib-uni"
-  
-  export default {
-    data() {
-      return {
-        mediaType: "video",
-        callType: "out",
-		callWay:0,//呼叫方式 0 单聊 1 群聊
-        targetId: "",
-        bottomHeight: 0,
-        isConnected: false,
-		isSelf:false,
-		viewArr:[],
-		callSelect:'single',
-		groupId:'',
-		userIds:[],
-		windowWidth:'',
-		windowHeight:'',
-		isMicrophone:true,
-		isEnableSpeaker:true,
-		curCamera:true,
-		backCamera:true,
-		isMe:true,
-		users:[],
-		currentCallSession:{},
-		isMark:false,
-		inviteUsersIds:'',
-		mediaTypeCur:'audio',
-		isBeauty:false,
-		tabArr:[
-			{
-				id:'0',
-				text:'滤镜'
-			},
-			{
-				id:'1',
-				text:'美白'
-			},
-			{
-				id:'2',
-				text:'红润'
-			},
-			{
-				id:'3',
-				text:'磨皮'
-			},
-			{
-				id:'4',
-				text:'亮度'
-			},
-		],
-		filteArr:[
-			{
-				id:0,
-				name:'原画'
-			},
-			{
-				id:1,
-				name:'唯美'
-			},
-			{
-				id:2,
-				name:'清新'
-			},
-			{
-				id:3,
-				name:'浪漫'
+	import * as call from "@/uni_modules/RongCloud-CallWrapper/lib/index"
+	// import * as im from "@/uni_modules/RongCloud-IMWrapper/js_sdk/index"
+	import RCBeautyEngine from "@/uni_modules/RongCloud-BeautyWrapper/lib/RCBeautyEngine"
+	export default {
+		data() {
+			return {
+				mediaType: "video",
+				callType: "out",
+				callWay: 0, //呼叫方式 0 单聊 1 群聊
+				targetId: "",
+				bottomHeight: 0,
+				isConnected: false,
+				isSelf: false,
+				viewArr: [],
+				callSelect: 'single',
+				groupId: '',
+				userIds: [],
+				windowWidth: '',
+				windowHeight: '',
+				isMicrophone: true,
+				isEnableSpeaker: true,
+				curCamera: true,
+				backCamera: true,
+				isMe: true,
+				users: [],
+				currentCallSession: {},
+				isMark: false,
+				inviteUsersIds: '',
+				mediaTypeCur: 'audio',
+				isBeauty: false,
+				tabArr: [{
+						id: '0',
+						text: '滤镜'
+					},
+					{
+						id: '1',
+						text: '美白'
+					},
+					{
+						id: '2',
+						text: '红润'
+					},
+					{
+						id: '3',
+						text: '磨皮'
+					},
+					{
+						id: '4',
+						text: '亮度'
+					},
+				],
+				filteArr: [{
+						id: 0,
+						name: '原画'
+					},
+					{
+						id: 1,
+						name: '唯美'
+					},
+					{
+						id: 2,
+						name: '清新'
+					},
+					{
+						id: 3,
+						name: '浪漫'
+					}
+				],
+				curIndex: '0',
+				curFilte: 0,
+				whiteVal: 0,
+				ruddyVal: 0,
+				buffingVal: 0,
+				brightnessVal: 5,
+				isChecked: false
 			}
-		],
-		curIndex:'0',
-		curFilte:0,
-		whiteVal:0,
-		ruddyVal:0,
-		buffingVal:0,
-		brightnessVal:5,
-		isChecked:false
-      }
-    },
-    onLoad: function() {
-		var _this=this;
-		uni.getStorage({
-			key: "room-parameters",
-			success: (res) => {
-				this.mediaType = res.data.mediaType;
-				this.callType = res.data.callType?res.data.callType:'in';
-				this.groupId = res.data.groupId?res.data.groupId:'';
-				this.userIds = res.data.userIds?res.data.userIds:'';
-				if (this.callType === 'out') {
-					console.log('呼出out')
-					this.targetId = res.data.targetId;
-					this.startCall();
-				} else {
-					console.log('呼入接受')
-					this.accept();
-			  }
-			}
-      });
-	  uni.getSystemInfo({
-	  	success:function(res){
-			_this.windowWidth = res.windowWidth;
-			_this.windowHeight = res.windowHeight;
-	  	}
-	  })
-	  uni.$on('OnCallConnected',this.onCallConnected)
-	  uni.$on('OnCallDisconnected',this.onCallDisconnected)
-	  this.initBeautyOpton();
-    },
-	beforeDestroy(){
-		uni.$off('OnCallDisconnected');
-		uni.$off('OnCallConnected');
-	},
-    onUnload() {
-	  call.hangup();
-    },
-	onHide(){
-	    const session = call.getCurrentCallSession();
-		if (session) {
-		  call.hangup();
-		}
-	},
-    methods: {
-	  changeMediaType(){
-		this.mediaTypeCur = 'audio';  
-		call.changeMediaType(0);  
-	  },
-	  inviteUsers(flag){
-		  if(flag){
-			 if(this.inviteUsersIds === ''){
-			  uni.showToast({
-				title:"请输入被邀请者ID",
-				icon: "error",
-				duration:2000
-			  })
-			  return;
-			 }
-			 let userIdsArr = this.inviteUsersIds.split(',');
-			 call.inviteUsers(userIdsArr,[]); 
-		  }
-		  this.$refs.inviteInput.blur();  
-		  this.isMark =false;
-	  },
-	  switchVideo(){
-		this.isMe = !this.isMe;
-		let session = call.getCurrentCallSession();
-		if(this.isMe){
-			switch(uni.getSystemInfoSync().platform){
-			    case 'android':
-					call.setVideoView(session.targetId, this.$refs.bigVideoView.ref, 0,false);
-					call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0,true);
-			       break;
-			    case 'ios':
-					call.setVideoView(session.targetId, this.$refs.bigVideoView.ref, 0);
-					call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
-			       break;
-			    default:
-			       console.log('运行在开发者工具上')
-			       break;
-			}
-		}else{
-			switch(uni.getSystemInfoSync().platform){
-			    case 'android':
-					call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0,false);
-					call.setVideoView(session.targetId, this.$refs.smallVideoView.ref, 0,true);
-			       break;
-			    case 'ios':
-					call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref,0);
-					call.setVideoView(session.targetId, this.$refs.smallVideoView.ref,0);
-			       break;
-			    default:
-			       console.log('运行在开发者工具上')
-			       break;
-			}
-		}
-	  },
-	  closeCameraCur(){
-		  this.curCamera = !this.curCamera;
-		  let camera = call.currentCamera();
-		  call.enableCamera(this.curCamera,camera)
-	  },
-	  closeCameraBack(){
-		  this.backCamera = !this.backCamera;
-		  call.enableCamera(this.backCamera,1)
-	  },
-	  switchCamera(){
-		call.switchCamera();
-	  },
-	  microphone(){
-		this.isMicrophone = !this.isMicrophone;
-		call.enableMicrophone(this.isMicrophone);
-	  },
-	  enableSpeaker(){
-		  this.isEnableSpeaker = !this.isEnableSpeaker;
-		  call.enableSpeaker(this.isEnableSpeaker);
-	  },
-      hangup() {
-		this.isSelf = true;
-		console.log('12321332')
-		call.resetBeauty();
-        call.hangup();
-		uni.navigateBack({
-			delta:1
-		})
-      },
-      accept() {
-		  call.accept();
-      },
-      startCall() {
-		  const type = this.mediaType === 'audio' ? 0 : 1;
-		  this.mediaTypeCur = this.mediaType;
-		  if (this.targetId.length > 0) {
-			call.enableSpeaker(true);
-			call.startSingleCall(this.targetId, type, null);
-			// this.currentCallSession = call.getCurrentCallSession();
-			// this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
-		  }else{
-			  call.startGroupCall(this.groupId, this.userIds,[] , type, '');
-			  this.users = this.userIds;
-			  
-			  console.log(this.users);
-			  // this.currentCallSession = call.getCurrentCallSession();
-			  // this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
-		  }
-		  let _this=this;
-		  im.getCurrentUserId(function(result){
-		  	 _this.systemInfoSync(result.userId,_this.$refs.bigVideoView.ref,false);
-		  })
-		  // this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
-      },
-
-      onCallConnected() {
-		  let context = this;
-		  console.log('oncallconnected接收了');
-		  this.mediaTypeCur = this.mediaType;
-			call.enableSpeaker(true);
-			this.currentCallSession = call.getCurrentCallSession();
-			this.callWay = this.currentCallSession.callType;
-			this.users = this.currentCallSession.users ? this.currentCallSession.users:[];
-			let isHasMine = this.users.findIndex((item)=>{
-				return item.userId === this.currentCallSession.mine.userId;
+		},
+		onLoad: function() {
+			var _this = this;
+			uni.getStorage({
+				key: "room-parameters",
+				success: (res) => {
+					this.mediaType = res.data.mediaType;
+					this.callType = res.data.callType ? res.data.callType : 'in';
+					this.groupId = res.data.groupId ? res.data.groupId : '';
+					this.userIds = res.data.userIds ? res.data.userIds : '';
+					if (this.callType === 'out') {
+						console.log('呼出out')
+						this.targetId = res.data.targetId;
+						this.startCall();
+					} else {
+						console.log('呼入接受')
+						this.accept();
+					}
+				}
 			});
-			if(isHasMine === -1){
-				this.users.push(this.currentCallSession.mine);
+			uni.getSystemInfo({
+				success: function(res) {
+					_this.windowWidth = res.windowWidth;
+					_this.windowHeight = res.windowHeight;
+				}
+			})
+			uni.$on('OnCallConnected', this.onCallConnected)
+			uni.$on('OnCallDisconnected', this.onCallDisconnected)
+			this.initBeautyOpton();
+		},
+		beforeDestroy() {
+			uni.$off('OnCallDisconnected');
+			uni.$off('OnCallConnected');
+		},
+		onUnload() {
+			call.hangup();
+		},
+		onHide() {
+			const session = call.getCurrentCallSession();
+			if (session) {
+				call.hangup();
 			}
-			if (this.currentCallSession && this.currentCallSession.users.length > 0 ) {
-				//视频是两个的时候
-				if(this.currentCallSession.users.length<=2){
-					setTimeout(()=>{
-						this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.smallVideoView.ref,true);
-						this.viewArr = this.currentCallSession.users.filter((item)=>{
-							return item.userId !== this.currentCallSession.mine.userId;
-						});
-							this.viewArr.forEach((itm)=>{
+		},
+		methods: {
+			changeMediaType() {
+				this.mediaTypeCur = 'audio';
+				call.changeMediaType(0);
+			},
+			inviteUsers(flag) {
+				if (flag) {
+					if (this.inviteUsersIds === '') {
+						uni.showToast({
+							title: "请输入被邀请者ID",
+							icon: "error",
+							duration: 2000
+						})
+						return;
+					}
+					let userIdsArr = this.inviteUsersIds.split(',');
+					call.inviteUsers(userIdsArr, []);
+				}
+				this.$refs.inviteInput.blur();
+				this.isMark = false;
+			},
+			switchVideo() {
+				this.isMe = !this.isMe;
+				let session = call.getCurrentCallSession();
+				if (this.isMe) {
+					switch (uni.getSystemInfoSync().platform) {
+						case 'android':
+							call.setVideoView(session.targetId, this.$refs.bigVideoView.ref, 0, false);
+							call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0, true);
+							break;
+						case 'ios':
+							call.setVideoView(session.targetId, this.$refs.bigVideoView.ref, 0);
+							call.setVideoView(session.mine.userId, this.$refs.smallVideoView.ref, 0);
+							break;
+						default:
+							console.log('运行在开发者工具上')
+							break;
+					}
+				} else {
+					switch (uni.getSystemInfoSync().platform) {
+						case 'android':
+							call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0, false);
+							call.setVideoView(session.targetId, this.$refs.smallVideoView.ref, 0, true);
+							break;
+						case 'ios':
+							call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0);
+							call.setVideoView(session.targetId, this.$refs.smallVideoView.ref, 0);
+							break;
+						default:
+							console.log('运行在开发者工具上')
+							break;
+					}
+				}
+			},
+			closeCameraCur() {
+				this.curCamera = !this.curCamera;
+				let camera = call.currentCamera();
+				call.enableCamera(this.curCamera, camera)
+			},
+			closeCameraBack() {
+				this.backCamera = !this.backCamera;
+				call.enableCamera(this.backCamera, 1)
+			},
+			switchCamera() {
+				call.switchCamera();
+			},
+			microphone() {
+				this.isMicrophone = !this.isMicrophone;
+				call.enableMicrophone(this.isMicrophone);
+			},
+			enableSpeaker() {
+				this.isEnableSpeaker = !this.isEnableSpeaker;
+				call.enableSpeaker(this.isEnableSpeaker);
+			},
+			hangup() {
+				this.isSelf = true;
+				RCBeautyEngine.resetBeauty();
+				call.hangup();
+				uni.navigateBack({
+					delta: 1
+				})
+			},
+			accept() {
+				call.accept();
+			},
+			startCall() {
+				const type = this.mediaType === 'audio' ? 0 : 1;
+				this.mediaTypeCur = this.mediaType;
+				if (this.targetId.length > 0) {
+					call.enableSpeaker(true);
+					call.startSingleCall(this.targetId, type, null);
+					this.currentCallSession = call.getCurrentCallSession();
+					this.users = this.currentCallSession.users ? this.currentCallSession.users : [];
+				} else {
+					call.startGroupCall(this.groupId, this.userIds, [], type, '');
+					this.users = this.userIds;
+
+					console.log(this.users);
+					this.currentCallSession = call.getCurrentCallSession();
+					this.users = this.currentCallSession.users ? this.currentCallSession.users : [];
+				}
+				let _this = this;
+				// im.getCurrentUserId(function(result){
+				// 	 _this.systemInfoSync(result.userId,_this.$refs.bigVideoView.ref,false);
+				// })
+				if (this.currentCallSession) {
+					this.systemInfoSync(this.currentCallSession.mine.userId, this.$refs.bigVideoView.ref, false);
+				}
+			},
+
+			onCallConnected() {
+				let context = this;
+				console.log('oncallconnected接收了');
+				this.mediaTypeCur = this.mediaType;
+				call.enableSpeaker(true);
+				this.currentCallSession = call.getCurrentCallSession();
+				this.callWay = this.currentCallSession.callType;
+				this.users = this.currentCallSession.users ? this.currentCallSession.users : [];
+				let isHasMine = this.users.findIndex((item) => {
+					return item.userId === this.currentCallSession.mine.userId;
+				});
+				if (isHasMine === -1) {
+					this.users.push(this.currentCallSession.mine);
+				}
+				if (this.currentCallSession && this.currentCallSession.users.length > 0) {
+					//视频是两个的时候
+					if (this.currentCallSession.users.length <= 2) {
+						setTimeout(() => {
+							this.systemInfoSync(this.currentCallSession.mine.userId, this.$refs.smallVideoView.ref,
+								true);
+							this.viewArr = this.currentCallSession.users.filter((item) => {
+								return item.userId !== this.currentCallSession.mine.userId;
+							});
+							this.viewArr.forEach((itm) => {
 								this.targetId = itm.userId;
-								this.systemInfoSync(itm.userId,this.$refs.bigVideoView.ref,false);
+								this.systemInfoSync(itm.userId, this.$refs.bigVideoView.ref, false);
 							});
-					},100);
-					
-				}else{
-					// 视频超过三个
-					this.$nextTick(()=>{
-						this.systemInfoSync(this.currentCallSession.mine.userId,this.$refs.bigVideoView.ref,false);
-						this.viewArr = this.currentCallSession.users.filter((item)=>{
-							return item.userId !== this.currentCallSession.mine.userId;
-						});
-						setTimeout(()=>{
-							this.viewArr.forEach((itm)=>{
-								this.systemInfoSync(itm.userId,this.$refs[itm.userId][0].ref,false);
+						}, 100);
+
+					} else {
+						// 视频超过三个
+						this.$nextTick(() => {
+							this.systemInfoSync(this.currentCallSession.mine.userId, this.$refs.bigVideoView.ref,
+								false);
+							this.viewArr = this.currentCallSession.users.filter((item) => {
+								return item.userId !== this.currentCallSession.mine.userId;
 							});
-						},100)
+							setTimeout(() => {
+								this.viewArr.forEach((itm) => {
+									this.systemInfoSync(itm.userId, this.$refs[itm.userId][0].ref,
+										false);
+								});
+							}, 100)
+						})
+					}
+				}
+			},
+			systemInfoSync(userId, ref, isZOrderOnTop) {
+				switch (uni.getSystemInfoSync().platform) {
+					case 'android':
+						call.setVideoView(userId, ref, 0, isZOrderOnTop);
+						break;
+					case 'ios':
+						call.setVideoView(userId, ref, 0);
+						break;
+					default:
+						console.log('运行在开发者工具上')
+						break;
+				}
+			},
+			onCallDisconnected() {
+				this.isMe = true;
+				if (!this.isSelf) {
+					uni.navigateBack({
+						delta: 1
 					})
 				}
+			},
+			switchChange() {
+				this.isChecked = !this.isChecked;
+				if (!this.isChecked) {
+					this.reset();
+				} else {
+					this.setBeautyOption();
+				}
+			},
+			//设置美颜
+			setBeautyOption() {
+				let option = {
+					whitenessLevel: this.whiteVal,
+					ruddyLevel: this.ruddyVal,
+					smoothLevel: this.buffingVal,
+					brightLevel: this.brightnessVal
+				}
+				if (this.isChecked) { //开启
+					console.log('设置美颜')
+					RCBeautyEngine.setBeautyOptions(this.isChecked, option);
+				}
+			},
+			//切换滤镜
+			cutFilte(id) {
+				//切换滤镜打开美颜
+				if (!this.isChecked) {
+					this.isChecked = true;
+				}
+				let option = {
+					whitenessLevel: this.whiteVal,
+					ruddyLevel: this.ruddyVal,
+					smoothLevel: this.buffingVal,
+					brightLevel: this.brightnessVal
+				}
+				//打开滤镜
+				this.curFilte = id;
+				this.isChecked ? RCBeautyEngine.setBeautyOptions(this.isChecked, option) : '';
+				RCBeautyEngine.setBeautyFilter(this.curFilte);
+			},
+			//美白
+			whiteChange(e) {
+				console.log('美白', e.detail.value);
+				//打开美颜
+				if (!this.isChecked) {
+					this.isChecked = true;
+				}
+				this.whiteVal = e.detail.value;
+				this.setBeautyOption();
+			},
+			//红润
+			ruddyChange(e) {
+				console.log('红润', e.detail.value);
+				//打开美颜
+				if (!this.isChecked) {
+					this.isChecked = true;
+				}
+				this.ruddyVal = e.detail.value;
+				this.setBeautyOption();
+			},
+			//磨皮
+			buffingChange(e) {
+				console.log('磨皮', e.detail.value);
+				//打开美颜
+				if (!this.isChecked) {
+					this.isChecked = true;
+				}
+				this.buffingVal = e.detail.value;
+				this.setBeautyOption();
+			},
+			//亮度
+			brightnessChange(e) {
+				console.log('亮度', e.detail.value);
+				//打开美颜
+				if (!this.isChecked) {
+					this.isChecked = true;
+				}
+				this.brightnessVal = e.detail.value;
+				this.setBeautyOption();
+			},
+			//重置
+			reset() {
+				RCBeautyEngine.resetBeauty();
+				this.initBeautyOpton();
+			},
+			initBeautyOpton() {
+				//初始化滤镜
+				this.curFilte = RCBeautyEngine.getCurrentBeautyFilter();
+				//初始化美颜参数
+				let beautyOption = RCBeautyEngine.getCurrentBeautyOptions();
+				this.whiteVal = beautyOption.whitenessLevel;
+				this.ruddyVal = beautyOption.ruddyLevel;
+				this.buffingVal = beautyOption.smoothLevel;
+				this.brightnessVal = beautyOption.brightLevel;
 			}
-      },
-	  systemInfoSync(userId,ref,isZOrderOnTop){
-		  switch(uni.getSystemInfoSync().platform){
-		  	case 'android':
-		  		call.setVideoView(userId, ref, 0,isZOrderOnTop);
-		  		break;
-		  	case 'ios':
-		  		call.setVideoView(userId, ref, 0);
-		  		break;
-		  	default:
-		  		console.log('运行在开发者工具上')
-		  		break;
-		  }	
-	  },
-      onCallDisconnected() {
-		  this.isMe = true;
-		  if(!this.isSelf){
-			  uni.navigateBack({
-			  	delta:1
-			  })
-		  }
-      },
-	  switchChange(){
-		 this.isChecked = !this.isChecked;
-		 if(!this.isChecked){
-			 this.reset();
-		 }else{
-			 this.setBeautyOption();
-		 }
-	  },
-	  //设置美颜
-	  setBeautyOption(){
-		let option = {
-			whitenessLevel:this.whiteVal,
-			ruddyLevel:this.ruddyVal,
-			smoothLevel:this.buffingVal,
-			brightLevel:this.brightnessVal
 		}
-		if(this.isChecked){//开启
-			console.log('设置美颜')
-			call.setBeautyOption(this.isChecked,option);
-		}
-	  },
-	  //切换滤镜
-	  cutFilte(id){
-		//切换滤镜打开美颜
-		if(!this.isChecked){
-			this.isChecked = true;
-		}
-		let option = {
-			whitenessLevel:this.whiteVal,
-			ruddyLevel:this.ruddyVal,
-			smoothLevel:this.buffingVal,
-			brightLevel:this.brightnessVal
-		}
-		//打开滤镜
-		this.curFilte = id;
-		this.isChecked?call.setBeautyOption(this.isChecked,option):'';
-		call.setBeautyFilter(this.curFilte);
-	  },
-	  //美白
-	  whiteChange(e){
-		console.log('美白',e.detail.value);
-		//打开美颜
-		if(!this.isChecked){
-			this.isChecked = true;
-		}
-		this.whiteVal = e.detail.value;
-		this.setBeautyOption();
-	  },
-	  //红润
-	  ruddyChange(e){
-		console.log('红润',e.detail.value);
-		//打开美颜
-		if(!this.isChecked){
-			this.isChecked = true;
-		}
-		this.ruddyVal = e.detail.value;
-		this.setBeautyOption();
-	  },
-	  //磨皮
-	  buffingChange(e){
-		console.log('磨皮',e.detail.value);
-		//打开美颜
-		if(!this.isChecked){
-			this.isChecked = true;
-		}
-	  	this.buffingVal = e.detail.value;
-		this.setBeautyOption();
-	  },
-	  //亮度
-	  brightnessChange(e){
-		console.log('亮度',e.detail.value);
-		//打开美颜
-		if(!this.isChecked){
-			this.isChecked = true;
-		}
-	  	this.brightnessVal = e.detail.value;
-		this.setBeautyOption();
-	  },
-	  //重置
-	  reset(){
-		call.resetBeauty();
-		this.initBeautyOpton();
-	  },
-	  initBeautyOpton(){
-		  //初始化滤镜
-		  this.curFilte = call.getCurrentBeautyFilter();
-		  //初始化美颜参数
-		  let beautyOption = call.getCurrentBeautyOption();
-		  this.whiteVal = beautyOption.whitenessLevel;
-		  this.ruddyVal= beautyOption.ruddyLevel;
-		  this.buffingVal = beautyOption.smoothLevel;
-		  this.brightnessVal=beautyOption.brightLevel;
-	  }
-    }
-  }
+	}
 </script>
 
 <style scoped>
-  .content {
-    flex: 1;
-	flex-direction: column;
-    position: relative;
-  }
-  .bigVideoView{
-	  background: #000;
-  }
-  .smallVideoView{
-	  position: absolute;
-	  right: 0;
-	  top: 50upx;
-	  width: 200upx;
-	  height: 200upx;
-  }
-  .smallViews{
-	  flex-wrap: wrap;
-	  flex-direction: row;
-	  background: #ccc;
-  }
-  .smallView{
-	  width: 200upx;
-	  height: 200upx;
-	  margin-right: 20upx;
-	  background: pink;
-  }
-  .container {
-	  position: absolute;
-	  bottom: 20upx;
-	  height: 100upx;
-	  flex-direction: row;
-	  justify-content: center;
-  }
-  .nav{
-	  position: fixed;
-	  bottom: 200upx;
-	  right: 0;
-  }
-  
-  .camera{
-	  background: #ccc;
-  }
-  .nav-com{
-	  margin-top: 10upx;
-	  color: #fff;
-	  background: rgba(0,0,0,0.5);
-	  justify-content: center;
-	  align-items: center;
-	  
-  }
-  .hangup{
-	  width: 200upx;
-	  height: 100upx;
-	  color: #fff;
-	  text-align: center;
-	  line-height: 100upx;
-	  background: red;
-	  margin-right: 50upx;
-	  border-radius: 50upx;
-  }
-  .box-mark{
-	  position: fixed;
-	  left: 0;
-	  top: 0;
-	  background: rgba(0,0,0,.5);
-	  z-index: 9999;
-	  justify-content: center;
-	  align-items: center;
-	  color: #fff;
-  }
-  .box-cen{
-	  padding: 30upx;
-	  width: 500upx;
-	  height: 500upx;
-	  background: #222831;
-  }
-  .box-des{
-	color: #fff;
-  }
-  .box-input{
-	margin-top: 30upx;
-	color: #fff;
-	border: 1upx solid #fff;   
-  }
-  .box-tit{
-	margin-top: 30upx;
-	color: #fff;
-  }
-  .box-btn{
-	  margin-top: 30upx;
-  }
-  .box-btns{
-	  flex-direction: row;
-	  justify-content: space-between;
-	  padding: 0 30upx;
-  }
-  .box-btn{
-	padding:0 20upx;
-  }
-  .beauty{
-	height: 500upx;
-	position: fixed;
-	bottom: 0;
-	background: #000;
-  }
-  .beauty-btn{
-	  height: 100upx;
-	  padding-right: 20upx;
-	  flex-direction: row;
-	  justify-content: space-between;
-  }
-  .change-btn{
-	  padding-top:20upx;
-	  flex-direction: row;
-  }
-  .switch-btn{
-	  border: 1upx;
-	  border-color: #fff;
-	  padding: 20upx;
-	  background: blue;
-	  color: #fff;
-	  margin-left: 20upx;
-	  margin-top: -10upx;
-  }
-  .ch-tit{
-	margin-top: 8upx;
-	color: #fff;
-  }
-  .ch-res{
-	  margin-top: -10upx;
-	  margin-left: 20upx;
-	  color: #fff;
-	  padding:20upx;
-	  border-radius: 10upx;
-	  justify-content: center;
-	  align-items: center;
-	  background: #4e6ef2;
-  }
-  .close-btn{
-	padding-top:20upx;
-  }
-  .close-tit{
-	   color: #fff;
-  }
-  .beauty-view{
-	  flex: 1;
-	  background: #ccc;
-  }
-  .com-view{
-	  padding-top: 40upx;
-	  background: #ccc;
-	  padding-left: 30upx;
-	  padding-right: 30upx;
-	  
-  }
-  .beauty-tab{
-	  border-top:1px;
-	  border-top-color: #000000;
-	  padding: 0 20upx;
-  	  flex: 1;
-  	  background: #fff;
-	  flex-direction: row;
-	  justify-content: space-between;
-	  padding-top: 40upx;
-  }
-  .filte-view{
-  }
-  .tab-item{
-	  width: 100upx;
-	  height: 100upx;
-	  border:1px;
-	  border-color: #000000;
-	  justify-content: center;
-	  align-items: center;
-  }
-  .current{
-	  background: yellow;
-  }
-  .white-view{
-  }
+	.content {
+		flex: 1;
+		flex-direction: column;
+		position: relative;
+	}
+
+	.bigVideoView {
+		background: #000;
+	}
+
+	.smallVideoView {
+		position: absolute;
+		right: 0;
+		top: 50upx;
+		width: 200upx;
+		height: 200upx;
+	}
+
+	.smallViews {
+		flex-wrap: wrap;
+		flex-direction: row;
+		background: #ccc;
+	}
+
+	.smallView {
+		width: 200upx;
+		height: 200upx;
+		margin-right: 20upx;
+		background: pink;
+	}
+
+	.container {
+		position: absolute;
+		bottom: 20upx;
+		height: 100upx;
+		flex-direction: row;
+		justify-content: center;
+	}
+
+	.nav {
+		position: fixed;
+		bottom: 200upx;
+		right: 0;
+	}
+
+	.camera {
+		background: #ccc;
+	}
+
+	.nav-com {
+		margin-top: 10upx;
+		color: #fff;
+		background: rgba(0, 0, 0, 0.5);
+		justify-content: center;
+		align-items: center;
+
+	}
+
+	.hangup {
+		width: 200upx;
+		height: 100upx;
+		color: #fff;
+		text-align: center;
+		line-height: 100upx;
+		background: red;
+		margin-right: 50upx;
+		border-radius: 50upx;
+	}
+
+	.box-mark {
+		position: fixed;
+		left: 0;
+		top: 0;
+		background: rgba(0, 0, 0, .5);
+		z-index: 9999;
+		justify-content: center;
+		align-items: center;
+		color: #fff;
+	}
+
+	.box-cen {
+		padding: 30upx;
+		width: 500upx;
+		height: 500upx;
+		background: #222831;
+	}
+
+	.box-des {
+		color: #fff;
+	}
+
+	.box-input {
+		margin-top: 30upx;
+		color: #fff;
+		border: 1upx solid #fff;
+	}
+
+	.box-tit {
+		margin-top: 30upx;
+		color: #fff;
+	}
+
+	.box-btn {
+		margin-top: 30upx;
+	}
+
+	.box-btns {
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 0 30upx;
+	}
+
+	.box-btn {
+		padding: 0 20upx;
+	}
+
+	.beauty {
+		height: 500upx;
+		position: fixed;
+		bottom: 0;
+		background: #000;
+	}
+
+	.beauty-btn {
+		height: 100upx;
+		padding-right: 20upx;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+
+	.change-btn {
+		padding-top: 20upx;
+		flex-direction: row;
+	}
+
+	.switch-btn {
+		border: 1upx;
+		border-color: #fff;
+		padding: 20upx;
+		background: blue;
+		color: #fff;
+		margin-left: 20upx;
+		margin-top: -10upx;
+	}
+
+	.ch-tit {
+		margin-top: 8upx;
+		color: #fff;
+	}
+
+	.ch-res {
+		margin-top: -10upx;
+		margin-left: 20upx;
+		color: #fff;
+		padding: 20upx;
+		border-radius: 10upx;
+		justify-content: center;
+		align-items: center;
+		background: #4e6ef2;
+	}
+
+	.close-btn {
+		padding-top: 20upx;
+	}
+
+	.close-tit {
+		color: #fff;
+	}
+
+	.beauty-view {
+		flex: 1;
+		background: #ccc;
+	}
+
+	.com-view {
+		padding-top: 40upx;
+		background: #ccc;
+		padding-left: 30upx;
+		padding-right: 30upx;
+
+	}
+
+	.beauty-tab {
+		border-top: 1px;
+		border-top-color: #000000;
+		padding: 0 20upx;
+		flex: 1;
+		background: #fff;
+		flex-direction: row;
+		justify-content: space-between;
+		padding-top: 40upx;
+	}
+
+	.filte-view {}
+
+	.tab-item {
+		width: 100upx;
+		height: 100upx;
+		border: 1px;
+		border-color: #000000;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.current {
+		background: yellow;
+	}
+
+	.white-view {}
 </style>

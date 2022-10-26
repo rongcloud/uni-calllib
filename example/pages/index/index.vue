@@ -125,7 +125,8 @@
 
 <script>
 	import * as call from "@/uni_modules/RongCloud-CallWrapper/lib/index"
-	import * as im from "@rongcloud/imlib-uni"
+	// import * as im from "@/uni_modules/RongCloud-IMWrapper/js_sdk/index"
+	import RCIMIWEngine from "@/uni_modules/RongCloud-IMWrapper-V2/js_sdk/RCIMEngine";
 	import permision from "@/js_sdk/wa-permission/permission.js"
 	import {reasonDeal,errorDeal,imCode} from '../../utils/code.js'
 	export default {
@@ -137,9 +138,9 @@
 				isLogining: "",
 				isInitIm: false,
 				form:{
-					appkey:'c9kqb3rdkbb8j',
-					token:'fBsTKu1WSiANi7pTWnHRyf+f0IjfzRkyUpTVecImFcPNrpMY6GzeS/sRCrHjCiQD+FKPw5HyKn95+fgPzxzcLgS1YXhQ15eZ',
-					navi:'https://nav-ucqa.rongcloud.net',
+					appkey:'',
+					token:'',
+					navi:'',
 					mediaServer:''
 				},
 				isShow:false,
@@ -169,21 +170,21 @@
 						label:'音视频'
 					}
 				],
-				targetId:'13811396855',
+				targetId:'',
 				isRoom:false,
-				groupId:'88888888',
-				userIds:'13811396855',
+				groupId:'',
+				userIds:'',
 				isCut:false,
 				localSession:'',
-				showMask:false,
 				isPermission:false,
-				isBeauty:false
+				isBeauty:false,
+				imEngine: null
 			}
 		},
 		onLoad() {
 			// 初始化 CallLib
-			im.disconnect();
-			call.init({});
+			// im.disconnect();
+			// call.init({});
 			call.onCallReceived( (res)=> {
 				console.log(res)
 				console.log("Engine:OnCallReceived=>"+"监听通话呼入, 目标id=>", res.data.targetId);
@@ -249,25 +250,10 @@
 		},
 		onBackPress(){
 			console.log('返回')
-			if(this.showMask) {  
-			     this.showMask = false;  
-			     return true;  
-			   }else{  
-			      uni.showModal({  
-			        title: '提示',  
-			        content: '是否退出uni-app？',  
-			        success: function(res) {  
-			            if (res.confirm) {  
-							im.disconnect();
-			                // 退出当前应用，改方法只在App中生效  
-			                plus.runtime.quit();  
-			            } else if (res.cancel) {  
-			                console.log('用户点击取消');  
-			            }  
-			        }  
-			      });  
-			      return true  
-			   }
+			call.unInit()
+			if (this.imEngine != null){
+				this.imEngine.disconnect(false)
+			}
 		},
 		methods: {
 			removeAllListeners(){
@@ -309,7 +295,7 @@
 				}
 			},
 			//连接IM
-			connect(){
+			async connect(){
 				if(!this.form.appkey){
 					uni.showToast({
 						title:"请输入appKey",
@@ -325,74 +311,52 @@
 				    	duration:2000
 				    })
 				    return;
-				  }
-				  this.connectIM().then((userId)=>{
-					  this.libPage = true;
-					  this.loginUserId = userId;
-					  uni.showToast({
-					  	title:userId
-					  });
-					  if(uni.getSystemInfoSync().platform === 'android'){
-						  permision.requestAndroidPermission('android.permission.CAMERA');
-						  permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
-					  }
-				  }).catch((e)=>{
-						uni.setStorageSync('login-params',{
-							appkey:this.form.appkey,
-							token:this.form.token,
-							navi:this.form.navi
-						});
-						console.log(e)
-						console.log("连接IM发生错误... code=",e.message);
-						uni.showToast({
-							title:imCode(e),
-							icon: "error",
-							duration:2000
-						})
-						this.isInitIm=false;
-					});
+				}
+				uni.showLoading({
+					title: '正在连接。。。'
+				});
+				this.connectIM()
 			},
 			//连接IM
-			connectIM(){
-				
-				//判断是否初始化
-				if(!this.isInitIm){
-					if(this.form.navi){
-						console.log('有nav')
-						console.log(this.form.navi)
-						im.setServerInfo(this.form.navi,'')
-					};
-					im.init(this.form.appkey)
-					this.isInitIm = true;
-				}else{
-					uni.showToast({
-						title:"正在连接。。。",
-						icon: "error",
-						duration:2000
-					})
-					return;
+			async connectIM(){
+				const options = {
+					naviServer: this.form.navi
 				}
-				return new Promise((resolve,reject)=>{
-						im.connect(this.form.token,(res)=> {
-							console.log('im已连接')
-							console.log(res)
-							if (res.code === 0) {
-								uni.setStorageSync('login-params',{
-									appkey:this.form.appkey,
-									token:this.form.token,
-									navi:this.form.navi
-								});
-								resolve(res.userId);
-							} else {
-								reject(res.code);
-							}
-						});
+				this.imEngine = await RCIMIWEngine.create(this.form.appkey,options)
+				this.imEngine.setOnConnectedListener((res) => {
+					if (res.code != 0){
+						uni.hideLoading();
+						uni.showToast({
+							title: 'OnCon:' + res.code,
+							icon: 'error'
+						})
+						return
+					}
+					//连接成功
+					call.init({});
+					console.log('call.init')
+					this.libPage = true;
+					this.loginUserId = res.userId;
+					uni.hideLoading();
+					uni.showToast({
+						title:res.userId
+					});
+					if(uni.getSystemInfoSync().platform === 'android'){
+						permision.requestAndroidPermission('android.permission.CAMERA');
+						permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
+					}
 				});
-				
+				let code = await this.imEngine.connect(this.form.token,10)
+				if(code != 0 ){
+					uni.hideLoading();
+					uni.showToast({
+						title: 'connect:' + code,
+						icon: 'error'
+					})
+				}
 			},
 			//呼叫
 			callOut(){
-				
 				//单聊音频
 				if(this.callSelect ==='single'&&this.mediaSelect ==='audio'){
 					if(this.targetId === ''){

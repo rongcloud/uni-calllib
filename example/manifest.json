@@ -48,6 +48,34 @@
             }
         },
         "nativePlugins" : {
+            "RongCloud-Beauty" : {
+                "__plugin_info__" : {
+                    "name" : "RCUniBeauty",
+                    "description" : "融云基础版美颜插件，服务于 RCUniRtc 或 RCUniRtc",
+                    "platforms" : "Android,iOS",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=7982",
+                    "android_package_name" : "cn.rongcloud.call.uni.example",
+                    "ios_bundle_id" : "cn.rongcloud.call.uni.example",
+                    "isCloud" : true,
+                    "bought" : 1,
+                    "pid" : "7982",
+                    "parameters" : {}
+                }
+            },
+            "RongCloud-IM-V2" : {
+                "__plugin_info__" : {
+                    "name" : "RCUniIMV2",
+                    "description" : "融云即时通讯 SDK uni 原生插件V2",
+                    "platforms" : "Android,iOS",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=9227",
+                    "android_package_name" : "cn.rongcloud.call.uni.example",
+                    "ios_bundle_id" : "cn.rongcloud.call.uni.example",
+                    "isCloud" : true,
+                    "bought" : 1,
+                    "pid" : "9227",
+                    "parameters" : {}
+                }
+            },
             "RongCloud-Call" : {
                 "__plugin_info__" : {
                     "name" : "RCUniCall",
@@ -59,20 +87,6 @@
                     "isCloud" : true,
                     "bought" : 1,
                     "pid" : "6372",
-                    "parameters" : {}
-                }
-            },
-            "RongCloud-IM" : {
-                "__plugin_info__" : {
-                    "name" : "RCUniIM",
-                    "description" : "融云即时通讯 SDK uni 原生插件",
-                    "platforms" : "Android,iOS",
-                    "url" : "https://ext.dcloud.net.cn/plugin?id=6120",
-                    "android_package_name" : "",
-                    "ios_bundle_id" : "",
-                    "isCloud" : true,
-                    "bought" : 1,
-                    "pid" : "6120",
                     "parameters" : {}
                 }
             }

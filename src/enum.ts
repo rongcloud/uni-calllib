@@ -1,12 +1,12 @@
 export enum RCCallIWCamera {
-  NONE = -1,
-  FRONT = 0,
-  BACK = 1
+  NONE = 0,
+  FRONT = 1,
+  BACK = 2,
 }
 /**
  * 通话媒体类型
  */
- export enum RCCallIWMediaType {
+export enum RCCallIWMediaType {
   /**
    * 音频通话
    */
@@ -70,8 +70,8 @@ export enum RCUNICallErrorCode {
   MEDIA_JOIN_ROOM_REFUSE_ERROR = 16
 
 }
-export enum RCCallIWCallDisconnectedReason{
-    // 己方取消已发出的通话请求
+export enum RCCallIWCallDisconnectedReason {
+  // 己方取消已发出的通话请求
   CANCEL = 0,
 
   // 己方拒绝收到的通话请求
@@ -173,10 +173,185 @@ export enum RCCallIWCallDisconnectedReason{
   // im ipc服务已断开
   SERVICE_DISCONNECTED = 33
 }
-export enum RCCallIWBeautyFilterType {
-  NONE = 0,
-  ESTHETIC = 1,
-  FRESH = 2,
-  ROMANTIC = 3 
 
+/**
+ * 音频编译类型
+ */
+export enum RCCallIWAudioCodecType {
+  PCMU = 0,
+  OPUS = 111,
+}
+
+/**
+ * 音源类型
+ */
+export enum RCCallIWAudioSource {
+  /**
+   * 默认音频源
+   */
+  DEFAULT = 0,
+  /**
+   * 麦克风
+   */
+  MIC = 1,
+  /**
+   * 语音呼叫上行音频源
+   */
+  VOICE_UPLINK = 2,
+  /**
+   * 语音呼叫下行音频源
+   */
+  VOICE_DOWNLINK = 3,
+  /**
+   * 语音呼叫音频源
+   */
+  VOICE_CALL = 4,
+  /**
+   * 同方向的相机麦克风，若相机无内置相机或无法识别，则使用预设的麦克风
+   */
+  CAMCORDER = 5,
+  /**
+   * 进过语音识别后的麦克风音频源
+   */
+  VOICE_RECOGNITION = 6,
+  /**
+   * 针对VoIP调整后的麦克风音频源
+   */
+  VOICE_COMMUNICATION = 7,
+}
+
+/*!
+ 通话视频参数
+ */
+export enum RCCallIWVideoProfile {
+
+  /**
+   * 144x256, 15fps, 120~240kbps
+   */
+  PROFILE_144_256 = 0,
+
+  /**
+   * 240x240, 15fps, 120~280kbps
+   */
+  PROFILE_240_240 = 1,
+  /**
+   * 240x320, 15fps, 120~400kbps
+   */
+  PROFILE_240_320 = 2,
+  /**
+   * 360x480, 15fps, 150~650kbps
+   */
+  PROFILE_360_480 = 3,
+
+  /**
+   * 360x640, 15fps, 180~800kbps
+   */
+  PROFILE_360_640 = 4,
+
+  /**
+   * 480x640, 15fps, 200~900kbps
+   */
+  PROFILE_480_640 = 5,
+
+  /**
+   * 480x720, 15fps, 200~1000kbps
+   */
+  PROFILE_480_720 = 6,
+
+  /**
+   * 720x1280, 15fps, 250~2200kbps
+   */
+  PROFILE_720_1280 = 7,
+
+  /**
+   * 1080x1920, 15fps, 400~4000kbps
+   */
+  PROFILE_1080_1920 = 8,
+
+  /**
+   * 144x256, 30fps, 240~480kbps
+   */
+  PROFILE_144_256_HIGH = 9,
+
+  /**
+   * 240x240, 30fps, 240~360kbps
+   */
+  PROFILE_240_240_HIGH = 10,
+
+  /**
+   * 240x320, 30fps, 240~800kbps
+   */
+  PROFILE_240_320_HIGH = 11,
+
+  /**
+   * 360x480, 30fps, 300~1300kbps
+   */
+  PROFILE_360_480_HIGH = 12,
+
+  /**
+   * 360x640, 30fps, 360~1600kbps
+   */
+  PROFILE_360_640_HIGH = 13,
+
+  /**
+   * 480x640, 30fps, 400~1800kbps
+   */
+  PROFILE_480_640_HIGH =14,
+
+  /**
+   * 480x720, 30fps, 400~2000kbps
+   */
+  PROFILE_480_720_HIGH = 15,
+
+  /**
+   * 720x1080, 30fps, 500~4400kbps
+   */
+  PROFILE_720_1280_HIGH = 16,
+
+  /**
+   * 1080x1920, 30fps, 800~8000kbps
+   */
+  PROFILE_1080_1920_HIGH = 17,
+}
+
+/**
+ * 摄像头方向
+ */
+export enum RCCallIWCameraOrientation {
+  
+  /**
+   * home 键在下
+   */
+  PORTRAIT = 0,
+
+  /**
+   * home 键在上
+   */
+  PORTRAIT_UPSIDE_DOWN,
+
+  /**
+   * home 键在右
+   */
+  LANDSCAPE_RIGHT,
+
+  /**
+   * home 键在左
+   */
+  LANDSCAPE_LEFT,
+}
+
+
+export enum RCCallIWVideoBitrateMode {
+  CQ = 0,
+  VBR = 1,
+  CBR = 2,
+}
+
+export enum RCCallIWNetworkQuality {
+  UNKNOWN = 0,
+  EXCELLENT = 1,
+  GOOD = 2,
+  POOR = 3,
+  BAD = 4,
+  TERRIBLE = 5,
 }
