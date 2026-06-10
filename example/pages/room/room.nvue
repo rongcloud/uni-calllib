@@ -2,15 +2,20 @@
 	<view class="content">
 		<!-- 单人视频 -->
 		<view v-if="users.length<=2">
-			<RongCloud-Call-RCUniCallView class="bigVideoView"
-				:style="{width:windowWidth+'px',height:windowHeight+'px'}" ref="bigVideoView">
-			</RongCloud-Call-RCUniCallView>
-			<RongCloud-Call-RCUniCallView class="smallVideoView" :style="{width:200+'upx',height:200+'upx'}"
-				ref="smallVideoView">
-			</RongCloud-Call-RCUniCallView>
+			<view v-if="mediaTypeCur === 'video'">
+				<RongCloud-Call-RCUniCallView class="bigVideoView"
+					:style="{width:windowWidth+'px',height:windowHeight+'px'}" ref="bigVideoView">
+				</RongCloud-Call-RCUniCallView>
+				<RongCloud-Call-RCUniCallView class="smallVideoView" :style="{width:220+'upx',height:320+'upx'}"
+					ref="smallVideoView">
+				</RongCloud-Call-RCUniCallView>
+			</view>
+			<view v-else class="audioModeView" :style="{width:windowWidth+'px',height:windowHeight+'px'}">
+				<text class="audioModeText">语音通话中</text>
+			</view>
 		</view>
 		<!-- 多人视频 -->
-		<view v-else>
+		<view v-else-if="mediaTypeCur === 'video'">
 			<RongCloud-Call-RCUniCallView class="bigVideoView" :style="{width:windowWidth+'px',height:300+'px'}"
 				ref="bigVideoView">
 			</RongCloud-Call-RCUniCallView>
@@ -20,7 +25,10 @@
 				</RongCloud-Call-RCUniCallView>
 			</view>
 		</view>
-		<view class="nav">
+		<view v-else class="audioModeView" :style="{width:windowWidth+'px',height:windowHeight+'px'}">
+			<text class="audioModeText">语音通话中</text>
+		</view>
+		<view class="nav" v-if="!isCut">
 			<text class="nav-com" v-if="callWay === 1" @click="isMark=true">
 				邀请
 			</text>
@@ -40,9 +48,9 @@
 				美颜
 			</text>
 		</view>
-		<view class="container" :style="{width:windowWidth+'px'}">
-			<text class="hangup" @click="hangup">挂断 </text>
-			<text v-if="mediaTypeCur === 'video' " class="hangup" @click="changeMediaType">切换语音 </text>
+		<view class="container" v-if="!isCut" :style="{width:windowWidth+'px'}">
+			<text class="hangup end-action" @click="hangup">挂断</text>
+			<text v-if="mediaTypeCur === 'video' " class="hangup voice-action" @click="changeMediaType">切换语音</text>
 		</view>
 		<view class="box-mark" v-if="isMark" :style="{width:windowWidth+'px',height:windowHeight+'px'}" @click.stop="">
 			<view class="box-cen">
@@ -58,7 +66,7 @@
 				</view>
 			</view>
 		</view>
-
+	
 		<view class="beauty" v-if="isBeauty" :style="{width:windowWidth+'px'}" @click.stop="">
 			<view class="beauty-btn">
 				<view class="change-btn">
@@ -100,16 +108,23 @@
 				</view>
 			</view>
 		</view>
-
+		<view class="accept_btn" v-if="isCut">
+			<button class="accept-action reject-action" type="default" @click="cutFn(false)">挂断</button>
+			<button class="accept-action answer-action" type="default" @click="cutFn(true)">接听</button>
+		</view>
 	</view>
 </template>
 <script>
 	import * as call from "@/uni_modules/RongCloud-CallWrapper/lib/index"
+	//import { RCCallIWVideoProfile } from '@/uni_modules/RongCloud-CallWrapper/lib/index.esm.js
+
 	// import * as im from "@/uni_modules/RongCloud-IMWrapper/js_sdk/index"
 	import RCBeautyEngine from "@/uni_modules/RongCloud-BeautyWrapper/lib/RCBeautyEngine"
+	import { RCCallIWCamera, RCCallIWVideoProfile, RCCallIWCameraOrientation, RCCallIWVideoBitrateMode } from "../../uni_modules/RongCloud-CallWrapper/lib";
 	export default {
 		data() {
 			return {
+				isCut: true,
 				mediaType: "video",
 				callType: "out",
 				callWay: 0, //呼叫方式 0 单聊 1 群聊
@@ -181,34 +196,40 @@
 				isChecked: false
 			}
 		},
-		onLoad: function() {
-			var _this = this;
-			uni.getStorage({
-				key: "room-parameters",
-				success: (res) => {
-					this.mediaType = res.data.mediaType;
-					this.callType = res.data.callType ? res.data.callType : 'in';
-					this.groupId = res.data.groupId ? res.data.groupId : '';
-					this.userIds = res.data.userIds ? res.data.userIds : '';
+		onLoad: function(data) {
+			uni.$on('OnCallConnected', this.onCallConnected)
+			uni.$on('OnCallDisconnected', this.onCallDisconnected)
+			console.log("room - onLoad ->", data);
+			// uni.getStorage({
+			// 	key: "room-parameters",
+			// 	success: (res) => {
+					this.mediaType = data.mediaType ? data.mediaType : this.mediaType;
+					this.mediaTypeCur = this.mediaType;
+					this.callType = data.callType ? data.callType : 'in';
+					this.groupId = data.groupId ? data.groupId : '';
+					this.userIds = data.userIds ? data.userIds : '';
 					if (this.callType === 'out') {
+						this.isCut = false;
 						console.log('呼出out')
-						this.targetId = res.data.targetId;
-						this.startCall();
-					} else {
-						console.log('呼入接受')
-						this.accept();
+						this.targetId = data.targetId;
+						setTimeout(()=> {
+							this.startCall();
+						}, 200);
 					}
-				}
-			});
+				// }
+			// });
+			
+			var _this = this;
 			uni.getSystemInfo({
 				success: function(res) {
 					_this.windowWidth = res.windowWidth;
 					_this.windowHeight = res.windowHeight;
 				}
 			})
-			uni.$on('OnCallConnected', this.onCallConnected)
-			uni.$on('OnCallDisconnected', this.onCallDisconnected)
+			
 			this.initBeautyOpton();
+			
+			this.previewBeforeAccept();
 		},
 		beforeDestroy() {
 			uni.$off('OnCallDisconnected');
@@ -224,6 +245,31 @@
 			}
 		},
 		methods: {
+			// 接听前预览
+			previewBeforeAccept() {
+				if (this.mediaType != 'video') return;
+				setTimeout(() => {
+					let session = call.getCurrentCallSession();
+					console.log('previewBeforeAccept - session:', session);
+					if (!session || !session.mine || !session.mine.userId || !this.$refs.bigVideoView) {
+						return;
+					}
+					call.setVideoView(session.mine.userId, this.$refs.bigVideoView.ref, 0, false);
+				}, 200);
+			},
+			// 是否接入
+			cutFn(isFlag){
+				let session = call.getCurrentCallSession();
+				// 确认接入
+				if(isFlag) {
+					this.isCut=false;
+					if (session.callId && session.callId.length > 0) {
+						call.accept()
+					}
+				} else {
+					call.hangup();
+				}
+			},
 			changeMediaType() {
 				this.mediaTypeCur = 'audio';
 				call.changeMediaType(0);
@@ -309,52 +355,63 @@
 				call.accept();
 			},
 			startCall() {
+				// 设置视频参数
+				call.setVideoConfig({
+					profile:RCCallIWVideoProfile.PROFILE_720_1280,
+					defaultCamera:RCCallIWCamera.FRONT,
+					cameraOrientation:RCCallIWCameraOrientation.PORTRAIT,
+					isPreviewMirror:true,
+					enableHardwareDecoder:true,
+					hardwareDecoderColor:1,
+					enableHardwareEncoder:true,
+					enableHardwareEncoderHighProfile:true,
+					hardWareEncoderColor:11,
+					hardwareEncoderFrameRate:15,
+					hardwareEncoderBitrateMode:RCCallIWVideoBitrateMode.CBR
+				});
 				const type = this.mediaType === 'audio' ? 0 : 1;
 				this.mediaTypeCur = this.mediaType;
 				if (this.targetId.length > 0) {
 					call.enableSpeaker(true);
 					call.startSingleCall(this.targetId, type, null);
-					this.currentCallSession = call.getCurrentCallSession();
-					this.users = this.currentCallSession.users ? this.currentCallSession.users : [];
 				} else {
 					call.startGroupCall(this.groupId, this.userIds, [], type, '');
 					this.users = this.userIds;
-
-					console.log(this.users);
-					this.currentCallSession = call.getCurrentCallSession();
-					this.users = this.currentCallSession.users ? this.currentCallSession.users : [];
 				}
-				let _this = this;
-				// im.getCurrentUserId(function(result){
-				// 	 _this.systemInfoSync(result.userId,_this.$refs.bigVideoView.ref,false);
-				// })
-				if (this.currentCallSession) {
+				this.currentCallSession = call.getCurrentCallSession();
+				this.users = this.currentCallSession && this.currentCallSession.users ? this.currentCallSession.users : [];
+				
+				if (this.mediaTypeCur === 'video' && this.currentCallSession && this.currentCallSession.mine) {
 					this.systemInfoSync(this.currentCallSession.mine.userId, this.$refs.bigVideoView.ref, false);
 				}
 			},
 
 			onCallConnected() {
-				let context = this;
-				console.log('oncallconnected接收了');
-				this.mediaTypeCur = this.mediaType;
+				let session = call.getCurrentCallSession();
+				this.currentCallSession = session;
+				console.log('room - onCallConnected session -> ', session);
+				
 				call.enableSpeaker(true);
-				this.currentCallSession = call.getCurrentCallSession();
-				this.callWay = this.currentCallSession.callType;
-				this.users = this.currentCallSession.users ? this.currentCallSession.users : [];
+				this.callWay = session.callType;
+				this.users = session.users ? session.users : [];
+				this.mediaType = session.mine.mediaType == 1 ? 'video' : 'audio';
+				this.mediaTypeCur = this.mediaType;
+				if (this.mediaTypeCur !== 'video') {
+					return;
+				}
 				let isHasMine = this.users.findIndex((item) => {
-					return item.userId === this.currentCallSession.mine.userId;
+					return item.userId === session.mine.userId;
 				});
 				if (isHasMine === -1) {
-					this.users.push(this.currentCallSession.mine);
+					this.users.push(session.mine);
 				}
-				if (this.currentCallSession && this.currentCallSession.users.length > 0) {
+				if (session && session.users.length > 0) {
 					//视频是两个的时候
-					if (this.currentCallSession.users.length <= 2) {
+					if (session.users.length <= 2) {
 						setTimeout(() => {
-							this.systemInfoSync(this.currentCallSession.mine.userId, this.$refs.smallVideoView.ref,
-								true);
-							this.viewArr = this.currentCallSession.users.filter((item) => {
-								return item.userId !== this.currentCallSession.mine.userId;
+							this.systemInfoSync(session.mine.userId, this.$refs.smallVideoView.ref, true);
+							this.viewArr = session.users.filter((item) => {
+								return item.userId !== session.mine.userId;
 							});
 							this.viewArr.forEach((itm) => {
 								this.targetId = itm.userId;
@@ -364,11 +421,11 @@
 
 					} else {
 						// 视频超过三个
-						this.$nextTick(() => {
-							this.systemInfoSync(this.currentCallSession.mine.userId, this.$refs.bigVideoView.ref,
+						this.$nextTick(() => { 
+							this.systemInfoSync(session.mine.userId, this.$refs.bigVideoView.ref,
 								false);
-							this.viewArr = this.currentCallSession.users.filter((item) => {
-								return item.userId !== this.currentCallSession.mine.userId;
+							this.viewArr = session.users.filter((item) => {
+								return item.userId !== session.mine.userId;
 							});
 							setTimeout(() => {
 								this.viewArr.forEach((itm) => {
@@ -378,6 +435,16 @@
 							}, 100)
 						})
 					}
+				}
+			},
+			onCallDisconnected() {
+				let session = call.getCurrentCallSession();
+				console.log('room - onCallDisconnected session -> ', session);
+				this.isMe = true;
+				if (!this.isSelf) {
+					uni.navigateBack({
+						delta: 1
+					})
 				}
 			},
 			systemInfoSync(userId, ref, isZOrderOnTop) {
@@ -391,14 +458,6 @@
 					default:
 						console.log('运行在开发者工具上')
 						break;
-				}
-			},
-			onCallDisconnected() {
-				this.isMe = true;
-				if (!this.isSelf) {
-					uni.navigateBack({
-						delta: 1
-					})
 				}
 			},
 			switchChange() {
@@ -503,18 +562,33 @@
 		flex: 1;
 		flex-direction: column;
 		position: relative;
+		background: #05080c;
 	}
 
 	.bigVideoView {
 		background: #000;
 	}
 
+	.audioModeView {
+		background: #000000;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.audioModeText {
+		color: rgba(255, 255, 255, 0.72);
+		font-size: 32upx;
+	}
+
 	.smallVideoView {
 		position: absolute;
-		right: 0;
-		top: 50upx;
-		width: 200upx;
-		height: 200upx;
+		right: 24upx;
+		top: 72upx;
+		width: 220upx;
+		height: 320upx;
+		border-radius: 12upx;
+		border-width: 2upx;
+		border-color: rgba(255, 255, 255, 0.6);
 	}
 
 	.smallViews {
@@ -526,22 +600,29 @@
 	.smallView {
 		width: 200upx;
 		height: 200upx;
-		margin-right: 20upx;
-		background: pink;
+		margin-right: 16upx;
+		margin-bottom: 16upx;
+		background: #111820;
+		border-radius: 8upx;
 	}
 
 	.container {
-		position: absolute;
-		bottom: 20upx;
-		height: 100upx;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 48upx;
+		height: 96upx;
 		flex-direction: row;
 		justify-content: center;
+		align-items: center;
 	}
 
 	.nav {
 		position: fixed;
-		bottom: 200upx;
-		right: 0;
+		right: 24upx;
+		bottom: 176upx;
+		width: 176upx;
+		align-items: center;
 	}
 
 	.camera {
@@ -549,23 +630,39 @@
 	}
 
 	.nav-com {
-		margin-top: 10upx;
+		width: 168upx;
+		height: 58upx;
+		line-height: 58upx;
+		margin-top: 14upx;
 		color: #fff;
-		background: rgba(0, 0, 0, 0.5);
+		background: rgba(17, 24, 32, 0.72);
+		border-radius: 29upx;
+		font-size: 23upx;
+		text-align: center;
 		justify-content: center;
 		align-items: center;
-
 	}
 
 	.hangup {
-		width: 200upx;
-		height: 100upx;
+		width: 190upx;
+		height: 78upx;
 		color: #fff;
 		text-align: center;
-		line-height: 100upx;
-		background: red;
-		margin-right: 50upx;
-		border-radius: 50upx;
+		line-height: 78upx;
+		margin-left: 18upx;
+		margin-right: 18upx;
+		border-radius: 39upx;
+		font-size: 28upx;
+	}
+
+	.end-action {
+		background: #e5484d;
+	}
+
+	.voice-action {
+		background: rgba(17, 24, 32, 0.82);
+		border-width: 1upx;
+		border-color: rgba(255, 255, 255, 0.48);
 	}
 
 	.box-mark {
@@ -708,4 +805,55 @@
 	}
 
 	.white-view {}
+	
+	.boxs{
+		position: fixed;
+		  justify-content: center;
+		  align-items: center;
+		left: 0;
+		top: 0;
+		background: rgba(0,0,0,.5);
+		z-index: 9999;
+	}
+	.boxs-cen{
+		width: 600upx;
+		height: 300upx;
+		background: #FFFFFF;
+		border-radius: 4upx;
+	}
+	.boxs-des{
+		margin-top: 50upx;
+		color: #000000;
+		text-align: center;
+	}
+	.boxs-btn{
+		margin-top: 50upx;
+		display: flex;
+		justify-content: space-between;
+	}
+	.accept_btn{
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 120upx;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+	.accept-action{
+		width: 220upx;
+		height: 78upx;
+		line-height: 78upx;
+		margin-left: 24upx;
+		margin-right: 24upx;
+		border-radius: 39upx;
+		color: #FFFFFF;
+		font-size: 28upx;
+	}
+	.reject-action{
+		background: #e5484d;
+	}
+	.answer-action{
+		background: #20b26b;
+	}
 </style>

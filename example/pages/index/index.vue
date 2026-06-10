@@ -1,62 +1,64 @@
 <template>
-	<view class="content" @click.sop="">
+	<view class="content" @click.stop="">
 		<!-- IM连接 -->
-		<view v-if="!libPage" class="user">
+		<view v-if="!libPage" class="user login-user">
 			<!-- <p>User1</p> -->
-			<h3>请先进行IM连接</h3>
+			<h3 class="page-title">请先进行IM连接</h3>
 			<view class="content-lab">
 				<view class="content-flex">
 					<span class="flex-des">App Key:</span>
 					<view class="flex1">
 						<input v-model="form.appkey" type="text" placeholder="请输入 App Key" />
-						<view>必填；</view>	
+						<view>必填；</view>
 					</view>
 				</view>
-				
 			</view>
 			<view class="content-lab">
 				<view class="content-flex">
 					<span class="flex-des">Token:</span>
 					<view class="flex1">
-						<input v-model="form.token" class="flex1" type="text" placeholder="请输入 Token">
-						<view>必填；</view>	
+						<picker mode="selector" :range="tokenOptions" range-key="label" :value="tokenIndex" @change="tokenChange">
+							<view class="token-picker">
+								{{tokenOptions[tokenIndex] ? 'Token：' + tokenOptions[tokenIndex].label : '请选择 Token'}}
+							</view>
+						</picker>
+						<view>必填；</view>
 					</view>
 				</view>
-				
 			</view>
 			<view class="content-lab">
 				<view class="content-flex">
 					<span class="flex-des">Navi:</span>
 					<view class="flex1">
 						<input v-model="form.navi" class="flex1" type="text" placeholder="请输入 Navi地址">
-						<view>非必填；</view>	
+						<view>非必填；</view>
 					</view>
 				</view>
 			</view>
 			<view class="content-lab">
-				<button @click="connect" class="btn">
+				<button @click="connect" class="btn btn-full">
 					连接
 				</button>
 			</view>
 		</view>
 		
 		<view v-if="libPage">
-			<view class="user">
-				<view>
+			<view class="user call-user">
+				<view class="current-user">
 					<span>用户ID：</span><span>{{loginUserId}}</span>
 				</view>
 				<view class="content-lab">
 					<view class="content-flex">
 						<span class="flex-des">通话类型:</span>
 						<view class="flex1">
-							 <radio-group @change="callChange">
-								 <label style="margin-top:20upx" v-for="(item, index) in callTypeArr" :key="item.id">
-									 <view class="radio-style">
-										 <radio :value="item.id" :checked="index === current" />
-										 {{item.label}}
-									 </view>
-								 </label>
-							 </radio-group>
+							<radio-group class="choice-group" @change="callChange">
+								<label class="choice-label" v-for="(item, index) in callTypeArr" :key="item.id">
+									<view class="radio-style">
+										<radio :value="item.id" :checked="index === current" />
+										{{item.label}}
+									</view>
+								</label>
+							</radio-group>
 						</view>
 					</view>
 				</view>
@@ -64,8 +66,8 @@
 					<view class="content-flex">
 						<span class="flex-des">媒体类型:</span>
 						<view class="flex1">
-							<radio-group @change="mediaChange">
-								<label style="margin-top:20upx" v-for="(item, index) in mediaTypeArr" :key="item.id">
+							<radio-group class="choice-group" @change="mediaChange">
+								<label class="choice-label" v-for="(item, index) in mediaTypeArr" :key="item.id">
 									<view class="radio-style">
 										<radio :value="item.id" :checked="index === cur" />
 										{{item.label}}
@@ -80,7 +82,7 @@
 						<span class="flex-des">对方ID:</span>
 						<view class="flex1">
 							<input v-model="targetId" class="flex1" type="text" placeholder="对方userID">
-							<view>必填；对方的userId</view>	
+							<view>必填；对方的userId</view>
 						</view>
 					</view>
 				</view>
@@ -89,7 +91,7 @@
 						<span class="flex-des">群组ID:</span>
 						<view class="flex1">
 							<input v-model="groupId" class="flex1" type="text" placeholder="群组ID">
-							<view>必填；通过开发者后台API调用创建群组</view>	
+							<view>必填；通过开发者后台API调用创建群组</view>
 						</view>
 					</view>
 				</view>
@@ -98,9 +100,14 @@
 						<span class="flex-des">被邀请者ID:</span>
 						<view class="flex1">
 							<input v-model="userIds" class="flex1" type="text" placeholder="被邀请者ID">
-							<view>必填；需加入群后，方可收到邀请，多个userId用英文半角逗号分开</view>	
+							<view>必填；需加入群后，方可收到邀请，多个userId用英文半角逗号分开</view>
 						</view>
 					</view>
+				</view>
+				<view class="content-lab">
+					<button @click="showPushConfig" class="btn btn-wide">
+						设置推送参数
+					</button>
 				</view>
 				<view class="content-lab">
 					<button @click="callOut" class="btn">
@@ -109,17 +116,31 @@
 				</view>
 			</view>
 		</view>
-		<view class="boxs" v-if="isCut">
-			<view class="boxs-cen">
-				<view class="boxs-des">
-					是否接入？
-				</view>
-				<view class="boxs-btn">
-					<button type="default" @click="cutFn(false)">取消</button>
-					<button type="default" @click="cutFn(true)">确定</button>
-				</view>
-			</view>
-		</view>
+		<uni-popup ref="formPopup" type="dialog">
+			<uni-popup-dialog mode="base" type="info"
+				:duration="2000" 
+				:before-close="true" 
+				@close="closeForm" 
+				@confirm="runAction"
+				:title="curFormInfo.name"
+			>
+				<scroll-view scroll-y="true" style="height: 70vh;">
+					<view  v-if="curFormVisible">
+						<view class="" v-for="(item, index) in curFormInfo.params" :key="item.key" style="margin-bottom: 10px;">
+							<view class="" style="color: #222831;">
+								{{item.name || item.key}}:
+							</view>
+							<view class="" v-if="item.type === 'number'">
+								<input  type="number" v-model="item.value" :placeholder="item.placeholder" style="border: 1px solid #999999;padding: 3px; background-color:#ccc"/>
+							</view>
+							<view class="" v-else>
+								<input  type="text" v-model="item.value" :placeholder="item.placeholder" maxlength="-1" style="border: 1px solid #999999;padding: 3px; background-color:#ccc"/>
+							</view>
+						</view>
+					</view>
+				</scroll-view>
+			</uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
@@ -129,6 +150,8 @@
 	import RCIMIWEngine from "@/uni_modules/RongCloud-IMWrapper-V2/js_sdk/RCIMEngine";
 	import permision from "@/js_sdk/wa-permission/permission.js"
 	import {reasonDeal,errorDeal,imCode} from '../../utils/code.js'
+	import * as Config from '../../common/config.js'
+	
 	export default {
 		data() {
 			return {
@@ -138,11 +161,22 @@
 				isLogining: "",
 				isInitIm: false,
 				form:{
-					appkey:'',
-					token:'',
-					navi:'',
-					mediaServer:''
+					appkey: Config.appKey,
+					token: Config.token1,
+					navi: Config.navi,
+					mediaServer: Config.mediaServer
 				},
+				tokenIndex: 0,
+				tokenOptions: [
+					{
+						label: Config.userId1,
+						value: Config.token1
+					},
+					{
+						label: Config.userId2,
+						value: Config.token2
+					}
+				],
 				isShow:false,
 				libPage:false,
 				isReceive:false,
@@ -178,7 +212,11 @@
 				localSession:'',
 				isPermission:false,
 				isBeauty:false,
-				imEngine: null
+				imEngine: null,
+				curFormInfo: {
+					name: ''
+				},
+				curFormVisible: true,
 			}
 		},
 		onLoad() {
@@ -188,8 +226,7 @@
 			call.onCallReceived( (res)=> {
 				console.log(res)
 				console.log("Engine:OnCallReceived=>"+"监听通话呼入, 目标id=>", res.data.targetId);
-				this.isCut=true;
-				this.localSession = res.data;
+				this.onCallReceived()
 			});
 			call.onCallDisconnected((res)=>{
 				console.log(res)
@@ -323,30 +360,36 @@
 					naviServer: this.form.navi
 				}
 				this.imEngine = await RCIMIWEngine.create(this.form.appkey,options)
-				this.imEngine.setOnConnectedListener((res) => {
-					if (res.code != 0){
+
+				let callback = {
+					onDatabaseOpened:(res) => {
+					},
+					onConnected:(res) => {
+						if (res.code != 0){
+							uni.hideLoading();
+							uni.showToast({
+								title: 'OnCon:' + res.code,
+								icon: 'error'
+							})
+							return
+						}
+						//连接成功
+						call.init({});
+						console.log('call.init')
+						this.libPage = true;
+						this.loginUserId = res.userId;
 						uni.hideLoading();
 						uni.showToast({
-							title: 'OnCon:' + res.code,
-							icon: 'error'
-						})
-						return
+							title:res.userId
+						});
+						if(uni.getSystemInfoSync().platform === 'android'){
+							permision.requestAndroidPermission('android.permission.CAMERA');
+							permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
+						}
 					}
-					//连接成功
-					call.init({});
-					console.log('call.init')
-					this.libPage = true;
-					this.loginUserId = res.userId;
-					uni.hideLoading();
-					uni.showToast({
-						title:res.userId
-					});
-					if(uni.getSystemInfoSync().platform === 'android'){
-						permision.requestAndroidPermission('android.permission.CAMERA');
-						permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
-					}
-				});
-				let code = await this.imEngine.connect(this.form.token,10)
+				};
+
+				let code = await this.imEngine.connect(this.form.token,10,callback)
 				if(code != 0 ){
 					uni.hideLoading();
 					uni.showToast({
@@ -357,67 +400,41 @@
 			},
 			//呼叫
 			callOut(){
-				//单聊音频
-				if(this.callSelect ==='single'&&this.mediaSelect ==='audio'){
-					if(this.targetId === ''){
-						uni.showToast({
-							title:"请输入对方ID",
-							icon: "error",
-							duration:2000
-						})
-						return;
-					}
-					this.callMsg(this.mediaSelect,this.targetId,this.callSelect);
-				}else if(this.callSelect ==='single'&&this.mediaSelect ==='video'){
-					if(this.targetId === ''){
-						uni.showToast({
-							title:"请输入对方ID",
-							icon: "error",
-							duration:2000
-						})
-						return;
-					}
-					//单聊视频
-					this.callMsg(this.mediaSelect,this.targetId,this.callSelect);
-				}else if(this.callSelect ==='group'&&this.mediaSelect ==='video'){
-					let userIdsArr = this.userIds.split(',');
-					uni.setStorageSync('room-parameters', {
-						callType: 'out',
-						mediaType: this.mediaSelect,
-						targetId: '',
-						callSelect:this.callSelect,
-						groupId:this.groupId,
-						userIds:userIdsArr
-					});
-					uni.navigateTo({
-						url:'../room/room'
-					});
-				}else if(this.callSelect ==='group'&&this.mediaSelect ==='audio'){
-					let userIdsArr = this.userIds.split(',');
-					uni.setStorageSync('room-parameters', {
-						callType: 'out',
-						mediaType: this.mediaSelect,
-						targetId: '',
-						callSelect:this.callSelect,
-						groupId:this.groupId,
-						userIds:userIdsArr
-					});
-					uni.navigateTo({
-						url:'../room/room'
-					});
-				}
-			},
-			callMsg(mediaSelect,targetId,callSelect){
-				console.log(targetId)
-				console.log(mediaSelect)
-				uni.setStorageSync('room-parameters', {
+				let params = {
 					callType: 'out',
-					mediaType: mediaSelect,
-					targetId: targetId,
-					callSelect:callSelect
-				});
+					mediaType: this.mediaSelect,
+					callSelect: this.callSelect,
+				};
+				//单聊音视频
+				if(this.callSelect ==='single'){
+					if(this.targetId === ''){
+						uni.showToast({
+							title:"请输入对方ID",
+							icon: "error",
+							duration:2000
+						})
+						return;
+					}
+					params.targetId = this.targetId;
+				} else if(this.callSelect ==='group') {
+					if(this.groupId === ''){
+						uni.showToast({
+							title:"请输入群 ID",
+							icon: "error",
+							duration:2000
+						})
+						return;
+					}
+					params.targetId = '';
+					params.groupId = this.groupId;
+					let userIdsArr = this.userIds.split(',');
+					params.userIds = userIdsArr;
+				}
+				console.log('push room', params);
+				let {callType, mediaType, targetId, callSelect, groupId, userIds} = params;
+				let roomUrl = `../room/room?callType=${callType}&mediaType=${mediaType}&targetId=${targetId}&callSelect=${callSelect}&groupId=${groupId}&userIds=${JSON.stringify(userIds)}`
 				uni.navigateTo({
-					url:'../room/room'
+					url: roomUrl
 				});
 			},
 			//通话类型切换
@@ -428,17 +445,72 @@
 			mediaChange(e){
 				this.mediaSelect = e.target.value;
 			},
-			//是否接收逻辑
+			tokenChange(e) {
+				const index = Number(e.detail.value);
+				this.tokenIndex = index;
+				this.form.token = this.tokenOptions[index].value;
+			},
+			// 是否接收逻辑
 			onCallReceived(session) {
-				// //呼入
-				uni.setStorageSync('room-parameters', {
-					callType: 'in',
-					mediaType: session.mediaType === 0 ? 'audio' : 'video'
-				});
+				// 呼入
+				// uni.setStorageSync('room-parameters', {
+				// 	callType: 'in',
+				// 	mediaType: session.mediaType === 0 ? 'audio' : 'video'
+				// });
 				//跳转.nvue
 				uni.navigateTo({
 					url:'../room/room'
 				});
+			},
+			showPushConfig() {
+				this.curFormInfo = {
+					name: "设置推送参数",
+					params: [
+						{ key: 'channelIdMi', value: '', type: 'string', name: '小米的渠道 ID', placeholder: '非必填'},
+						{ key: 'channelIdHW', value: '', type: 'string', name: '华为的渠道 ID', placeholder: '非必填'},
+						{ key: 'categoryHW', value: '', type: 'string', name: '华为推送消息分类', placeholder: '非必填'},
+						{ key: 'channelIdOPPO', value: '', type: 'string', name: 'OPPO 的渠道 ID', placeholder: '非必填'},
+						{ key: 'typeVivo', value: '', type: 'number', name: 'vivo 推送通道类型', placeholder: '非必填, 0 运营, 1 系统'},
+						{ key: 'categoryVivo', value: '', type: 'string', name: 'vivo 推送消息分类', placeholder: '非必填'},
+					],
+					action: (params) => {
+						if (uni.getSystemInfoSync().platform !== 'android') {
+							uni.showToast({
+								title: 'iOS 无需设置 Android 推送参数',
+								icon: 'none',
+								duration: 2000
+							})
+							return;
+						}
+						if (Object.keys(params).length === 0) {
+							uni.showToast({
+								title: '未填写推送参数',
+								icon: 'none',
+								duration: 2000
+							})
+							return;
+						}
+						console.log(params);
+						call.setPushConfig({androidConfig: params}, {});
+					},
+				}
+
+				this.$refs.formPopup.open();
+			},
+			closeForm() {
+				this.$refs.formPopup.close()
+			},
+			runAction() {
+				const params = {}
+				this.curFormInfo.params && this.curFormInfo.params.forEach((item) => {
+					const value = typeof item.value === 'string' ? item.value.trim() : item.value;
+					if (value === '' || value === undefined || value === null) {
+						return;
+					}
+					params[item.key] = item.type === 'number' ? Number(value) : value;
+				})
+				this.curFormInfo.action && this.curFormInfo.action(params)
+				this.$refs.formPopup.close()
 			}
 		}
 	}
@@ -446,64 +518,192 @@
 
 <style scoped>
 	page{
-		height: 90vh;
-		overflow-y:hidden;
+		height: 100vh;
+		overflow-y: auto;
 	}
 	.content {
-		flex: 1;
-		position: relative;
+		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		background: #222831;
 		color: #FFFFFF;
-		height: 90vh;
-		overflow:hidden;
-		padding: 30upx 50upx;
-		
+		min-height: 100vh;
+		overflow-y: auto;
+		padding: 56upx 44upx;
+		box-sizing: border-box;
 	}
 	.user{
-		padding: 20px;
-		background: #eeeeee1c;
+		width: 100%;
+		max-width: 720upx;
+		padding: 0;
+		box-sizing: border-box;
 	}
-	.user h3{
+	.login-user{
+		transform: translateY(-120upx);
+	}
+	.login-user .content-flex{
+		justify-content: center;
+	}
+	.login-user .flex-des{
+		display: none;
+	}
+	.login-user .flex1{
+		flex: none;
+		width: 80vw;
+		max-width: 600upx;
+	}
+	.call-user{
+		transform: translateY(-70upx);
+	}
+	.call-user .content-lab{
+		margin-top: 28upx;
+	}
+	.call-user .content-flex{
+		flex-direction: column;
+		align-items: center;
+	}
+	.call-user .flex-des{
+		width: 80vw;
+		max-width: 600upx;
+		min-height: 38upx;
+		line-height: 38upx;
+		text-align: left;
+		margin-right: 0;
+		margin-bottom: 12upx;
+		font-size: 26upx;
+		color: #cbd5df;
+	}
+	.call-user .flex1{
+		flex: none;
+		width: 80vw;
+		max-width: 600upx;
+	}
+	.page-title{
 		text-align: center;
+		font-size: 36upx;
+		font-weight: 600;
+		line-height: 48upx;
+		margin: 0 0 54upx;
+		color: #f7fafc;
+	}
+	.current-user{
+		text-align: center;
+		font-size: 30upx;
+		line-height: 42upx;
+		margin-bottom: 52upx;
+		color: #f7fafc;
 	}
 	.content-center{
 		text-align: center;
 	}
 	.content-lab{
-		/* padding: 0 50upx; */
+		width: 100%;
+		margin-top: 26upx;
 	}
 	.content-flex{
 		display: flex;
-		margin-top: 30upx;
+		align-items: flex-start;
+		width: 100%;
 	}
 	.flex-des{
-		width: 30%;
+		width: 168upx;
+		min-height: 72upx;
+		line-height: 72upx;
 		text-align: right;
-		margin-right: 10upx;
+		margin-right: 24upx;
+		color: #edf2f7;
+		font-size: 28upx;
+		white-space: nowrap;
 	}
 	.flex1{
-		flex:1;
-		color: #ccc;
-		
+		flex: 1;
+		min-width: 0;
+		color: #aeb8c2;
+		font-size: 24upx;
+		line-height: 34upx;
 	}
 	.flex1 input{
-		border: 1px solid #ccc;
-		height: 60upx;
+		width: 100%;
+		height: 72upx;
+		border: 1px solid #5f6d7a;
+		border-radius: 8upx;
+		background: rgba(255, 255, 255, 0.06);
+		color: #f7fafc;
+		padding: 0 20upx;
+		box-sizing: border-box;
+		font-size: 26upx;
+	}
+	.token-picker{
+		width: 100%;
+		height: 72upx;
+		line-height: 72upx;
+		border: 1px solid #5f6d7a;
+		border-radius: 8upx;
+		background: rgba(255, 255, 255, 0.06);
+		color: #f7fafc;
+		padding: 0 20upx;
+		box-sizing: border-box;
+		font-size: 26upx;
 	}
 	.flex1 select{
 		width: 100%;
-		height: 60upx;
+		height: 72upx;
 	}
 	.btn{
-		margin-top: 30upx;
-		width: 50%;
+		margin: 36upx auto 0;
+		width: 360upx;
+		height: 72upx;
+		line-height: 72upx;
 		color: #fff;
 		background: #2da2ea;
+		border: 0;
+		border-radius: 8upx;
+		font-size: 28upx;
+		padding: 0 24upx;
+		white-space: nowrap;
+		box-sizing: border-box;
+	}
+	.login-user .page-title{
+		margin-bottom: 92upx;
+	}
+	.btn-wide{
+		width: 420upx;
+	}
+	.call-user .btn,
+	.call-user .btn-wide{
+		width: 80vw;
+		max-width: 600upx;
+	}
+	.btn-full{
+		width: 80vw;
+		max-width: 600upx;
+	}
+	.login-user .btn-full{
+		margin-top: 70upx;
 	}
 	.radio-style{
-		margin-bottom: 20upx;
+		min-height: 72upx;
+		line-height: 72upx;
+		margin-bottom: 8upx;
+		color: #f7fafc;
+		font-size: 28upx;
+	}
+	.choice-group{
+		display: flex;
+		width: 100%;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.choice-label{
+		width: 48%;
+	}
+	.choice-label .radio-style{
+		border: 1px solid #5f6d7a;
+		border-radius: 8upx;
+		background: rgba(255, 255, 255, 0.06);
+		text-align: center;
+		box-sizing: border-box;
 	}
 	.shade-call{
 		position: absolute;
@@ -519,7 +719,6 @@
 		height: 100%;
 		background: rgba(0,0,0,.5);
 		z-index: 9999;
-	
 	}
 	.boxs-cen{
 		width: 80%;

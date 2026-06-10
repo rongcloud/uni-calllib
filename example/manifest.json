@@ -1,9 +1,9 @@
 {
     "name" : "call-example",
-    "appid" : "__UNI__98C6F90",
+    "appid" : "__UNI__277C0C4",
     "description" : "",
     "versionName" : "1.0.0",
-    "versionCode" : "100",
+    "versionCode" : 101,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -41,7 +41,13 @@
                 ]
             },
             /* ios打包配置 */
-            "ios" : {},
+            "ios" : {
+                "dSYMs" : false,
+                "privacyDescription" : {
+                    "NSCameraUsageDescription" : "用于音视频通话时采集摄像头画面",
+                    "NSMicrophoneUsageDescription" : "用于音视频通话时采集麦克风声音"
+                }
+            },
             /* SDK配置 */
             "sdkConfigs" : {
                 "ad" : {}

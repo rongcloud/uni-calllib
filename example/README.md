@@ -71,7 +71,31 @@
    - 已获取用于体验的两个 Token
    - 下载并安装 [HBuilder X](https://www.dcloud.io/hbuilderx.html)
 
-2. QuickDemo [项目地址](https://github.com/rongcloud/uni-calllib)。
+2. 配置 `common/config.js`。
+
+    运行示例前，请先打开 `example/common/config.js`，填写应用的 App Key、两个测试用户的 Token 以及对应的 userId。
+
+    ```js
+    export const appKey = '请填写融云开发者后台的 App Key';
+
+    export const token1 = '请填写第一个测试用户的 Token';
+    export const userId1 = '请填写 token1 对应的 userId';
+
+    export const token2 = '请填写第二个测试用户的 Token';
+    export const userId2 = '请填写 token2 对应的 userId';
+
+    export const navi = '';           // 可选
+    export const mediaServer = '';    // 可选
+    ```
+
+    说明：
+
+    - `token1` 和 `token2` 用于登录页下拉选择，建议分别对应两个不同的测试用户。
+    - `userId1` 和 `userId2` 必须与各自 Token 对应的用户 ID 一致。
+    - `navi` 默认可留空；如果应用使用海外数据中心或私有云，请按实际环境填写导航服务地址。
+    - `mediaServer` 默认可留空；仅在需要指定音视频媒体服务地址时填写。
+
+3. QuickDemo [项目地址](https://github.com/rongcloud/uni-calllib)。
 
     **克隆下载示例代码**
 
@@ -81,9 +105,9 @@
 
     注意，QuickDemo 示例代码在 `uni-calllib/example` 目录下。
 
-3. 在 HBuilderX 中，打开 `uni-calllib/example`。
+4. 在 HBuilderX 中，打开 `uni-calllib/example`。
 
-4. 进入 `example`，通过 NPM 下载 CallLib，IMLib 的安装包：
+5. 进入 `example`，通过 NPM 下载 CallLib，IMLib 的安装包：
 
     ```js  
     npm i @rongcloud/imlib-uni -S
@@ -91,14 +115,14 @@
     npm i @rongcloud/calllib-uni -S
     ```
 
-5. 前往 DCloud 插件市场，购买下列融云 uni-app 原生插件，或将插件下载到本地：
+6. 前往 DCloud 插件市场，购买下列融云 uni-app 原生插件，或将插件下载到本地：
 
     * 融云即时通讯 SDK uni 原生插件 `RCUniIm`：
         https://ext.dcloud.net.cn/search?q=RCUniIm
     * 融云实时音视频 SDK uni 原生插件 `RCUniCall`：
         https://ext.dcloud.net.cn/search?q=RCUniCall
 
-6. 使用 HBuilder X 导入原生插件，并完成相应配置。
+7. 使用 HBuilder X 导入原生插件，并完成相应配置。
 
     请根据项目打包方式，选择合适的步骤：
 
@@ -114,9 +138,9 @@
         3. 在 HBuilder X 中，打开项目的 `manifest.json` 文件。
         4. 点击 **App原生插件配置** -> **选择本地插件** -> 选中 **RCUniIM(RCUniCall)**。
 
-7. 在 HBuilder X 中，点击 **运行** -> 点击 **运行到手机或模拟器** -> 点击 **制作自定义调试基座**
+8. 在 HBuilder X 中，点击 **运行** -> 点击 **运行到手机或模拟器** -> 点击 **制作自定义调试基座**
 
-8. 制作基座完成后：
+9. 制作基座完成后：
    * 在 HBuilder X 中，点击 **运行** -> 点击**运行到手机或模拟器** -> 点击 **运行基座选择** -> 选择 **自定义调试基座**。
    * 连接 Android 或 iOS 手机，HBuilder X 点击 **运行** -> 点击 **运行到手机或模拟器** -> 点击 **已连接的手机**。
 
