@@ -1,5 +1,7 @@
 # rongcloud-uniapp-calllib
 
+本项目为融云音视频通话能力库（CallLib）的 uni-app 示例 Demo，旨在帮助开发者快速集成并全面掌握融云音视频通话的核心功能。
+
 [demo 测试文档](./example/README.md)
 
 [imlib-uni calllib-uni包使用文档](./INTRODUCTION.md)
